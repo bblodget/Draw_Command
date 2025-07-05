@@ -20,6 +20,14 @@ Try saying:
 - **Context Awareness**: Understands references like "it" and "the red square"
 - **Cross-Browser**: Works in Chrome, Firefox, Safari, and Edge
 
+## 📊 Status
+
+**🚧 Early Development** - This project is currently under active development. The basic functionality is being implemented and the demo will be available soon.
+
+**Current Phase**: Phase 1 - Core Functionality Foundation  
+**Next Milestone**: Basic voice-to-drawing demo  
+**Estimated Demo Availability**: 2-3 weeks
+
 ## 🚀 Quick Start
 
 ### Live Demo
