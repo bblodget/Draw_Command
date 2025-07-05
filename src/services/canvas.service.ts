@@ -9,6 +9,26 @@ export class CanvasService {
 
   setCanvas(canvas: fabric.Canvas): void {
     this.fabricCanvas = canvas;
+    
+    // Add hover effects
+    canvas.on('mouse:over', (e) => {
+      if (e.target) {
+        e.target.set('shadow', new fabric.Shadow({
+          color: 'rgba(0, 0, 0, 0.2)',
+          blur: 10,
+          offsetX: 3,
+          offsetY: 3,
+        }));
+        canvas.renderAll();
+      }
+    });
+
+    canvas.on('mouse:out', (e) => {
+      if (e.target) {
+        e.target.set('shadow', null);
+        canvas.renderAll();
+      }
+    });
   }
 
   drawSquare(color: string = 'red', size: number = 100, position?: { x: number; y: number }): string {
@@ -21,8 +41,15 @@ export class CanvasService {
       width: size,
       height: size,
       fill: color,
-      stroke: 'black',
+      stroke: '#374151',
       strokeWidth: 2,
+      cornerStyle: 'circle',
+      cornerColor: '#2563eb',
+      cornerStrokeColor: '#1e40af',
+      borderColor: '#2563eb',
+      borderScaleFactor: 2,
+      transparentCorners: false,
+      cornerSize: 8,
     });
 
     this.fabricCanvas.add(rect);
@@ -50,8 +77,15 @@ export class CanvasService {
       top: position?.y ?? 100,
       radius: size,
       fill: color,
-      stroke: 'black',
+      stroke: '#374151',
       strokeWidth: 2,
+      cornerStyle: 'circle',
+      cornerColor: '#2563eb',
+      cornerStrokeColor: '#1e40af',
+      borderColor: '#2563eb',
+      borderScaleFactor: 2,
+      transparentCorners: false,
+      cornerSize: 8,
     });
 
     this.fabricCanvas.add(circle);
@@ -80,8 +114,15 @@ export class CanvasService {
       width: size,
       height: size,
       fill: color,
-      stroke: 'black',
+      stroke: '#374151',
       strokeWidth: 2,
+      cornerStyle: 'circle',
+      cornerColor: '#2563eb',
+      cornerStrokeColor: '#1e40af',
+      borderColor: '#2563eb',
+      borderScaleFactor: 2,
+      transparentCorners: false,
+      cornerSize: 8,
     });
 
     this.fabricCanvas.add(triangle);
