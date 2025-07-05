@@ -1,9 +1,106 @@
+import * as fabric from 'fabric';
 import type { Shape } from '../types';
+import { generateId } from '../utils';
 
 export class CanvasService {
   private shapes: Map<string, Shape> = new Map();
+  private fabricCanvas: fabric.Canvas | null = null;
+  private fabricObjects: Map<string, fabric.Object> = new Map();
 
-  addShape(shape: Shape): void {
+  setCanvas(canvas: fabric.Canvas): void {
+    this.fabricCanvas = canvas;
+  }
+
+  drawSquare(color: string = 'red', size: number = 100, position?: { x: number; y: number }): string {
+    if (!this.fabricCanvas) throw new Error('Canvas not initialized');
+
+    const id = generateId();
+    const rect = new fabric.Rect({
+      left: position?.x ?? 100,
+      top: position?.y ?? 100,
+      width: size,
+      height: size,
+      fill: color,
+      stroke: 'black',
+      strokeWidth: 2,
+    });
+
+    this.fabricCanvas.add(rect);
+    this.fabricObjects.set(id, rect);
+
+    const shape: Shape = {
+      id,
+      type: 'square',
+      color,
+      position: { x: rect.left!, y: rect.top! },
+      size,
+      createdAt: new Date(),
+    };
+
+    this.addShape(shape);
+    return id;
+  }
+
+  drawCircle(color: string = 'blue', size: number = 50, position?: { x: number; y: number }): string {
+    if (!this.fabricCanvas) throw new Error('Canvas not initialized');
+
+    const id = generateId();
+    const circle = new fabric.Circle({
+      left: position?.x ?? 200,
+      top: position?.y ?? 100,
+      radius: size,
+      fill: color,
+      stroke: 'black',
+      strokeWidth: 2,
+    });
+
+    this.fabricCanvas.add(circle);
+    this.fabricObjects.set(id, circle);
+
+    const shape: Shape = {
+      id,
+      type: 'circle',
+      color,
+      position: { x: circle.left!, y: circle.top! },
+      size,
+      createdAt: new Date(),
+    };
+
+    this.addShape(shape);
+    return id;
+  }
+
+  drawTriangle(color: string = 'green', size: number = 100, position?: { x: number; y: number }): string {
+    if (!this.fabricCanvas) throw new Error('Canvas not initialized');
+
+    const id = generateId();
+    const triangle = new fabric.Triangle({
+      left: position?.x ?? 300,
+      top: position?.y ?? 100,
+      width: size,
+      height: size,
+      fill: color,
+      stroke: 'black',
+      strokeWidth: 2,
+    });
+
+    this.fabricCanvas.add(triangle);
+    this.fabricObjects.set(id, triangle);
+
+    const shape: Shape = {
+      id,
+      type: 'triangle',
+      color,
+      position: { x: triangle.left!, y: triangle.top! },
+      size,
+      createdAt: new Date(),
+    };
+
+    this.addShape(shape);
+    return id;
+  }
+
+  private addShape(shape: Shape): void {
     this.shapes.set(shape.id, shape);
   }
 
@@ -16,10 +113,19 @@ export class CanvasService {
   }
 
   removeShape(id: string): boolean {
+    const fabricObject = this.fabricObjects.get(id);
+    if (fabricObject && this.fabricCanvas) {
+      this.fabricCanvas.remove(fabricObject);
+      this.fabricObjects.delete(id);
+    }
     return this.shapes.delete(id);
   }
 
   clearAll(): void {
+    if (this.fabricCanvas) {
+      this.fabricCanvas.clear();
+    }
     this.shapes.clear();
+    this.fabricObjects.clear();
   }
 }

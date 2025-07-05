@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as fabric from 'fabric';
+import { CanvasService } from '../../services/canvas.service';
+import { Button } from '../common';
 
 export const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
+  const canvasServiceRef = useRef<CanvasService>(new CanvasService());
   const [isCanvasReady, setIsCanvasReady] = useState(false);
 
   useEffect(() => {
@@ -18,6 +21,7 @@ export const Canvas: React.FC = () => {
     });
 
     fabricCanvasRef.current = fabricCanvas;
+    canvasServiceRef.current.setCanvas(fabricCanvas);
     setIsCanvasReady(true);
 
     // Cleanup function
@@ -28,17 +32,49 @@ export const Canvas: React.FC = () => {
     };
   }, []);
 
+  const handleDrawSquare = () => {
+    canvasServiceRef.current.drawSquare('red', 100);
+  };
+
+  const handleDrawCircle = () => {
+    canvasServiceRef.current.drawCircle('blue', 50);
+  };
+
+  const handleDrawTriangle = () => {
+    canvasServiceRef.current.drawTriangle('green', 100);
+  };
+
+  const handleClear = () => {
+    canvasServiceRef.current.clearAll();
+  };
+
   return (
-    <div className="border-2 border-gray-300 rounded-lg bg-white overflow-hidden" style={{ width: '800px', height: '600px' }}>
-      <canvas
-        ref={canvasRef}
-        className="block"
-      />
-      {!isCanvasReady && (
-        <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-          <p>Loading canvas...</p>
-        </div>
-      )}
+    <div>
+      <div className="mb-4 flex gap-2">
+        <Button onClick={handleDrawSquare} disabled={!isCanvasReady}>
+          Draw Square
+        </Button>
+        <Button onClick={handleDrawCircle} disabled={!isCanvasReady}>
+          Draw Circle
+        </Button>
+        <Button onClick={handleDrawTriangle} disabled={!isCanvasReady}>
+          Draw Triangle
+        </Button>
+        <Button onClick={handleClear} variant="secondary" disabled={!isCanvasReady}>
+          Clear Canvas
+        </Button>
+      </div>
+      <div className="border-2 border-gray-300 rounded-lg bg-white overflow-hidden" style={{ width: '800px', height: '600px' }}>
+        <canvas
+          ref={canvasRef}
+          className="block"
+        />
+        {!isCanvasReady && (
+          <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+            <p>Loading canvas...</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
