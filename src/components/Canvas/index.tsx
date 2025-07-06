@@ -3,14 +3,18 @@ import * as fabric from 'fabric';
 import { CanvasService } from '../../services/canvas.service';
 import { Button } from '../common';
 
-export const Canvas: React.FC = () => {
+interface CanvasProps {
+  onCanvasReady?: (canvasService: CanvasService) => void;
+}
+
+export const Canvas: React.FC<CanvasProps> = ({ onCanvasReady }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const canvasServiceRef = useRef<CanvasService>(new CanvasService());
   const [isCanvasReady, setIsCanvasReady] = useState(false);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || fabricCanvasRef.current) return; // Prevent re-initialization
 
     // Initialize Fabric.js canvas
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
@@ -30,6 +34,11 @@ export const Canvas: React.FC = () => {
     fabricCanvasRef.current = fabricCanvas;
     canvasServiceRef.current.setCanvas(fabricCanvas);
     setIsCanvasReady(true);
+    
+    // Notify parent component that canvas is ready
+    if (onCanvasReady) {
+      onCanvasReady(canvasServiceRef.current);
+    }
 
     // Cleanup function
     return () => {
@@ -37,7 +46,7 @@ export const Canvas: React.FC = () => {
       fabricCanvasRef.current = null;
       setIsCanvasReady(false);
     };
-  }, []);
+  }, []); // Remove dependency to ensure it only runs once
 
   const handleDrawSquare = () => {
     canvasServiceRef.current.drawSquare('red', 100);

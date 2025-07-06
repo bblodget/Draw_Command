@@ -17,6 +17,8 @@ export class VoiceService {
   private attentionWordDetected: boolean = false;
   private readonly ATTENTION_WORD = 'computer';
   private readonly EXECUTE_WORD = 'please';
+  private lastExecutedCommand: string = '';
+  private lastExecutedAt: number = 0;
 
   constructor() {
     this.initializeSpeechRecognition();
@@ -83,10 +85,18 @@ export class VoiceService {
         if (this.attentionWordDetected && fullTranscript.toLowerCase().includes(this.EXECUTE_WORD)) {
           // Extract command between attention and execution words
           const command = this.extractCommand(fullTranscript);
-          if (command) {
+          const now = Date.now();
+          
+          // Prevent duplicate command execution (within 2 seconds)
+          if (command && (command !== this.lastExecutedCommand || now - this.lastExecutedAt > 2000)) {
+            console.log('Executing command:', command);
             this.callbacks.onCommand?.(command);
+            this.lastExecutedCommand = command;
+            this.lastExecutedAt = now;
             this.attentionWordDetected = false;
             this.currentTranscript = '';
+          } else if (command === this.lastExecutedCommand) {
+            console.log('Duplicate command ignored:', command);
           }
         }
 

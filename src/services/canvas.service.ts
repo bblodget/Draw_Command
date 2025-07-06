@@ -10,6 +10,10 @@ export class CanvasService {
   setCanvas(canvas: fabric.Canvas): void {
     this.fabricCanvas = canvas;
     
+    // Ensure canvas is in selection mode, not drawing mode
+    canvas.isDrawingMode = false;
+    canvas.selection = true;
+    
     // Add hover effects
     canvas.on('mouse:over', (e) => {
       if (e.target) {
@@ -50,10 +54,17 @@ export class CanvasService {
       borderScaleFactor: 2,
       transparentCorners: false,
       cornerSize: 8,
+      selectable: true,
+      evented: true,
+      hasControls: true,
+      hasBorders: true,
+      lockMovementX: false,
+      lockMovementY: false,
     });
 
     this.fabricCanvas.add(rect);
     this.fabricObjects.set(id, rect);
+    this.fabricCanvas.renderAll(); // Force canvas to render
 
     const shape: Shape = {
       id,
@@ -86,10 +97,17 @@ export class CanvasService {
       borderScaleFactor: 2,
       transparentCorners: false,
       cornerSize: 8,
+      selectable: true,
+      evented: true,
+      hasControls: true,
+      hasBorders: true,
+      lockMovementX: false,
+      lockMovementY: false,
     });
 
     this.fabricCanvas.add(circle);
     this.fabricObjects.set(id, circle);
+    this.fabricCanvas.renderAll(); // Force canvas to render
 
     const shape: Shape = {
       id,
@@ -123,10 +141,17 @@ export class CanvasService {
       borderScaleFactor: 2,
       transparentCorners: false,
       cornerSize: 8,
+      selectable: true,
+      evented: true,
+      hasControls: true,
+      hasBorders: true,
+      lockMovementX: false,
+      lockMovementY: false,
     });
 
     this.fabricCanvas.add(triangle);
     this.fabricObjects.set(id, triangle);
+    this.fabricCanvas.renderAll(); // Force canvas to render
 
     const shape: Shape = {
       id,
