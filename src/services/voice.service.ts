@@ -1,213 +1,237 @@
 export interface VoiceRecognitionCallbacks {
-  onTranscript?: (transcript: string, isFinal: boolean) => void;
-  onCommand?: (command: string) => void;
-  onError?: (error: string) => void;
-  onStart?: () => void;
-  onEnd?: () => void;
-  onSpeechStart?: () => void;
-  onSpeechEnd?: () => void;
+    onTranscript?: (transcript: string, isFinal: boolean) => void;
+    onCommand?: (command: string) => void;
+    onError?: (error: string) => void;
+    onStart?: () => void;
+    onEnd?: () => void;
+    onSpeechStart?: () => void;
+    onSpeechEnd?: () => void;
 }
 
 export class VoiceService {
-  private recognition: SpeechRecognition | null = null;
-  private synthesis: SpeechSynthesis | null = null;
-  private isListening: boolean = false;
-  private callbacks: VoiceRecognitionCallbacks = {};
-  private currentTranscript: string = '';
-  private attentionWordDetected: boolean = false;
-  private readonly ATTENTION_WORD = 'computer';
-  private readonly EXECUTE_WORD = 'please';
-  private lastExecutedCommand: string = '';
-  private lastExecutedAt: number = 0;
+    private recognition: SpeechRecognition | null = null;
+    private synthesis: SpeechSynthesis | null = null;
+    private isListening: boolean = false;
+    private callbacks: VoiceRecognitionCallbacks = {};
+    private currentTranscript: string = '';
+    private attentionWordDetected: boolean = false;
+    private readonly ATTENTION_WORD = 'computer';
+    private readonly EXECUTE_WORD = 'please';
+    private lastExecutedCommand: string = '';
+    private lastExecutedAt: number = 0;
+    private commandCooldownMs: number = 2000; // 2 second cooldown
+    private isProcessingCommand: boolean = false; // Prevent overlapping command processing
 
-  constructor() {
-    this.initializeSpeechRecognition();
-    this.initializeSpeechSynthesis();
-  }
-
-  private initializeSpeechRecognition(): void {
-    if ('webkitSpeechRecognition' in window) {
-      this.recognition = new ((window as typeof window & { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition)();
-    } else if ('SpeechRecognition' in window) {
-      this.recognition = new SpeechRecognition();
+    constructor() {
+        this.initializeSpeechRecognition();
+        this.initializeSpeechSynthesis();
     }
 
-    if (this.recognition) {
-      this.recognition.continuous = true;
-      this.recognition.interimResults = true;
-      this.recognition.lang = 'en-US';
-      this.recognition.maxAlternatives = 1;
-
-      this.recognition.onstart = () => {
-        this.isListening = true;
-        this.callbacks.onStart?.();
-      };
-
-      this.recognition.onend = () => {
-        this.isListening = false;
-        this.callbacks.onEnd?.();
-        // Auto-restart if we were listening
-        if (this.isListening) {
-          this.startListening();
-        }
-      };
-
-      this.recognition.onspeechstart = () => {
-        this.callbacks.onSpeechStart?.();
-      };
-
-      this.recognition.onspeechend = () => {
-        this.callbacks.onSpeechEnd?.();
-      };
-
-      this.recognition.onresult = (event: SpeechRecognitionEvent) => {
-        let interimTranscript = '';
-        let finalTranscript = '';
-
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript;
-          } else {
-            interimTranscript += transcript;
-          }
+    private initializeSpeechRecognition(): void {
+        if ('webkitSpeechRecognition' in window) {
+            this.recognition = new ((window as typeof window & { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition)();
+        } else if ('SpeechRecognition' in window) {
+            this.recognition = new SpeechRecognition();
         }
 
-        const fullTranscript = finalTranscript || interimTranscript;
-        this.currentTranscript = fullTranscript;
+        if (this.recognition) {
+            this.recognition.continuous = true;
+            this.recognition.interimResults = true;
+            this.recognition.lang = 'en-US';
+            this.recognition.maxAlternatives = 1;
+
+            this.recognition.onstart = () => {
+                this.isListening = true;
+                this.callbacks.onStart?.();
+            };
+
+            this.recognition.onend = () => {
+                this.isListening = false;
+                this.callbacks.onEnd?.();
+                // Auto-restart if we were listening (but add a small delay to prevent rapid restarts)
+                if (this.isListening) {
+                    setTimeout(() => {
+                        if (this.isListening) {
+                            this.startListening();
+                        }
+                    }, 100);
+                }
+            };
+
+            this.recognition.onspeechstart = () => {
+                this.callbacks.onSpeechStart?.();
+            };
+
+            this.recognition.onspeechend = () => {
+                this.callbacks.onSpeechEnd?.();
+            };
+
+            this.recognition.onresult = (event: SpeechRecognitionEvent) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript;
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+
+                // Always update current transcript for display
+                const fullTranscript = finalTranscript || interimTranscript;
+                this.currentTranscript = fullTranscript;
+
+                // Only process commands on final results to prevent duplicates
+                if (finalTranscript) {
+                    this.processFinalTranscript(finalTranscript);
+                }
+
+                // Always report current transcript for display
+                this.callbacks.onTranscript?.(fullTranscript, !!finalTranscript);
+            };
+
+            this.recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+                this.callbacks.onError?.(event.error);
+            };
+        }
+    }
+
+    private initializeSpeechSynthesis(): void {
+        if ('speechSynthesis' in window) {
+            this.synthesis = window.speechSynthesis;
+        }
+    }
+
+    private processFinalTranscript(transcript: string): void {
+        // Prevent overlapping command processing
+        if (this.isProcessingCommand) {
+            return;
+        }
 
         // Check for attention word
-        if (fullTranscript.toLowerCase().includes(this.ATTENTION_WORD)) {
-          this.attentionWordDetected = true;
+        if (transcript.toLowerCase().includes(this.ATTENTION_WORD)) {
+            this.attentionWordDetected = true;
         }
 
         // Check for execution word
-        if (this.attentionWordDetected && fullTranscript.toLowerCase().includes(this.EXECUTE_WORD)) {
-          // Extract command between attention and execution words
-          const command = this.extractCommand(fullTranscript);
-          const now = Date.now();
-          
-          // Prevent duplicate command execution (within 2 seconds)
-          if (command && (command !== this.lastExecutedCommand || now - this.lastExecutedAt > 2000)) {
-            console.log('Executing command:', command);
-            this.callbacks.onCommand?.(command);
-            this.lastExecutedCommand = command;
-            this.lastExecutedAt = now;
+        if (this.attentionWordDetected && transcript.toLowerCase().includes(this.EXECUTE_WORD)) {
+            this.isProcessingCommand = true;
+
+            // Extract command between attention and execution words
+            const command = this.extractCommand(transcript);
+            const now = Date.now();
+
+            // Prevent duplicate command execution (within cooldown period)
+            if (command && (command !== this.lastExecutedCommand || now - this.lastExecutedAt > this.commandCooldownMs)) {
+                console.log('Executing command:', command);
+                this.callbacks.onCommand?.(command);
+                this.lastExecutedCommand = command;
+                this.lastExecutedAt = now;
+            } else if (command === this.lastExecutedCommand) {
+                console.log('Duplicate command ignored:', command);
+            }
+
+            // Reset state after processing
             this.attentionWordDetected = false;
             this.currentTranscript = '';
-          } else if (command === this.lastExecutedCommand) {
-            console.log('Duplicate command ignored:', command);
-          }
+            this.isProcessingCommand = false;
+        }
+    }
+
+    private extractCommand(transcript: string): string {
+        const lowerTranscript = transcript.toLowerCase();
+        const attentionIndex = lowerTranscript.indexOf(this.ATTENTION_WORD);
+        const executeIndex = lowerTranscript.indexOf(this.EXECUTE_WORD);
+
+        if (attentionIndex !== -1 && executeIndex !== -1 && executeIndex > attentionIndex) {
+            const commandStart = attentionIndex + this.ATTENTION_WORD.length;
+            const commandEnd = executeIndex;
+            return transcript.substring(commandStart, commandEnd).trim();
         }
 
-        // Always report current transcript for display
-        this.callbacks.onTranscript?.(fullTranscript, !!finalTranscript);
-      };
-
-      this.recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-        this.callbacks.onError?.(event.error);
-      };
-    }
-  }
-
-  private initializeSpeechSynthesis(): void {
-    if ('speechSynthesis' in window) {
-      this.synthesis = window.speechSynthesis;
-    }
-  }
-
-  private extractCommand(transcript: string): string {
-    const lowerTranscript = transcript.toLowerCase();
-    const attentionIndex = lowerTranscript.indexOf(this.ATTENTION_WORD);
-    const executeIndex = lowerTranscript.indexOf(this.EXECUTE_WORD);
-
-    if (attentionIndex !== -1 && executeIndex !== -1 && executeIndex > attentionIndex) {
-      const commandStart = attentionIndex + this.ATTENTION_WORD.length;
-      const commandEnd = executeIndex;
-      return transcript.substring(commandStart, commandEnd).trim();
+        return '';
     }
 
-    return '';
-  }
-
-  isSupported(): boolean {
-    return this.recognition !== null && this.synthesis !== null;
-  }
-
-  isSpeechRecognitionSupported(): boolean {
-    return this.recognition !== null;
-  }
-
-  isSpeechSynthesisSupported(): boolean {
-    return this.synthesis !== null;
-  }
-
-  setCallbacks(callbacks: VoiceRecognitionCallbacks): void {
-    this.callbacks = callbacks;
-  }
-
-  async requestMicrophonePermission(): Promise<boolean> {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // Stop the stream immediately as we just wanted to check permission
-      stream.getTracks().forEach(track => track.stop());
-      return true;
-    } catch (error) {
-      console.error('Microphone permission denied:', error);
-      return false;
-    }
-  }
-
-  startListening(): void {
-    if (!this.recognition) {
-      this.callbacks.onError?.('Speech recognition not supported');
-      return;
+    isSupported(): boolean {
+        return this.recognition !== null && this.synthesis !== null;
     }
 
-    if (this.isListening) {
-      return;
+    isSpeechRecognitionSupported(): boolean {
+        return this.recognition !== null;
     }
 
-    try {
-      this.recognition.start();
-    } catch {
-      this.callbacks.onError?.('Failed to start speech recognition');
-    }
-  }
-
-  stopListening(): void {
-    if (!this.recognition || !this.isListening) {
-      return;
+    isSpeechSynthesisSupported(): boolean {
+        return this.synthesis !== null;
     }
 
-    this.recognition.stop();
-  }
+    setCallbacks(callbacks: VoiceRecognitionCallbacks): void {
+        this.callbacks = callbacks;
+    }
 
-  getIsListening(): boolean {
-    return this.isListening;
-  }
+    async requestMicrophonePermission(): Promise<boolean> {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            // Stop the stream immediately as we just wanted to check permission
+            stream.getTracks().forEach(track => track.stop());
+            return true;
+        } catch (error) {
+            console.error('Microphone permission denied:', error);
+            return false;
+        }
+    }
 
-  getCurrentTranscript(): string {
-    return this.currentTranscript;
-  }
+    startListening(): void {
+        if (!this.recognition) {
+            this.callbacks.onError?.('Speech recognition not supported');
+            return;
+        }
 
-  async speak(text: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (!this.synthesis) {
-        reject(new Error('Speech synthesis not supported'));
-        return;
-      }
-      
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.onend = () => resolve();
-      utterance.onerror = (event) => reject(new Error(`Speech synthesis error: ${event.error}`));
-      
-      this.synthesis.speak(utterance);
-    });
-  }
+        if (this.isListening) {
+            return;
+        }
 
-  clearTranscript(): void {
-    this.currentTranscript = '';
-    this.attentionWordDetected = false;
-  }
+        try {
+            this.recognition.start();
+        } catch {
+            this.callbacks.onError?.('Failed to start speech recognition');
+        }
+    }
+
+    stopListening(): void {
+        if (!this.recognition || !this.isListening) {
+            return;
+        }
+
+        this.recognition.stop();
+    }
+
+    getIsListening(): boolean {
+        return this.isListening;
+    }
+
+    getCurrentTranscript(): string {
+        return this.currentTranscript;
+    }
+
+    async speak(text: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (!this.synthesis) {
+                reject(new Error('Speech synthesis not supported'));
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.onend = () => resolve();
+            utterance.onerror = (event) => reject(new Error(`Speech synthesis error: ${event.error}`));
+
+            this.synthesis.speak(utterance);
+        });
+    }
+
+    clearTranscript(): void {
+        this.currentTranscript = '';
+        this.attentionWordDetected = false;
+    }
 }
