@@ -22,23 +22,33 @@ Try saying:
 
 ## 📊 Status
 
-**🚧 Early Development** - This project is currently under active development. The basic functionality is being implemented and the demo will be available soon.
+**🎉 Live Demo Available!** - The voice-controlled drawing demo is now fully functional and deployed.
 
-**Current Phase**: Phase 1 - Core Functionality Foundation  
-**Next Milestone**: Basic voice-to-drawing demo  
-**Estimated Demo Availability**: 2-3 weeks
+**Current Phase**: Phase 1 Complete - Core Functionality Foundation  
+**Next Milestone**: Phase 2 - AI Enhancement with OpenAI integration  
+**Live Demo**: Available now at GitHub Pages
 
 ## 🚀 Quick Start
 
 ### Live Demo
-Visit the live demo at: [Coming Soon - Vercel Deployment]
+🚀 **[Try the Live Demo](https://bblodget.github.io/Draw_Command/)**
+
+**Current Features Available:**
+- ✅ Voice-controlled shape drawing (squares, circles, triangles)
+- ✅ Color commands with 12+ colors supported
+- ✅ Real-time voice recognition and feedback
+- ✅ Interactive canvas with shape manipulation
+- ✅ Regex-based command parsing
+- ✅ Professional UI with status indicators
+
+**Try saying:** "Computer, draw a red square please"
 
 ### Local Development
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/speech-to-drawing-demo.git
-   cd speech-to-drawing-demo
+   git clone https://github.com/bblodget/Draw_Command.git
+   cd Draw_Command
    ```
 
 2. **Install dependencies**
@@ -104,7 +114,7 @@ Visit the live demo at: [Coming Soon - Vercel Deployment]
 - **Voice Recognition**: Web Speech API
 - **AI Processing**: OpenAI GPT-4
 - **Graphics**: HTML5 Canvas + Fabric.js
-- **Deployment**: Vercel
+- **Deployment**: GitHub Pages
 
 ## 📁 Project Structure
 
@@ -171,6 +181,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ## 📚 Documentation
 
 - **[CLAUDE.md](CLAUDE.md)** - Project overview and documentation guide
+- **[Voice Commands](docs/voice_commands.md)** - Complete guide to supported voice commands
 - **[Requirements](docs/requirements.md)** - Functional and non-functional requirements
 - **[Specification](docs/specification.md)** - Technical architecture and implementation details
 - **[Development Plan](docs/plan.md)** - Detailed development roadmap
