@@ -67,35 +67,42 @@ These commands change the color of existing shapes (or create new ones if none e
 - "color the [shape] [color]" - with article
 - "color [shape] [color]" - without article
 
-## 🟡 Partially Supported Commands
-
 ### Move Commands
-These commands are parsed correctly but not yet executed (shows placeholder message).
+These commands move shapes in the specified direction by 50 pixels.
 
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Move Up | "Computer, move the square up please" | ⚠️ Parsed Only | Shows "Phase 2" message |
-| Move Down | "Computer, move the circle down please" | ⚠️ Parsed Only | Shows "Phase 2" message |
-| Move Left | "Computer, move the triangle left please" | ⚠️ Parsed Only | Shows "Phase 2" message |
-| Move Right | "Computer, move the square right please" | ⚠️ Parsed Only | Shows "Phase 2" message |
+| Move Up | "Computer, move the square up please" | ✅ Full Support | Moves shape 50px up |
+| Move Down | "Computer, move the circle down please" | ✅ Full Support | Moves shape 50px down |
+| Move Left | "Computer, move the triangle left please" | ✅ Full Support | Moves shape 50px left |
+| Move Right | "Computer, move the square right please" | ✅ Full Support | Moves shape 50px right |
 
 **Format Variations:**
 - "move the [shape] [direction]" - with article
 - "move [shape] [direction]" - without article
 
+**Voice Feedback:**
+- Success: "I moved the square left"
+- No shape: "There's no square on the canvas to move"
+- Canvas edge: "I can't move the square any further in that direction"
+
 ### Delete Commands
-These commands are parsed correctly but not yet executed (shows placeholder message).
+These commands remove the specified shape from the canvas.
 
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Delete Shape | "Computer, delete the square please" | ⚠️ Parsed Only | Shows "Phase 2" message |
-| Remove Shape | "Computer, remove the circle please" | ⚠️ Parsed Only | Shows "Phase 2" message |
+| Delete Shape | "Computer, delete the square please" | ✅ Full Support | Removes the square |
+| Remove Shape | "Computer, remove the circle please" | ✅ Full Support | Removes the circle |
 
 **Format Variations:**
 - "delete the [shape]" - with article
 - "delete [shape]" - without article
 - "remove the [shape]" - with article
 - "remove [shape]" - without article
+
+**Voice Feedback:**
+- Success: "I deleted the square"
+- No shape: "There's no square on the canvas to delete"
 
 ## 🔴 Future Commands (Not Started)
 
@@ -203,14 +210,15 @@ The parser accepts various natural language variations:
 ### Phase 1: Core Functionality ✅
 - Basic voice recognition
 - Simple command parsing
-- Shape creation
-- Canvas clearing
+- Shape creation and deletion
+- Shape movement (four directions)
 - Color changing (single instance shapes)
+- Canvas clearing
 
 ### Phase 2: AI Enhancement 🚧
 - OpenAI API integration
 - Natural language processing
-- Shape movement and deletion
+- Advanced shape operations
 - Context-aware commands
 
 ### Phase 3: Advanced Features 📋
@@ -233,5 +241,6 @@ To test the system, try these basic commands:
 1. "Computer, draw a red square please"
 2. "Computer, draw a blue circle please"
 3. "Computer, color the square blue please" (changes square to blue)
-4. "Computer, clear please"
-5. "Computer, move the square left please" (shows Phase 2 message)
+4. "Computer, move the square left please" (moves square 50px left)
+5. "Computer, delete the circle please" (removes the circle)
+6. "Computer, clear please" (removes all shapes)

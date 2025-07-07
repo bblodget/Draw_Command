@@ -446,4 +446,70 @@ export class CanvasService {
       };
     }
   }
+
+  // Move a shape by type with directional offset
+  moveShapeByType(shapeType: string, offset: { x: number; y: number }): boolean {
+    if (!this.fabricCanvas) return false;
+
+    const shape = this.getShapeByType(shapeType);
+    if (!shape) return false;
+
+    const fabricObject = this.fabricObjects.get(shape.id);
+    if (!fabricObject) return false;
+
+    // Calculate new position
+    const currentPos = shape.position;
+    const newX = currentPos.x + offset.x;
+    const newY = currentPos.y + offset.y;
+
+    // Get canvas dimensions
+    const canvasWidth = this.fabricCanvas.getWidth();
+    const canvasHeight = this.fabricCanvas.getHeight();
+
+    // Calculate shape bounds at new position
+    const testShape: Shape = {
+      ...shape,
+      position: { x: newX, y: newY }
+    };
+    const bounds = this.getShapeBounds(testShape);
+
+    // Check if new position keeps shape within canvas
+    if (bounds.left < 0 || bounds.right > canvasWidth || 
+        bounds.top < 0 || bounds.bottom > canvasHeight) {
+      return false; // Would move off canvas
+    }
+
+    // Update fabric object position
+    fabricObject.set({
+      left: newX,
+      top: newY
+    });
+    fabricObject.setCoords(); // Update interactive controls
+    this.fabricCanvas.renderAll();
+
+    // Update our shape tracking
+    shape.position = { x: newX, y: newY };
+
+    return true;
+  }
+
+  // Delete a shape by type
+  deleteShapeByType(shapeType: string): boolean {
+    const shape = this.getShapeByType(shapeType);
+    if (!shape) return false;
+
+    // Remove from fabric canvas
+    const fabricObject = this.fabricObjects.get(shape.id);
+    if (fabricObject && this.fabricCanvas) {
+      this.fabricCanvas.remove(fabricObject);
+      this.fabricCanvas.renderAll();
+    }
+
+    // Clean up our tracking
+    this.shapes.delete(shape.id);
+    this.fabricObjects.delete(shape.id);
+    this.shapesByType.delete(shapeType);
+
+    return true;
+  }
 }

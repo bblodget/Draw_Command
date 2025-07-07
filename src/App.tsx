@@ -119,23 +119,44 @@ function App() {
           break;
           
         case 'move':
-          // For Phase 1, we'll just log this
-          // In Phase 2, this will actually move existing shapes
-          setCommandResult({ 
-            success: false, 
-            message: 'Move command will be implemented in Phase 2' 
-          });
-          responseService.current.speak('Move commands are coming in Phase 2', 'normal');
+          if (command.shape && command.position) {
+            // command.position contains the offset (x, y) from directionMap
+            // Determine direction name from offset
+            let direction = '';
+            if (command.position.x > 0) direction = 'right';
+            else if (command.position.x < 0) direction = 'left';
+            else if (command.position.y > 0) direction = 'down';
+            else if (command.position.y < 0) direction = 'up';
+            
+            const moved = canvas.moveShapeByType(command.shape, command.position);
+            if (moved) {
+              setCommandResult({ success: true, message: `Moved the ${command.shape} ${direction}` });
+              responseService.current.respondToMoveCommand(command.shape, direction);
+            } else {
+              // Either shape doesn't exist or would move off canvas
+              const shapeExists = canvas.getShapeByType(command.shape);
+              if (!shapeExists) {
+                setCommandResult({ success: false, message: `No ${command.shape} to move` });
+                responseService.current.speak(`There's no ${command.shape} on the canvas to move`, 'normal');
+              } else {
+                setCommandResult({ success: false, message: `Cannot move the ${command.shape} further ${direction}` });
+                responseService.current.speak(`I can't move the ${command.shape} any further in that direction`, 'normal');
+              }
+            }
+          }
           break;
           
         case 'delete':
-          // For Phase 1, we'll just log this
-          // In Phase 2, this will delete specific shapes
-          setCommandResult({ 
-            success: false, 
-            message: 'Delete command will be implemented in Phase 2' 
-          });
-          responseService.current.speak('Delete commands are coming in Phase 2', 'normal');
+          if (command.shape) {
+            const deleted = canvas.deleteShapeByType(command.shape);
+            if (deleted) {
+              setCommandResult({ success: true, message: `Deleted the ${command.shape}` });
+              responseService.current.respondToDeleteCommand(command.shape);
+            } else {
+              setCommandResult({ success: false, message: `No ${command.shape} to delete` });
+              responseService.current.speak(`There's no ${command.shape} on the canvas to delete`, 'normal');
+            }
+          }
           break;
           
         case 'clear':
