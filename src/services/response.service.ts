@@ -82,7 +82,7 @@ export class ResponseService {
                 pending: false,
                 speaking: false,
                 paused: false
-            } as SpeechSynthesis;
+            } as unknown as SpeechSynthesis;
         } else {
             this.synthesis = window.speechSynthesis;
         }
