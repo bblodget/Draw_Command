@@ -47,10 +47,20 @@ export class CanvasService {
       this.removeShapeByType('square');
     }
 
+    // Determine position: use old position if replacing (no overlap check), or find valid position for new shapes
+    let validPosition: { x: number; y: number };
+    if (wasReplaced && oldShape) {
+      // When replacing, always use the old position (user's chosen location)
+      validPosition = oldShape.position;
+    } else {
+      // For new shapes, find a position that doesn't overlap
+      validPosition = this.findValidPosition(size, 'square', position);
+    }
+
     const id = generateId();
     const rect = new fabric.Rect({
-      left: position?.x ?? 100,
-      top: position?.y ?? 100,
+      left: validPosition.x,
+      top: validPosition.y,
       width: size,
       height: size,
       fill: color,
@@ -73,13 +83,17 @@ export class CanvasService {
 
     this.fabricCanvas.add(rect);
     this.fabricObjects.set(id, rect);
+    
+    // Add event listener to track position changes
+    this.addMoveListener(rect, id);
+    
     this.fabricCanvas.renderAll(); // Force canvas to render
 
     const shape: Shape = {
       id,
       type: 'square',
       color,
-      position: { x: rect.left!, y: rect.top! },
+      position: validPosition,
       size,
       createdAt: new Date(),
     };
@@ -99,10 +113,20 @@ export class CanvasService {
       this.removeShapeByType('circle');
     }
 
+    // Determine position: use old position if replacing (no overlap check), or find valid position for new shapes
+    let validPosition: { x: number; y: number };
+    if (wasReplaced && oldShape) {
+      // When replacing, always use the old position (user's chosen location)
+      validPosition = oldShape.position;
+    } else {
+      // For new shapes, find a position that doesn't overlap
+      validPosition = this.findValidPosition(size, 'circle', position);
+    }
+
     const id = generateId();
     const circle = new fabric.Circle({
-      left: position?.x ?? 200,
-      top: position?.y ?? 100,
+      left: validPosition.x,
+      top: validPosition.y,
       radius: size,
       fill: color,
       stroke: '#374151',
@@ -124,13 +148,17 @@ export class CanvasService {
 
     this.fabricCanvas.add(circle);
     this.fabricObjects.set(id, circle);
+    
+    // Add event listener to track position changes
+    this.addMoveListener(circle, id);
+    
     this.fabricCanvas.renderAll(); // Force canvas to render
 
     const shape: Shape = {
       id,
       type: 'circle',
       color,
-      position: { x: circle.left!, y: circle.top! },
+      position: validPosition,
       size,
       createdAt: new Date(),
     };
@@ -150,10 +178,20 @@ export class CanvasService {
       this.removeShapeByType('triangle');
     }
 
+    // Determine position: use old position if replacing (no overlap check), or find valid position for new shapes
+    let validPosition: { x: number; y: number };
+    if (wasReplaced && oldShape) {
+      // When replacing, always use the old position (user's chosen location)
+      validPosition = oldShape.position;
+    } else {
+      // For new shapes, find a position that doesn't overlap
+      validPosition = this.findValidPosition(size, 'triangle', position);
+    }
+
     const id = generateId();
     const triangle = new fabric.Triangle({
-      left: position?.x ?? 300,
-      top: position?.y ?? 100,
+      left: validPosition.x,
+      top: validPosition.y,
       width: size,
       height: size,
       fill: color,
@@ -176,13 +214,17 @@ export class CanvasService {
 
     this.fabricCanvas.add(triangle);
     this.fabricObjects.set(id, triangle);
+    
+    // Add event listener to track position changes
+    this.addMoveListener(triangle, id);
+    
     this.fabricCanvas.renderAll(); // Force canvas to render
 
     const shape: Shape = {
       id,
       type: 'triangle',
       color,
-      position: { x: triangle.left!, y: triangle.top! },
+      position: validPosition,
       size,
       createdAt: new Date(),
     };
@@ -244,5 +286,164 @@ export class CanvasService {
 
   getExistingShapeTypes(): string[] {
     return Array.from(this.shapesByType.keys());
+  }
+
+  // Collision detection and smart positioning methods
+  private checkOverlap(shape1: Shape, shape2: Shape): boolean {
+    // Check if two shapes overlap based on their types and positions
+    return this.checkBoundingBoxOverlap(shape1, shape2);
+  }
+
+  private checkBoundingBoxOverlap(shape1: Shape, shape2: Shape): boolean {
+    const bounds1 = this.getShapeBounds(shape1);
+    const bounds2 = this.getShapeBounds(shape2);
+
+    return !(bounds1.right < bounds2.left || 
+             bounds2.right < bounds1.left || 
+             bounds1.bottom < bounds2.top || 
+             bounds2.bottom < bounds1.top);
+  }
+
+  private getShapeBounds(shape: Shape): { left: number; right: number; top: number; bottom: number } {
+    const { x, y } = shape.position;
+    const size = shape.size;
+
+    switch (shape.type) {
+      case 'square':
+        return {
+          left: x,
+          right: x + size,
+          top: y,
+          bottom: y + size
+        };
+      case 'circle':
+        // Circle uses radius, so we need to account for that
+        const radius = size;
+        return {
+          left: x - radius,
+          right: x + radius,
+          top: y - radius,
+          bottom: y + radius
+        };
+      case 'triangle':
+        return {
+          left: x,
+          right: x + size,
+          top: y,
+          bottom: y + size
+        };
+      default:
+        return { left: x, right: x, top: y, bottom: y };
+    }
+  }
+
+  private checkPositionOverlap(position: { x: number; y: number }, size: number, shapeType: string): boolean {
+    // Check if a position would overlap with existing shapes
+    const tempShape: Shape = {
+      id: 'temp',
+      type: shapeType as any,
+      color: '#000000',
+      position,
+      size,
+      createdAt: new Date()
+    };
+
+    for (const existingShape of this.shapes.values()) {
+      if (this.checkOverlap(tempShape, existingShape)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private isPositionOnCanvas(position: { x: number; y: number }, size: number, shapeType: string): boolean {
+    if (!this.fabricCanvas) return false;
+
+    const canvasWidth = this.fabricCanvas.getWidth();
+    const canvasHeight = this.fabricCanvas.getHeight();
+    const bounds = this.getShapeBounds({
+      id: 'temp',
+      type: shapeType as any,
+      color: '#000000',
+      position,
+      size,
+      createdAt: new Date()
+    });
+
+    return bounds.left >= 0 && 
+           bounds.right <= canvasWidth && 
+           bounds.top >= 0 && 
+           bounds.bottom <= canvasHeight;
+  }
+
+  private findValidPosition(size: number, shapeType: string, preferredPosition?: { x: number; y: number }): { x: number; y: number } {
+    if (!this.fabricCanvas) {
+      return preferredPosition || { x: 100, y: 100 };
+    }
+
+    // If preferred position is provided and valid, use it
+    if (preferredPosition && 
+        this.isPositionOnCanvas(preferredPosition, size, shapeType) && 
+        !this.checkPositionOverlap(preferredPosition, size, shapeType)) {
+      return preferredPosition;
+    }
+
+    const canvasWidth = this.fabricCanvas.getWidth();
+    const canvasHeight = this.fabricCanvas.getHeight();
+    const maxAttempts = 20;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      let x: number, y: number;
+
+      switch (shapeType) {
+        case 'circle':
+          // For circles, position is the center, so account for radius
+          x = size + Math.random() * (canvasWidth - 2 * size);
+          y = size + Math.random() * (canvasHeight - 2 * size);
+          break;
+        default:
+          // For squares and triangles, position is top-left
+          x = Math.random() * (canvasWidth - size);
+          y = Math.random() * (canvasHeight - size);
+          break;
+      }
+
+      const position = { x: Math.round(x), y: Math.round(y) };
+
+      if (this.isPositionOnCanvas(position, size, shapeType) && 
+          !this.checkPositionOverlap(position, size, shapeType)) {
+        return position;
+      }
+    }
+
+    // Fallback: return a safe position even if it might overlap
+    switch (shapeType) {
+      case 'circle':
+        return { x: Math.max(size, 100), y: Math.max(size, 100) };
+      default:
+        return { x: 50, y: 50 };
+    }
+  }
+
+  // Event listener management for tracking shape movements
+  private addMoveListener(fabricObject: fabric.Object, shapeId: string): void {
+    fabricObject.on('moving', () => {
+      this.updateShapePosition(shapeId, fabricObject);
+    });
+
+    fabricObject.on('moved', () => {
+      this.updateShapePosition(shapeId, fabricObject);
+    });
+  }
+
+  private updateShapePosition(shapeId: string, fabricObject: fabric.Object): void {
+    const shape = this.shapes.get(shapeId);
+    if (shape && fabricObject.left !== undefined && fabricObject.top !== undefined) {
+      // Update the shape's position in our tracking
+      shape.position = { 
+        x: Math.round(fabricObject.left), 
+        y: Math.round(fabricObject.top) 
+      };
+    }
   }
 }
