@@ -31,20 +31,26 @@ These commands manage the overall canvas state.
 | Clear All | "Computer, clear all please" | ✅ Full Support | Same as clear |
 | Clear Canvas | "Computer, clear the canvas please" | ✅ Full Support | Same as clear |
 
-## 🟡 Partially Supported Commands
-
 ### Color Commands
-These commands are parsed correctly but currently create new shapes instead of modifying existing ones.
+These commands change the color of existing shapes (or create new ones if none exist).
 
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Color Square | "Computer, color the square red please" | ⚠️ Parsed Only | Creates new red square |
-| Color Circle | "Computer, color the circle blue please" | ⚠️ Parsed Only | Creates new blue circle |
-| Color Triangle | "Computer, color the triangle green please" | ⚠️ Parsed Only | Creates new green triangle |
+| Color Square | "Computer, color the square red please" | ✅ Full Support | Changes existing square to red |
+| Color Circle | "Computer, color the circle blue please" | ✅ Full Support | Changes existing circle to blue |
+| Color Triangle | "Computer, color the triangle green please" | ✅ Full Support | Changes existing triangle to green |
 
 **Format Variations:**
 - "color the [shape] [color]" - with article
 - "color [shape] [color]" - without article
+
+**How It Works:**
+- Only one shape of each type can exist at a time
+- Color commands replace the existing shape with a new colored version
+- Voice response: "I changed the square to red"
+- If no shape exists, creates a new one with that color
+
+## 🟡 Partially Supported Commands
 
 ### Move Commands
 These commands are parsed correctly but not yet executed (shows placeholder message).
@@ -182,12 +188,13 @@ The parser accepts various natural language variations:
 - Simple command parsing
 - Shape creation
 - Canvas clearing
+- Color changing (single instance shapes)
 
 ### Phase 2: AI Enhancement 🚧
 - OpenAI API integration
 - Natural language processing
-- Shape modification
-- Movement and deletion
+- Shape movement and deletion
+- Context-aware commands
 
 ### Phase 3: Advanced Features 📋
 - Spatial relationships
@@ -208,6 +215,6 @@ The system provides user-friendly error messages for:
 To test the system, try these basic commands:
 1. "Computer, draw a red square please"
 2. "Computer, draw a blue circle please"
-3. "Computer, clear please"
-4. "Computer, color the square blue please" (creates new blue square)
+3. "Computer, color the square blue please" (changes square to blue)
+4. "Computer, clear please"
 5. "Computer, move the square left please" (shows Phase 2 message)
