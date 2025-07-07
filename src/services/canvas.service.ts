@@ -431,7 +431,7 @@ export class CanvasService {
       this.updateShapePosition(shapeId, fabricObject);
     });
 
-    fabricObject.on('moved', () => {
+    fabricObject.on('modified', () => {
       this.updateShapePosition(shapeId, fabricObject);
     });
   }
