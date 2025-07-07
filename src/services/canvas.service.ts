@@ -6,6 +6,7 @@ export class CanvasService {
   private shapes: Map<string, Shape> = new Map();
   private fabricCanvas: fabric.Canvas | null = null;
   private fabricObjects: Map<string, fabric.Object> = new Map();
+  private shapesByType: Map<string, string> = new Map(); // shape type -> shape id
 
   setCanvas(canvas: fabric.Canvas): void {
     this.fabricCanvas = canvas;
@@ -35,8 +36,16 @@ export class CanvasService {
     });
   }
 
-  drawSquare(color: string = 'red', size: number = 100, position?: { x: number; y: number }): string {
+  drawSquare(color: string = 'red', size: number = 100, position?: { x: number; y: number }): { id: string; wasReplaced: boolean; oldShape?: Shape } {
     if (!this.fabricCanvas) throw new Error('Canvas not initialized');
+
+    // Check if a square already exists
+    const oldShape = this.getShapeByType('square');
+    const wasReplaced = oldShape !== undefined;
+    if (wasReplaced) {
+      // Remove the existing square
+      this.removeShapeByType('square');
+    }
 
     const id = generateId();
     const rect = new fabric.Rect({
@@ -76,11 +85,19 @@ export class CanvasService {
     };
 
     this.addShape(shape);
-    return id;
+    return { id, wasReplaced, oldShape };
   }
 
-  drawCircle(color: string = 'blue', size: number = 50, position?: { x: number; y: number }): string {
+  drawCircle(color: string = 'blue', size: number = 50, position?: { x: number; y: number }): { id: string; wasReplaced: boolean; oldShape?: Shape } {
     if (!this.fabricCanvas) throw new Error('Canvas not initialized');
+
+    // Check if a circle already exists
+    const oldShape = this.getShapeByType('circle');
+    const wasReplaced = oldShape !== undefined;
+    if (wasReplaced) {
+      // Remove the existing circle
+      this.removeShapeByType('circle');
+    }
 
     const id = generateId();
     const circle = new fabric.Circle({
@@ -119,11 +136,19 @@ export class CanvasService {
     };
 
     this.addShape(shape);
-    return id;
+    return { id, wasReplaced, oldShape };
   }
 
-  drawTriangle(color: string = 'green', size: number = 100, position?: { x: number; y: number }): string {
+  drawTriangle(color: string = 'green', size: number = 100, position?: { x: number; y: number }): { id: string; wasReplaced: boolean; oldShape?: Shape } {
     if (!this.fabricCanvas) throw new Error('Canvas not initialized');
+
+    // Check if a triangle already exists
+    const oldShape = this.getShapeByType('triangle');
+    const wasReplaced = oldShape !== undefined;
+    if (wasReplaced) {
+      // Remove the existing triangle
+      this.removeShapeByType('triangle');
+    }
 
     const id = generateId();
     const triangle = new fabric.Triangle({
@@ -163,11 +188,12 @@ export class CanvasService {
     };
 
     this.addShape(shape);
-    return id;
+    return { id, wasReplaced, oldShape };
   }
 
   private addShape(shape: Shape): void {
     this.shapes.set(shape.id, shape);
+    this.shapesByType.set(shape.type, shape.id);
   }
 
   getShape(id: string): Shape | undefined {
@@ -193,5 +219,30 @@ export class CanvasService {
     }
     this.shapes.clear();
     this.fabricObjects.clear();
+    this.shapesByType.clear();
+  }
+
+  // New methods for single-instance shape management
+  hasShapeType(shapeType: string): boolean {
+    return this.shapesByType.has(shapeType);
+  }
+
+  getShapeByType(shapeType: string): Shape | undefined {
+    const shapeId = this.shapesByType.get(shapeType);
+    return shapeId ? this.shapes.get(shapeId) : undefined;
+  }
+
+  private removeShapeByType(shapeType: string): boolean {
+    const existingShapeId = this.shapesByType.get(shapeType);
+    if (existingShapeId) {
+      this.removeShape(existingShapeId);
+      this.shapesByType.delete(shapeType);
+      return true;
+    }
+    return false;
+  }
+
+  getExistingShapeTypes(): string[] {
+    return Array.from(this.shapesByType.keys());
   }
 }

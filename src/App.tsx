@@ -34,19 +34,43 @@ function App() {
             // Drawing a new shape
             switch (command.shape) {
               case 'square':
-                canvas.drawSquare(command.color, command.size, command.position);
-                setCommandResult({ success: true, message: `Drew a ${command.color || 'red'} square` });
-                responseService.current.respondToDrawCommand('square', command.color);
+                const squareResult = canvas.drawSquare(command.color, command.size, command.position);
+                if (squareResult.wasReplaced && squareResult.oldShape) {
+                  const oldColorName = responseService.current.getColorNameFromHex(squareResult.oldShape.color);
+                  const newColorName = responseService.current.getColorNameFromHex(command.color || 'red');
+                  setCommandResult({ success: true, message: `Replaced the ${oldColorName} square with a ${newColorName} one` });
+                  responseService.current.speak(`I replaced the ${oldColorName} square with a ${newColorName} one`);
+                } else {
+                  const colorName = responseService.current.getColorNameFromHex(command.color || '#FF0000');
+                  setCommandResult({ success: true, message: `Drew a ${colorName} square` });
+                  responseService.current.respondToDrawCommand('square', command.color);
+                }
                 break;
               case 'circle':
-                canvas.drawCircle(command.color, command.size, command.position);
-                setCommandResult({ success: true, message: `Drew a ${command.color || 'blue'} circle` });
-                responseService.current.respondToDrawCommand('circle', command.color);
+                const circleResult = canvas.drawCircle(command.color, command.size, command.position);
+                if (circleResult.wasReplaced && circleResult.oldShape) {
+                  const oldColorName = responseService.current.getColorNameFromHex(circleResult.oldShape.color);
+                  const newColorName = responseService.current.getColorNameFromHex(command.color || 'blue');
+                  setCommandResult({ success: true, message: `Replaced the ${oldColorName} circle with a ${newColorName} one` });
+                  responseService.current.speak(`I replaced the ${oldColorName} circle with a ${newColorName} one`);
+                } else {
+                  const colorName = responseService.current.getColorNameFromHex(command.color || '#0000FF');
+                  setCommandResult({ success: true, message: `Drew a ${colorName} circle` });
+                  responseService.current.respondToDrawCommand('circle', command.color);
+                }
                 break;
               case 'triangle':
-                canvas.drawTriangle(command.color, command.size, command.position);
-                setCommandResult({ success: true, message: `Drew a ${command.color || 'green'} triangle` });
-                responseService.current.respondToDrawCommand('triangle', command.color);
+                const triangleResult = canvas.drawTriangle(command.color, command.size, command.position);
+                if (triangleResult.wasReplaced && triangleResult.oldShape) {
+                  const oldColorName = responseService.current.getColorNameFromHex(triangleResult.oldShape.color);
+                  const newColorName = responseService.current.getColorNameFromHex(command.color || 'green');
+                  setCommandResult({ success: true, message: `Replaced the ${oldColorName} triangle with a ${newColorName} one` });
+                  responseService.current.speak(`I replaced the ${oldColorName} triangle with a ${newColorName} one`);
+                } else {
+                  const colorName = responseService.current.getColorNameFromHex(command.color || '#00FF00');
+                  setCommandResult({ success: true, message: `Drew a ${colorName} triangle` });
+                  responseService.current.respondToDrawCommand('triangle', command.color);
+                }
                 break;
             }
           } else if (command.shape && command.color) {
@@ -55,19 +79,40 @@ function App() {
             // In Phase 2, this will change the color of existing shapes
             switch (command.shape) {
               case 'square':
-                canvas.drawSquare(command.color);
-                setCommandResult({ success: true, message: `Drew a ${command.color} square` });
-                responseService.current.respondToDrawCommand('square', command.color);
+                const squareColorResult = canvas.drawSquare(command.color);
+                if (squareColorResult.wasReplaced && squareColorResult.oldShape) {
+                  const newColorName = responseService.current.getColorNameFromHex(command.color);
+                  setCommandResult({ success: true, message: `Changed the square to ${newColorName}` });
+                  responseService.current.speak(`I changed the square to ${newColorName}`);
+                } else {
+                  const colorName = responseService.current.getColorNameFromHex(command.color);
+                  setCommandResult({ success: true, message: `Drew a ${colorName} square` });
+                  responseService.current.respondToDrawCommand('square', command.color);
+                }
                 break;
               case 'circle':
-                canvas.drawCircle(command.color);
-                setCommandResult({ success: true, message: `Drew a ${command.color} circle` });
-                responseService.current.respondToDrawCommand('circle', command.color);
+                const circleColorResult = canvas.drawCircle(command.color);
+                if (circleColorResult.wasReplaced && circleColorResult.oldShape) {
+                  const newColorName = responseService.current.getColorNameFromHex(command.color);
+                  setCommandResult({ success: true, message: `Changed the circle to ${newColorName}` });
+                  responseService.current.speak(`I changed the circle to ${newColorName}`);
+                } else {
+                  const colorName = responseService.current.getColorNameFromHex(command.color);
+                  setCommandResult({ success: true, message: `Drew a ${colorName} circle` });
+                  responseService.current.respondToDrawCommand('circle', command.color);
+                }
                 break;
               case 'triangle':
-                canvas.drawTriangle(command.color);
-                setCommandResult({ success: true, message: `Drew a ${command.color} triangle` });
-                responseService.current.respondToDrawCommand('triangle', command.color);
+                const triangleColorResult = canvas.drawTriangle(command.color);
+                if (triangleColorResult.wasReplaced && triangleColorResult.oldShape) {
+                  const newColorName = responseService.current.getColorNameFromHex(command.color);
+                  setCommandResult({ success: true, message: `Changed the triangle to ${newColorName}` });
+                  responseService.current.speak(`I changed the triangle to ${newColorName}`);
+                } else {
+                  const colorName = responseService.current.getColorNameFromHex(command.color);
+                  setCommandResult({ success: true, message: `Drew a ${colorName} triangle` });
+                  responseService.current.respondToDrawCommand('triangle', command.color);
+                }
                 break;
             }
           }

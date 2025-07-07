@@ -168,7 +168,7 @@ export class ResponseService {
     }
 
     // Convert hex color to color name
-    private getColorNameFromHex(hex: string): string {
+    getColorNameFromHex(hex: string): string {
         return this.hexToColorName[hex] || hex;
     }
 

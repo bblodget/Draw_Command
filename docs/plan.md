@@ -5,9 +5,9 @@
 **Last Updated**: 2025-01-07
 
 ### Phase 1: Core Functionality Foundation
-- ✅ **7/8 tasks completed** (87.5% complete)
+- ✅ **7/9 tasks completed** (78% complete)
 - ⏱️ **10-12 hours** actual time vs 24-30 hours estimated
-- 🎯 **Next**: Task 1.8: UI Polish and Testing
+- 🎯 **Next**: Task 1.75: Single Shape Instance Limitation
 
 ### Phase 1.5: GitHub Pages Deployment
 - ✅ **COMPLETED**: Live demo deployed!
@@ -210,6 +210,38 @@ This plan breaks down the development into incremental tasks that can be complet
 **Completed**: 2025-01-07 | **Session**: `2025-07-06-1502-Task 1.7 (Voice Response System).md`
 **Actual Time**: ~3-4 hours (within estimate)
 **Notes**: Implemented with priority queue system, natural language variations, and hex-to-color name conversion
+
+---
+
+### Task 1.75: Single Shape Instance Limitation
+**Goal**: Limit canvas to one instance per shape type to simplify future command context and eliminate ambiguity.
+
+**Tasks**:
+- [ ] Update UI to make the new model clear
+- [ ] Modify canvas service to track existing shapes by type
+- [ ] Add shape existence checking before drawing new shapes
+- [ ] Implement voice responses for "already exists" scenarios
+- [ ] Update draw commands to replace existing shapes when requested
+- [ ] Add visual feedback showing which shapes are currently on canvas
+- [ ] Update clear command to work with single-instance model
+- [ ] Test all shape drawing scenarios with new limitation
+- [ ] Update documentation to explain new mental model
+
+
+**Acceptance Criteria**:
+- Only one square, one circle, and one triangle can exist at a time
+- Voice response: "A square is already on the canvas" when attempting to draw duplicate
+- Clear visual indication of which shape types are present
+- Commands like "move the square" have unambiguous targets
+- Foundation prepared for Phase 2 context-aware commands
+
+**Estimated Time**: 2-3 hours
+
+**Benefits**:
+- Eliminates ambiguity for future move/resize/color commands
+- Creates predictable mental model for users
+- Simplifies implementation of Phase 2 AI features
+- Maintains current simplicity while preparing for advanced features
 
 ---
 
@@ -538,7 +570,7 @@ This plan breaks down the development into incremental tasks that can be complet
 
 ## Timeline Estimate
 
-- **Phase 1**: ~~27-33 hours~~ **10-12 hours actual** (87.5% complete, 1 task remaining)
+- **Phase 1**: ~~27-33 hours~~ **10-12 hours actual** (78% complete, 2 tasks remaining: 1.75 + 1.8)
 - **Phase 1.5**: ~~2-3 hours~~ **54 minutes actual** ✅ COMPLETED
 - **Phase 2**: 20-25 hours (1-2 weeks) - Not started
 - **Phase 3**: 20-25 hours (1-2 weeks) - Not started
