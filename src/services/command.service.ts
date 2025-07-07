@@ -55,11 +55,14 @@ export class CommandService {
       const color = drawMatch[1];
       const shape = drawMatch[2] as 'square' | 'circle' | 'triangle';
       
+      // Set appropriate default size for each shape
+      const defaultSize = shape === 'circle' ? 50 : 100;
+      
       return {
         type: 'draw',
         shape,
         color: color ? this.normalizeColor(color) : undefined,
-        size: 100, // Default size
+        size: defaultSize,
         position: { x: 200, y: 200 } // Default position (center of canvas)
       };
     }
