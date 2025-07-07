@@ -5,12 +5,14 @@ import { VoiceInterface } from './components/VoiceInterface';
 import { Alert } from './components/common';
 import { CommandService } from './services/command.service';
 import { CanvasService } from './services/canvas.service';
+import { ResponseService } from './services/response.service';
 import type { DrawCommand } from './types';
 
 function App() {
   const [lastCommand, setLastCommand] = useState<string>('');
   const [commandResult, setCommandResult] = useState<{ success: boolean; message: string } | null>(null);
   const commandService = useRef(new CommandService());
+  const responseService = useRef(new ResponseService());
   const canvasServiceRef = useRef<CanvasService | null>(null);
 
   const handleCanvasReady = useCallback((canvasService: CanvasService) => {
@@ -34,14 +36,17 @@ function App() {
               case 'square':
                 canvas.drawSquare(command.color, command.size, command.position);
                 setCommandResult({ success: true, message: `Drew a ${command.color || 'red'} square` });
+                responseService.current.respondToDrawCommand('square', command.color);
                 break;
               case 'circle':
                 canvas.drawCircle(command.color, command.size, command.position);
                 setCommandResult({ success: true, message: `Drew a ${command.color || 'blue'} circle` });
+                responseService.current.respondToDrawCommand('circle', command.color);
                 break;
               case 'triangle':
                 canvas.drawTriangle(command.color, command.size, command.position);
                 setCommandResult({ success: true, message: `Drew a ${command.color || 'green'} triangle` });
+                responseService.current.respondToDrawCommand('triangle', command.color);
                 break;
             }
           } else if (command.shape && command.color) {
@@ -52,14 +57,17 @@ function App() {
               case 'square':
                 canvas.drawSquare(command.color);
                 setCommandResult({ success: true, message: `Drew a ${command.color} square` });
+                responseService.current.respondToDrawCommand('square', command.color);
                 break;
               case 'circle':
                 canvas.drawCircle(command.color);
                 setCommandResult({ success: true, message: `Drew a ${command.color} circle` });
+                responseService.current.respondToDrawCommand('circle', command.color);
                 break;
               case 'triangle':
                 canvas.drawTriangle(command.color);
                 setCommandResult({ success: true, message: `Drew a ${command.color} triangle` });
+                responseService.current.respondToDrawCommand('triangle', command.color);
                 break;
             }
           }
@@ -72,6 +80,7 @@ function App() {
             success: false, 
             message: 'Move command will be implemented in Phase 2' 
           });
+          responseService.current.speak('Move commands are coming in Phase 2', 'normal');
           break;
           
         case 'delete':
@@ -81,21 +90,25 @@ function App() {
             success: false, 
             message: 'Delete command will be implemented in Phase 2' 
           });
+          responseService.current.speak('Delete commands are coming in Phase 2', 'normal');
           break;
           
         case 'clear':
           canvas.clearAll();
           setCommandResult({ success: true, message: 'Cleared the canvas' });
+          responseService.current.respondToClearCommand();
           break;
           
         default:
           setCommandResult({ success: false, message: 'Unknown command type' });
+          responseService.current.respondWithError('unrecognized');
       }
     } catch (error) {
       setCommandResult({ 
         success: false, 
         message: `Error executing command: ${error instanceof Error ? error.message : 'Unknown error'}` 
       });
+      responseService.current.respondWithError('generalError');
     }
   };
 
@@ -114,6 +127,7 @@ function App() {
         success: false, 
         message: 'Could not understand the command. Try "draw a red square" or "clear".' 
       });
+      responseService.current.respondWithError('unrecognized');
     }
   };
 
