@@ -6,16 +6,39 @@ The Draw Command application uses a **"Computer, [command] please"** format for 
 - **"Computer"** - Attention word that wakes up the system
 - **"please"** - Execution word that triggers the command
 
+## 🎯 The Three Object Model
+
+The Draw Command system operates on a simple principle: **only one shape of each type can exist at a time**.
+
+### How It Works
+- **One Square** - Only one square can exist on the canvas
+- **One Circle** - Only one circle can exist on the canvas  
+- **One Triangle** - Only one triangle can exist on the canvas
+
+### What This Means
+- When you draw a new square, it **replaces** any existing square
+- When you change a shape's color, it **replaces** the old shape with a new colored version
+- Each shape type is independent - you can have a square, circle, and triangle all at once
+- This design eliminates ambiguity - "move the square" always refers to THE square
+
+### Voice Feedback
+The system provides intelligent voice responses:
+- **New shape**: "I drew a blue square for you"
+- **Replacing shape**: "I replaced the red square with a blue one"
+- **Changing color**: "I changed the square to blue"
+
+This simple model makes voice commands unambiguous and predictable, perfect for demonstration purposes.
+
 ## 🟢 Currently Supported Commands
 
 ### Drawing Shapes
-These commands create new shapes on the canvas with full functionality.
+These commands create shapes on the canvas (replacing any existing shape of the same type).
 
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Draw Square | "Computer, draw a red square please" | ✅ Full Support | Creates draggable square |
-| Draw Circle | "Computer, draw a blue circle please" | ✅ Full Support | Creates draggable circle |
-| Draw Triangle | "Computer, draw a green triangle please" | ✅ Full Support | Creates draggable triangle |
+| Draw Square | "Computer, draw a red square please" | ✅ Full Support | Creates/replaces the square |
+| Draw Circle | "Computer, draw a blue circle please" | ✅ Full Support | Creates/replaces the circle |
+| Draw Triangle | "Computer, draw a green triangle please" | ✅ Full Support | Creates/replaces the triangle |
 
 **Format Variations:**
 - "draw a [color] [shape]" - with article
@@ -43,12 +66,6 @@ These commands change the color of existing shapes (or create new ones if none e
 **Format Variations:**
 - "color the [shape] [color]" - with article
 - "color [shape] [color]" - without article
-
-**How It Works:**
-- Only one shape of each type can exist at a time
-- Color commands replace the existing shape with a new colored version
-- Voice response: "I changed the square to red"
-- If no shape exists, creates a new one with that color
 
 ## 🟡 Partially Supported Commands
 
