@@ -68,21 +68,31 @@ These commands change the color of existing shapes (or create new ones if none e
 - "color [shape] [color]" - without article
 
 ### Move Commands
-These commands move shapes in the specified direction by 50 pixels.
+These commands move shapes in the specified direction. Default distance is 50 pixels, but you can specify a custom distance.
 
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Move Up | "Computer, move the square up please" | ✅ Full Support | Moves shape 50px up |
-| Move Down | "Computer, move the circle down please" | ✅ Full Support | Moves shape 50px down |
+| Move Default | "Computer, move the square up please" | ✅ Full Support | Moves shape 50px up |
+| Move Custom | "Computer, move the square up 100 please" | ✅ Full Support | Moves shape 100px up |
+| Move Down | "Computer, move the circle down 25 please" | ✅ Full Support | Moves shape 25px down |
 | Move Left | "Computer, move the triangle left please" | ✅ Full Support | Moves shape 50px left |
-| Move Right | "Computer, move the square right please" | ✅ Full Support | Moves shape 50px right |
+| Move Right | "Computer, move the square right 200 please" | ✅ Full Support | Moves shape 200px right |
 
 **Format Variations:**
-- "move the [shape] [direction]" - with article
+- "move the [shape] [direction]" - default 50px distance
 - "move [shape] [direction]" - without article
+- "move the [shape] [direction] [number]" - custom distance
+- "move [shape] [direction] [number]" - custom distance without article
+
+**Distance Limits:**
+- Minimum: 10 pixels
+- Maximum: 500 pixels
+- Default: 50 pixels (when no number specified)
+- Invalid numbers default to 50 pixels
 
 **Voice Feedback:**
-- Success: "I moved the square left"
+- Default distance: "I moved the square left"
+- Custom distance: "I moved the square left 100 pixels"
 - No shape: "There's no square on the canvas to move"
 - Canvas edge: "I can't move the square any further in that direction"
 
@@ -242,5 +252,6 @@ To test the system, try these basic commands:
 2. "Computer, draw a blue circle please"
 3. "Computer, color the square blue please" (changes square to blue)
 4. "Computer, move the square left please" (moves square 50px left)
-5. "Computer, delete the circle please" (removes the circle)
-6. "Computer, clear please" (removes all shapes)
+5. "Computer, move the square up 100 please" (moves square 100px up)
+6. "Computer, delete the circle please" (removes the circle)
+7. "Computer, clear please" (removes all shapes)

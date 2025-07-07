@@ -130,8 +130,12 @@ function App() {
             
             const moved = canvas.moveShapeByType(command.shape, command.position);
             if (moved) {
-              setCommandResult({ success: true, message: `Moved the ${command.shape} ${direction}` });
-              responseService.current.respondToMoveCommand(command.shape, direction);
+              // Calculate distance from offset
+              const distance = Math.abs(command.position.x || command.position.y);
+              const distanceText = distance === 50 ? '' : ` ${distance} pixels`;
+              
+              setCommandResult({ success: true, message: `Moved the ${command.shape} ${direction}${distanceText}` });
+              responseService.current.respondToMoveCommand(command.shape, `${direction}${distanceText}`);
             } else {
               // Either shape doesn't exist or would move off canvas
               const shapeExists = canvas.getShapeByType(command.shape);

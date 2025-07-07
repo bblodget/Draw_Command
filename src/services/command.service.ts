@@ -9,8 +9,8 @@ export class CommandService {
     // Matches: "color the square red", "color the circle blue"
     color: /color\s+(?:the\s+)?(square|circle|triangle)\s+(\w+)/i,
     
-    // Matches: "move the square left", "move the circle up"
-    move: /move\s+(?:the\s+)?(square|circle|triangle)\s+(up|down|left|right)/i,
+    // Matches: "move the square left", "move the circle up", "move the square left 100"
+    move: /move\s+(?:the\s+)?(square|circle|triangle)\s+(up|down|left|right)(?:\s+(\d+))?/i,
     
     // Matches: "delete the square", "remove the circle"
     delete: /(?:delete|remove)\s+(?:the\s+)?(square|circle|triangle)/i,
@@ -85,7 +85,17 @@ export class CommandService {
     if (moveMatch) {
       const shape = moveMatch[1] as 'square' | 'circle' | 'triangle';
       const direction = moveMatch[2].toLowerCase() as keyof typeof this.directionMap;
-      const offset = this.directionMap[direction];
+      const customDistance = moveMatch[3] ? parseInt(moveMatch[3], 10) : null;
+      
+      // Get base direction and apply custom distance if provided
+      const baseOffset = this.directionMap[direction];
+      const distance = customDistance && customDistance >= 10 && customDistance <= 500 ? customDistance : 50;
+      
+      // Calculate offset with custom distance
+      const offset = {
+        x: baseOffset.x === 0 ? 0 : (baseOffset.x > 0 ? distance : -distance),
+        y: baseOffset.y === 0 ? 0 : (baseOffset.y > 0 ? distance : -distance)
+      };
       
       return {
         type: 'move',
