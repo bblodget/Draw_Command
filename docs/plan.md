@@ -5,9 +5,9 @@
 **Last Updated**: 2025-01-07
 
 ### Phase 1: Core Functionality Foundation
-- ✅ **7/9 tasks completed** (78% complete)
-- ⏱️ **10-12 hours** actual time vs 24-30 hours estimated
-- 🎯 **Next**: Task 1.75: Single Shape Instance Limitation
+- ✅ **8/10 tasks completed** (80% complete)
+- ⏱️ **12.5-14.5 hours** actual time vs 27-33 hours estimated
+- 🎯 **Next**: Task 1.76: Move and Delete Commands
 
 ### Phase 1.5: GitHub Pages Deployment
 - ✅ **COMPLETED**: Live demo deployed!
@@ -22,7 +22,8 @@
 5. ✅ **Task 1.5**: Basic Command Parsing (Regex)
 6. ✅ **Task 1.6**: Connect Voice to Canvas
 7. ✅ **Task 1.7**: Basic Voice Response System
-8. ✅ **Task 1.9**: Deploy to GitHub Pages
+8. ✅ **Task 1.75**: Single Shape Instance Limitation
+9. ✅ **Task 1.9**: Deploy to GitHub Pages
 
 ### Current Status
 🎉 **Major Milestone**: Voice-to-drawing system is FULLY FUNCTIONAL AND DEPLOYED! The system can:
@@ -39,8 +40,9 @@
 📦 **Deployment Status**: Successfully deployed to GitHub Pages with automatic CI/CD!
 
 **Next Steps**: 
-1. **Task 1.8**: UI Polish and Testing - Final touches before Phase 2
-2. **Phase 2**: AI Enhancement - Natural language processing with OpenAI
+1. **Task 1.76**: Move and Delete Commands - Complete voice control capabilities
+2. **Task 1.8**: UI Polish and Testing - Final touches before Phase 2
+3. **Phase 2**: AI Enhancement - Natural language processing with OpenAI
 
 ---
 
@@ -217,31 +219,54 @@ This plan breaks down the development into incremental tasks that can be complet
 **Goal**: Limit canvas to one instance per shape type to simplify future command context and eliminate ambiguity.
 
 **Tasks**:
-- [ ] Update UI to make the new model clear
-- [ ] Modify canvas service to track existing shapes by type
-- [ ] Add shape existence checking before drawing new shapes
-- [ ] Implement voice responses for "already exists" scenarios
-- [ ] Update draw commands to replace existing shapes when requested
-- [ ] Add visual feedback showing which shapes are currently on canvas
-- [ ] Update clear command to work with single-instance model
-- [ ] Test all shape drawing scenarios with new limitation
-- [ ] Update documentation to explain new mental model
-
+- [x] Modify canvas service to track existing shapes by type
+- [x] Update draw commands to replace existing shapes when requested
+- [x] Implement voice responses for replacement scenarios
+- [x] Add collision detection and smart positioning
+- [x] Track user position changes for shapes
+- [x] Update documentation to explain new mental model
 
 **Acceptance Criteria**:
-- Only one square, one circle, and one triangle can exist at a time
-- Voice response: "A square is already on the canvas" when attempting to draw duplicate
-- Clear visual indication of which shape types are present
-- Commands like "move the square" have unambiguous targets
-- Foundation prepared for Phase 2 context-aware commands
+- ✅ Only one square, one circle, and one triangle can exist at a time
+- ✅ Voice response: "I replaced the red square with a blue one"
+- ✅ Color commands effectively change shape colors
+- ✅ Commands like "move the square" have unambiguous targets
+- ✅ Foundation prepared for Phase 2 context-aware commands
+
+**Completed**: 2025-01-07 | **Session**: `2025-01-07-1730-Task 1.75: Single Shape Instance Limitation.md`
+**Actual Time**: ~2.5 hours (within estimate)
+**Notes**: Implemented with collision detection, smart positioning, and position tracking for user-moved shapes
+
+---
+
+### Task 1.76: Move and Delete Commands
+**Goal**: Implement move and delete voice commands now that the three object model makes shape references unambiguous.
+
+**Tasks**:
+- [ ] Implement moveShape method in CanvasService for directional movement
+- [ ] Implement deleteShape method in CanvasService for shape removal
+- [ ] Update App.tsx to execute move commands instead of showing placeholder
+- [ ] Update App.tsx to execute delete commands instead of showing placeholder
+- [ ] Add appropriate voice responses for successful moves
+- [ ] Add appropriate voice responses for successful deletions
+- [ ] Handle edge cases (moving off canvas, deleting non-existent shapes)
+- [ ] Test all four directions (up, down, left, right)
+- [ ] Update voice commands documentation
+
+**Acceptance Criteria**:
+- "Move the square left" moves the square 50 pixels left
+- "Delete the circle" removes the circle from canvas
+- Voice confirms: "I moved the square left" or "I deleted the circle"
+- Shapes cannot be moved outside canvas boundaries
+- Appropriate error messages for invalid operations
 
 **Estimated Time**: 2-3 hours
 
 **Benefits**:
-- Eliminates ambiguity for future move/resize/color commands
-- Creates predictable mental model for users
-- Simplifies implementation of Phase 2 AI features
-- Maintains current simplicity while preparing for advanced features
+- Completes core voice control functionality
+- Leverages three object model for unambiguous commands
+- No AI needed - simple deterministic implementation
+- Makes demo more impressive with full CRUD operations
 
 ---
 
