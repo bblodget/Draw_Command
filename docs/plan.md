@@ -5,9 +5,9 @@
 **Last Updated**: 2025-01-07
 
 ### Phase 1: Core Functionality Foundation
-- ✅ **8/10 tasks completed** (80% complete)
-- ⏱️ **12.5-14.5 hours** actual time vs 27-33 hours estimated
-- 🎯 **Next**: Task 1.76: Move and Delete Commands
+- ✅ **9/16 tasks completed** (56% complete)
+- ⏱️ **13-15 hours** actual time vs 40-50 hours estimated
+- 🎯 **Next**: Task 1.8: UI Polish and Testing
 
 ### Phase 1.5: GitHub Pages Deployment
 - ✅ **COMPLETED**: Live demo deployed!
@@ -23,7 +23,8 @@
 6. ✅ **Task 1.6**: Connect Voice to Canvas
 7. ✅ **Task 1.7**: Basic Voice Response System
 8. ✅ **Task 1.75**: Single Shape Instance Limitation
-9. ✅ **Task 1.9**: Deploy to GitHub Pages
+9. ✅ **Task 1.76**: Move and Delete Commands
+10. ✅ **Task 1.14**: Deploy to GitHub Pages
 
 ### Current Status
 🎉 **Major Milestone**: Voice-to-drawing system is FULLY FUNCTIONAL AND DEPLOYED! The system can:
@@ -40,9 +41,12 @@
 📦 **Deployment Status**: Successfully deployed to GitHub Pages with automatic CI/CD!
 
 **Next Steps**: 
-1. **Task 1.76**: Move and Delete Commands - Complete voice control capabilities
-2. **Task 1.8**: UI Polish and Testing - Final touches before Phase 2
-3. **Phase 2**: AI Enhancement - Natural language processing with OpenAI
+1. **Task 1.8**: UI Polish and Testing - Improve user interface
+2. **Task 1.9**: Resize Commands - "make the square bigger"
+3. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
+4. **Task 1.11**: Relative Positioning - "draw a circle to the left of the square"
+5. **Task 1.12**: Pronoun References - "move it to the right"
+6. **Task 1.13**: Help System - "what can I draw"
 
 ---
 
@@ -239,34 +243,30 @@ This plan breaks down the development into incremental tasks that can be complet
 
 ---
 
-### Task 1.76: Move and Delete Commands
+### ✅ Task 1.76: Move and Delete Commands (COMPLETED)
 **Goal**: Implement move and delete voice commands now that the three object model makes shape references unambiguous.
 
 **Tasks**:
-- [ ] Implement moveShape method in CanvasService for directional movement
-- [ ] Implement deleteShape method in CanvasService for shape removal
-- [ ] Update App.tsx to execute move commands instead of showing placeholder
-- [ ] Update App.tsx to execute delete commands instead of showing placeholder
-- [ ] Add appropriate voice responses for successful moves
-- [ ] Add appropriate voice responses for successful deletions
-- [ ] Handle edge cases (moving off canvas, deleting non-existent shapes)
-- [ ] Test all four directions (up, down, left, right)
-- [ ] Update voice commands documentation
+- [x] Implement moveShape method in CanvasService for directional movement
+- [x] Implement deleteShape method in CanvasService for shape removal
+- [x] Update App.tsx to execute move commands instead of showing placeholder
+- [x] Update App.tsx to execute delete commands instead of showing placeholder
+- [x] Add appropriate voice responses for successful moves
+- [x] Add appropriate voice responses for successful deletions
+- [x] Handle edge cases (moving off canvas, deleting non-existent shapes)
+- [x] Test all four directions (up, down, left, right)
+- [x] Update voice commands documentation
 
 **Acceptance Criteria**:
-- "Move the square left" moves the square 50 pixels left
-- "Delete the circle" removes the circle from canvas
-- Voice confirms: "I moved the square left" or "I deleted the circle"
-- Shapes cannot be moved outside canvas boundaries
-- Appropriate error messages for invalid operations
+- ✅ "Move the square left" moves the square 50 pixels left (with optional distance)
+- ✅ "Delete the circle" removes the circle from canvas
+- ✅ Voice confirms: "I moved the square left" or "I deleted the circle"
+- ✅ Shapes cannot be moved outside canvas boundaries
+- ✅ Appropriate error messages for invalid operations
 
-**Estimated Time**: 2-3 hours
-
-**Benefits**:
-- Completes core voice control functionality
-- Leverages three object model for unambiguous commands
-- No AI needed - simple deterministic implementation
-- Makes demo more impressive with full CRUD operations
+**Completed**: 2025-01-07 | **Session**: `2025-01-07-1526-Task 1.76: Move and Delete Commands.md`
+**Actual Time**: 12 minutes (significantly under estimate!)
+**Notes**: Implemented with optional distance parameter for move commands (10-500px)
 
 ---
 
@@ -292,9 +292,128 @@ This plan breaks down the development into incremental tasks that can be complet
 
 ---
 
+### Task 1.9: Resize Commands
+**Goal**: Implement shape resizing commands with default and custom multipliers.
+
+**Tasks**:
+- [ ] Create regex pattern for "make the [shape] bigger/smaller" commands
+- [ ] Add support for custom multipliers "make the [shape] 2 times bigger"
+- [ ] Implement resizeShape method in CanvasService
+- [ ] Update App.tsx to handle resize commands
+- [ ] Add appropriate voice responses
+- [ ] Test various size multipliers
+- [ ] Update voice commands documentation
+
+**Acceptance Criteria**:
+- "Make the square bigger" increases size by 1.5x
+- "Make the square smaller" decreases size by 0.75x
+- "Make the square 2 times bigger" doubles the size
+- Size limits prevent shapes from becoming too small/large
+- Voice confirms: "I made the square bigger"
+
+**Estimated Time**: 2-3 hours
+
+---
+
+### Task 1.10: Rotate Commands
+**Goal**: Implement shape rotation with default and custom angles.
+
+**Tasks**:
+- [ ] Create regex pattern for "rotate the [shape]" commands
+- [ ] Add support for custom angles "rotate the [shape] 45 degrees"
+- [ ] Support negative angles "rotate the [shape] negative 45 degrees"
+- [ ] Implement rotateShape method in CanvasService
+- [ ] Update App.tsx to handle rotate commands
+- [ ] Add appropriate voice responses
+- [ ] Test various rotation angles
+- [ ] Update voice commands documentation
+
+**Acceptance Criteria**:
+- "Rotate the triangle" rotates 90 degrees clockwise
+- "Rotate the triangle 45 degrees" rotates exactly 45 degrees
+- "Rotate the triangle negative 45 degrees" rotates counter-clockwise
+- Rotation maintains shape position
+- Voice confirms: "I rotated the triangle 45 degrees"
+
+**Estimated Time**: 2-3 hours
+
+---
+
+### Task 1.11: Relative Positioning
+**Goal**: Implement spatial positioning relative to other shapes.
+
+**Tasks**:
+- [ ] Create regex pattern for "to the [direction] of the [shape]" commands
+- [ ] Support both draw and move with relative positioning
+- [ ] Implement position calculation relative to reference shape
+- [ ] Add collision avoidance (move until no overlap)
+- [ ] Update App.tsx to handle relative positioning
+- [ ] Add appropriate voice responses
+- [ ] Test various spatial relationships
+- [ ] Update voice commands documentation
+
+**Acceptance Criteria**:
+- "Draw a circle to the left of the square" positions correctly
+- "Move the triangle to the right of the circle" repositions shape
+- Shapes don't overlap after relative positioning
+- Works with all four directions (left, right, up/above, down/below)
+- Voice confirms: "I drew a circle to the left of the square"
+
+**Estimated Time**: 3-4 hours
+
+---
+
+### Task 1.12: Pronoun References  
+**Goal**: Track and reference the last interacted shape with "it".
+
+**Tasks**:
+- [ ] Implement lastShapeId tracking in CanvasService
+- [ ] Update all shape operations to set lastShapeId
+- [ ] Create regex pattern for commands with "it"
+- [ ] Modify command parser to handle pronoun references
+- [ ] Update App.tsx to resolve "it" to specific shape
+- [ ] Add appropriate voice responses
+- [ ] Test pronoun references with various commands
+- [ ] Update voice commands documentation
+
+**Acceptance Criteria**:
+- "Move it to the right" moves the last acted upon shape
+- "Make it bigger" resizes the last shape
+- "Delete it" removes the last shape
+- Clear error if no shape has been interacted with
+- Voice confirms action with shape name: "I moved the square to the right"
+
+**Estimated Time**: 2-3 hours
+
+---
+
+### Task 1.13: Help System
+**Goal**: Implement voice-activated help commands.
+
+**Tasks**:
+- [ ] Create regex patterns for help commands
+- [ ] Design help response templates
+- [ ] Implement help categories (shapes, colors, commands)
+- [ ] Add "what can I draw" response
+- [ ] Add "what commands can I use" response
+- [ ] Update ResponseService with help methods
+- [ ] Test various help queries
+- [ ] Update voice commands documentation
+
+**Acceptance Criteria**:
+- "What can I draw" lists available shapes
+- "What commands can I use" lists all command types
+- "What colors can I use" lists available colors
+- Help responses are clear and concise
+- Voice provides helpful guidance
+
+**Estimated Time**: 2-3 hours
+
+---
+
 ## Phase 1.5: GitHub Pages Deployment
 
-### ✅ Task 1.9: Deploy to GitHub Pages (COMPLETED)
+### ✅ Task 1.14: Deploy to GitHub Pages (COMPLETED)
 **Goal**: Deploy the current fully functional voice-to-drawing demo to GitHub Pages for public showcase.
 
 **Tasks**:
@@ -595,11 +714,12 @@ This plan breaks down the development into incremental tasks that can be complet
 
 ## Timeline Estimate
 
-- **Phase 1**: ~~27-33 hours~~ **10-12 hours actual** (78% complete, 2 tasks remaining: 1.75 + 1.8)
+- **Phase 1**: ~~40-50 hours~~ **13-15 hours actual** (56% complete, 7 tasks remaining)
+  - Remaining: Tasks 1.8-1.13 (~16-21 hours)
 - **Phase 1.5**: ~~2-3 hours~~ **54 minutes actual** ✅ COMPLETED
-- **Phase 2**: 20-25 hours (1-2 weeks) - Not started
-- **Phase 3**: 20-25 hours (1-2 weeks) - Not started
-- **Total**: ~~69-86 hours~~ Tracking significantly under estimate!
+- **Phase 2**: 20-25 hours (AI Enhancement) - Future
+- **Phase 3**: 20-25 hours (Advanced Features) - Future
+- **Total**: ~~82-103 hours~~ Tracking significantly under estimate!
 
 This timeline assumes part-time development. Each phase can be completed independently, allowing for flexible scheduling and iteration based on feedback.
 

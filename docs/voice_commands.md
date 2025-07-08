@@ -114,58 +114,54 @@ These commands remove the specified shape from the canvas.
 - Success: "I deleted the square"
 - No shape: "There's no square on the canvas to delete"
 
-## 🔴 Future Commands (Not Started)
+## 🟡 Planned Commands (Next Priority)
 
-### Advanced Shape Operations
-These commands will be implemented in Phase 2 with AI-powered natural language processing.
+These commands will be implemented using the three object model and enhanced regex parsing.
 
+### Shape Manipulation
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Resize Shape | "Computer, make the square bigger please" | ❌ Not Started | Requires shape targeting |
-| Rotate Shape | "Computer, rotate the circle 45 degrees please" | ❌ Not Started | Requires shape targeting |
-| Duplicate Shape | "Computer, copy the triangle please" | ❌ Not Started | Requires shape targeting |
-| Group Shapes | "Computer, group the square and circle please" | ❌ Not Started | Requires multiple shape targeting |
+| Resize Default | "Computer, make the square bigger please" | 📋 Task 1.9 | Multiplies size by 1.5 |
+| Resize Custom | "Computer, make the square 2 times bigger please" | 📋 Task 1.9 | Custom multiplier |
+| Rotate Default | "Computer, rotate the triangle please" | 📋 Task 1.10 | Rotates 90 degrees |
+| Rotate Custom | "Computer, rotate the triangle 45 degrees please" | 📋 Task 1.10 | Custom rotation |
 
-### Spatial Relationship Commands
-These commands will enable positioning shapes relative to each other.
-
+### Spatial Positioning
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Relative Positioning | "Computer, draw a circle to the left of the square please" | ❌ Not Started | Requires spatial awareness |
-| Above/Below | "Computer, place a triangle above the circle please" | ❌ Not Started | Requires spatial awareness |
-| Next To | "Computer, put a rectangle next to the square please" | ❌ Not Started | Requires spatial awareness |
-| Align Shapes | "Computer, align the squares horizontally please" | ❌ Not Started | Requires multiple shape targeting |
+| Relative Draw | "Computer, draw a circle to the left of the square please" | 📋 Task 1.11 | Smart positioning |
+| Relative Move | "Computer, move the circle to the right of the square please" | 📋 Task 1.11 | Position relative to other shapes |
 
-### Advanced Shape Types
-These shapes will be added in future phases.
-
+### Context Commands
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Draw Rectangle | "Computer, draw a red rectangle please" | ❌ Not Started | Requires rectangle shape |
-| Draw Oval | "Computer, draw a blue oval please" | ❌ Not Started | Requires oval shape |
-| Draw Line | "Computer, draw a straight line please" | ❌ Not Started | Requires line shape |
-| Draw Text | "Computer, write 'Hello' please" | ❌ Not Started | Requires text rendering |
+| Pronoun Reference | "Computer, move it to the right please" | 📋 Task 1.12 | References last shape |
+| Help Commands | "Computer, what can I draw please" | 📋 Task 1.13 | Lists available commands |
 
-### System Commands
-These commands will provide system-level functionality.
+## 🔴 Future Commands (AI Required)
 
+These advanced commands will require AI-powered natural language processing in Phase 2.
+
+### Natural Language Variations
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Undo | "Computer, undo the last action please" | ❌ Not Started | Requires command history |
-| Redo | "Computer, redo the last action please" | ❌ Not Started | Requires command history |
-| Save | "Computer, save the drawing please" | ❌ Not Started | Requires file system integration |
-| Load | "Computer, load my drawing please" | ❌ Not Started | Requires file system integration |
-| Help | "Computer, what can I draw please" | ❌ Not Started | Requires help system |
+| Complex Sizes | "Computer, make the square a bit smaller please" | ❌ Phase 2 | Requires AI interpretation |
+| Descriptive References | "Computer, delete the big red shape please" | ❌ Phase 2 | Requires AI understanding |
+| Multiple Operations | "Computer, draw a blue square and move it left please" | ❌ Phase 2 | Requires command chaining |
 
-### Context-Aware Commands
-These commands will use natural language references to shapes.
-
+### Advanced Spatial Commands
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Pronoun References | "Computer, move it to the right please" | ❌ Not Started | Requires context tracking |
-| Color References | "Computer, delete the red square please" | ❌ Not Started | Requires shape identification |
-| Size References | "Computer, make the big circle smaller please" | ❌ Not Started | Requires size analysis |
-| Position References | "Computer, move the top triangle down please" | ❌ Not Started | Requires position analysis |
+| Above/Below | "Computer, place a triangle above the circle please" | ❌ Phase 2 | Complex spatial calculation |
+| Align Shapes | "Computer, align all shapes horizontally please" | ❌ Phase 2 | Multiple shape coordination |
+| Patterns | "Computer, arrange the shapes in a line please" | ❌ Phase 2 | Pattern recognition |
+
+### System Features
+| Command | Example | Status | Notes |
+|---------|---------|--------|-------|
+| Undo/Redo | "Computer, undo the last action please" | ❌ Phase 2 | Command history required |
+| Save/Load | "Computer, save this drawing please" | ❌ Phase 2 | File system integration |
+| Advanced Help | "Computer, how do I make shapes bigger please" | ❌ Phase 2 | Contextual help system |
 
 ## 🎨 Supported Colors
 
@@ -217,19 +213,28 @@ The parser accepts various natural language variations:
 
 ## 🚀 Development Phases
 
-### Phase 1: Core Functionality ✅
-- Basic voice recognition
-- Simple command parsing
-- Shape creation and deletion
-- Shape movement (four directions)
-- Color changing (single instance shapes)
-- Canvas clearing
+### Phase 1: Core Functionality 🚧
+**Completed**:
+- ✅ Basic voice recognition
+- ✅ Simple command parsing
+- ✅ Shape creation and deletion
+- ✅ Shape movement (with custom distances)
+- ✅ Color changing (single instance shapes)
+- ✅ Canvas clearing
 
-### Phase 2: AI Enhancement 🚧
+**In Progress**:
+- 📋 UI Polish and testing
+- 📋 Shape resizing (bigger/smaller)
+- 📋 Shape rotation (degrees)
+- 📋 Relative positioning
+- 📋 Pronoun references ("it")
+- 📋 Help system
+
+### Phase 2: AI Enhancement 📅
 - OpenAI API integration
 - Natural language processing
-- Advanced shape operations
-- Context-aware commands
+- Complex command interpretation
+- Advanced context awareness
 
 ### Phase 3: Advanced Features 📋
 - Spatial relationships
