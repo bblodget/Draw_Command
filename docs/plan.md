@@ -387,27 +387,34 @@ This plan breaks down the development into incremental tasks that can be complet
 
 ---
 
-### Task 1.13: Help System
-**Goal**: Implement voice-activated help commands.
+### Task 1.13: Interactive Help System
+**Goal**: Implement a conversational, multi-level help system.
 
 **Tasks**:
-- [ ] Create regex patterns for help commands
-- [ ] Design help response templates
-- [ ] Implement help categories (shapes, colors, commands)
-- [ ] Add "what can I draw" response
-- [ ] Add "what commands can I use" response
-- [ ] Update ResponseService with help methods
-- [ ] Test various help queries
+- [ ] Create help context tracking system
+- [ ] Implement Level 1 help: "help please" → main categories
+- [ ] Implement Level 2 help: "help with [category]" → specific topics
+- [ ] Implement Level 3 help: "help with [command]" → detailed explanations
+- [ ] Add help state management and context reset
+- [ ] Create comprehensive help response templates
+- [ ] Add examples and usage patterns to help responses
+- [ ] Test interactive help conversation flow
 - [ ] Update voice commands documentation
 
-**Acceptance Criteria**:
-- "What can I draw" lists available shapes
-- "What commands can I use" lists all command types
-- "What colors can I use" lists available colors
-- Help responses are clear and concise
-- Voice provides helpful guidance
+**Interactive Help Flow**:
+1. **Level 1**: "Computer, help please" → "I can help you with shapes, colors, or commands. What would you like to know about?"
+2. **Level 2**: "Computer, help with commands please" → "I understand several command types: draw, move, delete, color, resize, rotate, and more. Which would you like to learn about?"
+3. **Level 3**: "Computer, help with move please" → "Move commands let you move shapes in any direction. For example, say 'move the square left' or 'move the circle up 100'. You can specify the distance in pixels."
 
-**Estimated Time**: 2-3 hours
+**Acceptance Criteria**:
+- Multi-level conversational help system works
+- Context is tracked between help requests
+- Help responses include examples and usage patterns
+- "Help more" provides additional details
+- Context resets after other commands
+- Voice responses are natural and helpful
+
+**Estimated Time**: 3-4 hours
 
 ---
 
@@ -715,7 +722,7 @@ This plan breaks down the development into incremental tasks that can be complet
 ## Timeline Estimate
 
 - **Phase 1**: ~~40-50 hours~~ **13-15 hours actual** (56% complete, 7 tasks remaining)
-  - Remaining: Tasks 1.8-1.13 (~16-21 hours)
+  - Remaining: Tasks 1.8-1.13 (~17-22 hours)
 - **Phase 1.5**: ~~2-3 hours~~ **54 minutes actual** ✅ COMPLETED
 - **Phase 2**: 20-25 hours (AI Enhancement) - Future
 - **Phase 3**: 20-25 hours (Advanced Features) - Future

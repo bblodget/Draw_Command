@@ -136,7 +136,21 @@ These commands will be implemented using the three object model and enhanced reg
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
 | Pronoun Reference | "Computer, move it to the right please" | 📋 Task 1.12 | References last shape |
-| Help Commands | "Computer, what can I draw please" | 📋 Task 1.13 | Lists available commands |
+
+### Interactive Help System
+| Command | Example | Status | Notes |
+|---------|---------|--------|-------|
+| Main Help | "Computer, help please" | 📋 Task 1.13 | Interactive help menu |
+| Help Categories | "Computer, help with shapes please" | 📋 Task 1.13 | Category-specific help |
+| Command Help | "Computer, help with move please" | 📋 Task 1.13 | Detailed command help |
+
+**Interactive Help Flow:**
+1. **Level 1 - Main Help**: "I can help you with shapes, colors, or commands. What would you like to know about?"
+2. **Level 2 - Categories**: 
+   - Shapes: Lists available shapes and drawing options
+   - Colors: Lists supported colors
+   - Commands: Lists command types (draw, move, delete, etc.)
+3. **Level 3 - Specific Help**: Detailed explanations with examples
 
 ## 🔴 Future Commands (AI Required)
 
@@ -259,4 +273,12 @@ To test the system, try these basic commands:
 4. "Computer, move the square left please" (moves square 50px left)
 5. "Computer, move the square up 100 please" (moves square 100px up)
 6. "Computer, delete the circle please" (removes the circle)
-7. "Computer, clear please" (removes all shapes)
+7. "Computer, help please" (starts interactive help)
+8. "Computer, clear please" (removes all shapes)
+
+### Planned Commands Testing (Future):
+- "Computer, make the square bigger please" (Task 1.9)
+- "Computer, rotate the triangle 45 degrees please" (Task 1.10)
+- "Computer, draw a circle to the left of the square please" (Task 1.11)
+- "Computer, move it to the right please" (Task 1.12)
+- "Computer, help with move please" (Task 1.13)
