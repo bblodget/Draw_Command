@@ -80,9 +80,6 @@ export class VoiceService {
                     }
                 }
 
-                console.log('Speech recognition result:');
-                console.log('  - finalTranscript:', finalTranscript);
-                console.log('  - interimTranscript:', interimTranscript);
 
                 // NEW: Handle transcript accumulation
                 if (finalTranscript) {
@@ -113,11 +110,9 @@ export class VoiceService {
     private buildDisplayTranscript(finalTranscript: string, interimTranscript: string): string {
         // If we have a final transcript, add it to accumulation
         if (finalTranscript) {
-            console.log('Processing final transcript:', finalTranscript);
             // Check if this segment contains "computer" - if so, reset accumulation
             if (finalTranscript.toLowerCase().includes(this.ATTENTION_WORD)) {
                 this.accumulatedTranscript = finalTranscript;
-                console.log('Reset accumulation to:', this.accumulatedTranscript);
             } else {
                 // Add to existing accumulation
                 this.accumulatedTranscript = this.accumulatedTranscript
@@ -125,7 +120,6 @@ export class VoiceService {
                     : finalTranscript;
                 // Fix extra spaces by normalizing whitespace
                 this.accumulatedTranscript = this.accumulatedTranscript.replace(/\s+/g, ' ').trim();
-                console.log('Updated accumulation to:', this.accumulatedTranscript);
             }
         }
 
@@ -149,12 +143,10 @@ export class VoiceService {
 
         // Check if we have attention word and execute word in the display transcript
         if (this.attentionWordDetected && displayTranscript.toLowerCase().includes(this.EXECUTE_WORD)) {
-            console.log('Execute word detected in display transcript:', displayTranscript);
             this.isProcessingCommand = true;
 
             // Extract command from display transcript
             const command = this.extractCommand(displayTranscript);
-            console.log('Extracted command:', command);
             const now = Date.now();
 
             // Prevent duplicate command execution (within cooldown period)
@@ -172,7 +164,6 @@ export class VoiceService {
             this.currentTranscript = '';
             this.accumulatedTranscript = '';
             this.isProcessingCommand = false;
-            console.log('Transcript state cleared after command execution');
         }
     }
 
@@ -183,14 +174,9 @@ export class VoiceService {
     }
 
     private processFinalTranscript(transcript: string): void {
-        console.log('Processing final transcript:', transcript);
-        console.log('Current attentionWordDetected:', this.attentionWordDetected);
-        console.log('Current accumulatedTranscript:', this.accumulatedTranscript);
-
         // Check for attention word
         if (transcript.toLowerCase().includes(this.ATTENTION_WORD)) {
             this.attentionWordDetected = true;
-            console.log('Attention word detected, resetting accumulation');
         }
 
         // Note: Command execution is now handled in checkForCommandExecution()
