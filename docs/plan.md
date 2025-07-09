@@ -5,9 +5,9 @@
 **Last Updated**: 2025-01-07
 
 ### Phase 1: Core Functionality Foundation
-- ✅ **9/16 tasks completed** (56% complete)
+- ✅ **9/17 tasks completed** (53% complete)
 - ⏱️ **13-15 hours** actual time vs 40-50 hours estimated
-- 🎯 **Next**: Task 1.8: UI Polish and Testing
+- 🎯 **Next**: Task 1.77: Fix Transcript Display with Pauses
 
 ### Phase 1.5: GitHub Pages Deployment
 - ✅ **COMPLETED**: Live demo deployed!
@@ -267,6 +267,32 @@ This plan breaks down the development into incremental tasks that can be complet
 **Completed**: 2025-01-07 | **Session**: `2025-01-07-1526-Task 1.76: Move and Delete Commands.md`
 **Actual Time**: 12 minutes (significantly under estimate!)
 **Notes**: Implemented with optional distance parameter for move commands (10-500px)
+
+---
+
+### Task 1.77: Fix Transcript Display with Pauses
+**Goal**: Fix the transcript display bug where only the last speech segment appears when users pause between parts of a voice command.
+
+**Tasks**:
+- [ ] Analyze the current transcript accumulation logic
+- [ ] Implement proper transcript accumulation across speech pauses
+- [ ] Ensure "computer" always starts fresh (reset-on-computer behavior)
+- [ ] Display complete accumulated command throughout sequence
+- [ ] Prevent transcript from being overwritten by final segments
+- [ ] Test with various pause patterns
+- [ ] Keep the solution simple and focused
+
+**Acceptance Criteria**:
+- "Computer" → pause → "draw a red square" → pause → "please" shows full command
+- Transcript displays "computer draw a red square please" throughout
+- "Computer" always resets and starts a new command
+- No complex state management or timers needed
+- Works consistently across different pause durations
+
+**Bug Description**:
+When users pause between parts of a voice command (e.g., "Computer" → pause → "draw a red square" → pause → "please"), the transcript window only shows the last spoken segment ("please") instead of the complete accumulated command ("computer draw a red square please").
+
+**Estimated Time**: 2-3 hours
 
 ---
 
