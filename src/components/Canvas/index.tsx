@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as fabric from 'fabric';
 import { CanvasService } from '../../services/canvas.service';
-import { Button } from '../common';
 
 interface CanvasProps {
   onCanvasReady?: (canvasService: CanvasService) => void;
@@ -48,38 +47,9 @@ export const Canvas: React.FC<CanvasProps> = ({ onCanvasReady }) => {
     };
   }, []); // Remove dependency to ensure it only runs once
 
-  const handleDrawSquare = () => {
-    canvasServiceRef.current.drawSquare('red', 100);
-  };
-
-  const handleDrawCircle = () => {
-    canvasServiceRef.current.drawCircle('blue', 50);
-  };
-
-  const handleDrawTriangle = () => {
-    canvasServiceRef.current.drawTriangle('green', 100);
-  };
-
-  const handleClear = () => {
-    canvasServiceRef.current.clearAll();
-  };
 
   return (
     <div>
-      <div className="mb-4 flex gap-2">
-        <Button onClick={handleDrawSquare} disabled={!isCanvasReady}>
-          Draw Square
-        </Button>
-        <Button onClick={handleDrawCircle} disabled={!isCanvasReady}>
-          Draw Circle
-        </Button>
-        <Button onClick={handleDrawTriangle} disabled={!isCanvasReady}>
-          Draw Triangle
-        </Button>
-        <Button onClick={handleClear} variant="secondary" disabled={!isCanvasReady}>
-          Clear Canvas
-        </Button>
-      </div>
       <div className="relative inline-block">
         <div className="border-2 border-gray-300 rounded-lg bg-white overflow-hidden shadow-lg" style={{ width: '800px', height: '600px' }}>
           <canvas

@@ -206,14 +206,6 @@ function App() {
       <Header />
       
       <main className="flex-1 container mx-auto p-6">
-        <div className="mb-6">
-          <Alert type="info">
-            Welcome to Draw Command! This is a voice-controlled drawing demo. 
-            Click "Start Voice Recognition" and say "Computer, draw a red square please" to test.
-          </Alert>
-        </div>
-
-
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3">
             <Canvas onCanvasReady={handleCanvasReady} />
