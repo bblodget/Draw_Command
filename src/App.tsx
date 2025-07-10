@@ -205,21 +205,18 @@ function App() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       
-      <main className="flex-1 container mx-auto p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-3">
-            <Canvas onCanvasReady={handleCanvasReady} />
-          </div>
-          
-          <div className="lg:col-span-1">
-            <VoiceInterface 
-              onCommand={handleVoiceCommand} 
-              lastCommand={lastCommand}
-              commandResult={commandResult}
-            />
-          </div>
-        </div>
+      {/* Full-screen canvas container */}
+      <main className="flex-1 relative overflow-hidden">
+        <Canvas onCanvasReady={handleCanvasReady} />
       </main>
+      
+      {/* Draggable Voice Control panel - positioned relative to entire viewport */}
+      <VoiceInterface 
+        onCommand={handleVoiceCommand} 
+        lastCommand={lastCommand}
+        commandResult={commandResult}
+        isDraggable={true}
+      />
 
       <StatusBar />
     </div>

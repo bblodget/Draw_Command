@@ -10,9 +10,11 @@ interface VoiceInterfaceProps {
   onCommand?: (command: string) => void;
   lastCommand?: string;
   commandResult?: { success: boolean; message: string } | null;
+  isDraggable?: boolean;
+  initialPosition?: { x: number; y: number };
 }
 
-export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastCommand, commandResult }) => {
+export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastCommand, commandResult, isDraggable = false, initialPosition }) => {
   const voiceServiceRef = useRef<VoiceService>(new VoiceService());
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -20,6 +22,12 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
   const [isSupported, setIsSupported] = useState(false);
   const [micPermission, setMicPermission] = useState<boolean | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  
+  // Drag functionality
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const dragRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const voiceService = voiceServiceRef.current;
@@ -56,6 +64,54 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
 
     voiceService.setCallbacks(callbacks);
   }, [onCommand]);
+
+  // Drag handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!isDraggable || !dragRef.current) return;
+    
+    setIsDragging(true);
+    
+    // Get the actual current position of the element
+    const rect = dragRef.current.getBoundingClientRect();
+    const currentX = rect.left;
+    const currentY = rect.top;
+    
+    // If this is the first drag (position is still 0,0), update position to actual screen coordinates
+    if (position.x === 0 && position.y === 0) {
+      setPosition({ x: currentX, y: currentY });
+    }
+    
+    // Store the offset from the mouse to the current position
+    setDragOffset({
+      x: e.clientX - currentX,
+      y: e.clientY - currentY
+    });
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging || !isDraggable) return;
+    
+    // Calculate new position relative to the starting drag offset
+    setPosition({
+      x: e.clientX - dragOffset.x,
+      y: e.clientY - dragOffset.y
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, dragOffset]);
 
   const handleStartListening = async () => {
     const voiceService = voiceServiceRef.current;
@@ -102,9 +158,34 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg border border-gray-200">
-      <div className="px-4 py-3 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-800">Voice Control</h2>
+    <div 
+      ref={dragRef}
+      className={`bg-white rounded-lg shadow-lg border border-gray-200 ${isDraggable ? 'cursor-move fixed z-50' : ''} ${isDragging ? 'shadow-2xl' : ''}`}
+      style={isDraggable ? { 
+        position: 'fixed',
+        right: position.x === 0 && position.y === 0 ? '16px' : 'auto',
+        top: position.x === 0 && position.y === 0 ? '100px' : position.y,
+        left: position.x !== 0 || position.y !== 0 ? position.x : 'auto',
+        width: '320px',
+        maxHeight: 'calc(100vh - 200px)',
+        overflowY: 'auto',
+        transform: isDragging ? 'scale(1.02)' : 'scale(1)',
+        transition: isDragging ? 'none' : 'transform 0.2s ease',
+        zIndex: 50
+      } : {}}
+    >
+      <div 
+        className={`px-4 py-3 border-b border-gray-200 ${isDraggable ? 'cursor-move' : ''}`}
+        onMouseDown={handleMouseDown}
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-800">Voice Control</h2>
+          {isDraggable && (
+            <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
+          )}
+        </div>
       </div>
       <div className="p-4">
       

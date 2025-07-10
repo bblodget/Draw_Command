@@ -15,10 +15,15 @@ export const Canvas: React.FC<CanvasProps> = ({ onCanvasReady }) => {
   useEffect(() => {
     if (!canvasRef.current || fabricCanvasRef.current) return; // Prevent re-initialization
 
+    // Get container dimensions
+    const container = canvasRef.current.parentElement;
+    const containerWidth = container?.clientWidth || window.innerWidth;
+    const containerHeight = container?.clientHeight || window.innerHeight - 200; // Account for header/footer
+
     // Initialize Fabric.js canvas
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
-      width: 800,
-      height: 600,
+      width: containerWidth,
+      height: containerHeight,
       backgroundColor: '#ffffff',
       selection: true,
       selectionBorderColor: '#2563eb',
@@ -39,8 +44,18 @@ export const Canvas: React.FC<CanvasProps> = ({ onCanvasReady }) => {
       onCanvasReady(canvasServiceRef.current);
     }
 
+    // Handle window resize
+    const handleResize = () => {
+      const newWidth = container?.clientWidth || window.innerWidth;
+      const newHeight = container?.clientHeight || window.innerHeight - 200;
+      fabricCanvas.setDimensions({ width: newWidth, height: newHeight });
+    };
+
+    window.addEventListener('resize', handleResize);
+
     // Cleanup function
     return () => {
+      window.removeEventListener('resize', handleResize);
       fabricCanvas.dispose();
       fabricCanvasRef.current = null;
       setIsCanvasReady(false);
@@ -49,22 +64,20 @@ export const Canvas: React.FC<CanvasProps> = ({ onCanvasReady }) => {
 
 
   return (
-    <div>
-      <div className="relative inline-block">
-        <div className="border-2 border-gray-300 rounded-lg bg-white overflow-hidden shadow-lg" style={{ width: '800px', height: '600px' }}>
-          <canvas
-            ref={canvasRef}
-            className="block"
-          />
-          {!isCanvasReady && (
-            <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-50">
-              <p className="text-lg">Loading canvas...</p>
-            </div>
-          )}
-        </div>
-        <div className="absolute -bottom-8 left-0 text-xs text-gray-500">
-          Click shapes to select • Drag to move • Use corners to resize/rotate
-        </div>
+    <div className="w-full h-full relative">
+      <div className="w-full h-full bg-white border-2 border-gray-300 rounded-lg overflow-hidden shadow-lg">
+        <canvas
+          ref={canvasRef}
+          className="block w-full h-full"
+        />
+        {!isCanvasReady && (
+          <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-50">
+            <p className="text-lg">Loading canvas...</p>
+          </div>
+        )}
+      </div>
+      <div className="absolute bottom-4 left-4 text-xs text-gray-500 bg-white px-2 py-1 rounded shadow">
+        Click shapes to select • Drag to move • Use corners to resize/rotate
       </div>
     </div>
   );
