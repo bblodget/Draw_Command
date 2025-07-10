@@ -92,9 +92,24 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
     if (!isDragging || !isDraggable) return;
     
     // Calculate new position relative to the starting drag offset
+    const newX = e.clientX - dragOffset.x;
+    const newY = e.clientY - dragOffset.y;
+    
+    // Apply bounds checking using same Math.max/min pattern as canvas shapes
+    const panelWidth = 320; // Fixed width from CSS: width: '320px'
+    
+    // Get actual panel height from DOM element
+    const panelHeight = dragRef.current?.offsetHeight || 400; // Fallback to 400px if not available
+    
+    const maxX = window.innerWidth - panelWidth;
+    const maxY = window.innerHeight - panelHeight;
+    
+    const constrainedX = Math.max(0, Math.min(newX, maxX));
+    const constrainedY = Math.max(0, Math.min(newY, maxY));
+    
     setPosition({
-      x: e.clientX - dragOffset.x,
-      y: e.clientY - dragOffset.y
+      x: constrainedX,
+      y: constrainedY
     });
   };
 
