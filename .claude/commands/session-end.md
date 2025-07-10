@@ -37,10 +37,17 @@ End the current development session by:
 
 4. **Complete Workflow:**
    - **For Feature Development:**
-     - If changes are committed but not merged, offer to merge to main
-     - If feature branch exists, merge to main and delete the branch
-     - Switch back to main branch
-     - Document the final merge commit
+     - If `$ARGUMENTS` contains "abort":
+       - Document that session was aborted (no merge)
+       - Commit the session log to the feature branch
+       - Switch back to main branch
+       - Cherry-pick the session log commit to main (preserves documentation without feature code)
+       - Delete the feature branch without merging
+     - Otherwise (normal completion):
+       - If changes are committed but not merged, offer to merge to main
+       - If feature branch exists, merge to main and delete the branch
+       - Switch back to main branch
+       - Document the final merge commit
    - **For PR Review:**
      - Document the final review decision
      - If approved, note that PR can be merged
@@ -51,12 +58,16 @@ End the current development session by:
 5. Empty the `.claude/sessions/.current-session` file (don't remove it, just clear its contents)
 6. Inform user the session has been documented and workflow completed
 
+**Usage:**
+- `/session-end` - Complete session normally (merge changes to main)
+- `/session-end abort` - End session without merging (document and cleanup only)
+
 The summary should be thorough enough that another developer (or AI) can understand everything that happened without reading the entire session.
 
 **Feature Development Completion Checklist:**
 - ✅ Feature implemented and tested
 - ✅ Changes committed to feature branch
-- ✅ Feature branch merged to main
+- ✅ Feature branch merged to main (unless aborted)
 - ✅ Feature branch deleted
 - ✅ Session documented
 - ✅ Back on main branch

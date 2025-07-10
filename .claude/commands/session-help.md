@@ -8,8 +8,8 @@ The session system helps document development work for future reference and inte
 
 - `/project:session-start [name]` - Start a new feature development session
 - `/project:session-start-pr [pr_number] [name]` - Start a new PR review session
-- `/project:session-update [notes]` - Add notes to current session  
-- `/project:session-end` - End session with comprehensive summary
+- `/project:session-update [commit]` - Update session with automatic summary (optionally commit changes)
+- `/project:session-end [abort]` - End session with comprehensive summary (optionally abort without merging)
 - `/project:session-list` - List all session files
 - `/project:session-current` - Show current session status
 - `/project:session-help` - Show this help
@@ -39,6 +39,7 @@ The session system helps document development work for future reference and inte
 - Completes workflow by merging feature branch to main
 - Cleans up feature branch
 - Documents all changes and learnings
+- **Abort option:** Can end session without merging (preserves documentation, discards code)
 
 ### PR Review Workflow Integration:
 
@@ -58,6 +59,7 @@ The session system helps document development work for future reference and inte
 - Documents final review decision and findings
 - Switches back to main branch
 - Cleans up PR branch if needed
+- **Abort option:** Can end session without merging (preserves documentation, discards code)
 
 ### Best Practices:
 
@@ -75,12 +77,17 @@ The session system helps document development work for future reference and inte
 /project:session-start add-physics-engine
 # Creates feature-add-physics-engine branch
 # Implements physics engine
-/project:session-update Physics engine implemented, ready for testing
+/project:session-update
+# Automatically summarizes recent activities
 # User tests the implementation
-/project:session-update User approved physics implementation
-# Commits changes to feature branch
+/project:session-update commit
+# Summarizes activities and commits changes to feature branch
 /project:session-end
 # Merges to main, deletes feature branch, documents session
+
+# OR if feature doesn't work out:
+/project:session-end abort
+# Documents session, cherry-picks session log to main, discards feature code
 ```
 
 **PR Review:**
@@ -88,9 +95,11 @@ The session system helps document development work for future reference and inte
 /project:session-start-pr 1 refactor-implementation
 # Fetches and checks out PR #1
 # Tests the refactored code
-/project:session-update Functional testing completed, all shapes work
+/project:session-update
+# Automatically summarizes testing progress
 # Reviews code quality
-/project:session-update Code review complete, headers properly separated
+/project:session-update
+# Summarizes code review findings
 # Tests edge cases
 /project:session-end
 # Documents approval decision, switches back to main

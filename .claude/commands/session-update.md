@@ -4,7 +4,7 @@ Update the current development session by:
 2. If no active session, inform user to start one with `/project:session-start` or `/project:session-start-pr`
 3. If session exists, append to the session file with:
    - Current timestamp
-   - The update: $ARGUMENTS (or if no arguments, summarize recent activities)
+   - **Automatic summary of recent activities** (always generated)
    - **Workflow Status:**
      * **For Feature Development:**
        - Current phase: Implementation/Testing/Commit Ready/Merge Ready
@@ -26,7 +26,13 @@ Update the current development session by:
    - Code changes made
    - **Testing feedback:** Track user testing results and approval status
 
+4. **Optional:** If `$ARGUMENTS` contains "commit", also commit recent code changes with the session update
+
 Keep updates concise but comprehensive for future reference.
+
+**Usage:**
+- `/session-update` - Create summary and update session (no commit)
+- `/session-update commit` - Create summary, update session, and commit changes
 
 **Feature Development Phases:**
 - 🔧 **Implementation:** Code changes being made, uncommitted
@@ -87,3 +93,4 @@ Example format for PR Review:
 
 **Testing Status**: Box and Cylinder creation working, testing Beam creation
 **Details**: [user's update or automatic summary]
+```
