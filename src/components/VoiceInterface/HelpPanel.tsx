@@ -3,12 +3,47 @@ import React, { useState } from 'react';
 export const HelpPanel: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Helper function to render pattern with styled placeholders
+  const renderPattern = (pattern: string) => {
+    const parts = pattern.split(/(\[[^\]]+\])/);
+    return parts.map((part, index) => {
+      if (part.startsWith('[') && part.endsWith(']')) {
+        return (
+          <span key={index} className="bg-blue-100 text-blue-800 px-1 rounded">
+            {part}
+          </span>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
   const commands = [
-    { command: 'draw a [color] [shape]', example: 'draw a red square', description: 'Creates a new shape' },
-    { command: 'color the [shape] [color]', example: 'color the square blue', description: 'Changes shape color' },
-    { command: 'move the [shape] [direction] [distance]', example: 'move the circle left 100', description: 'Moves a shape' },
-    { command: 'delete the [shape]', example: 'delete the triangle', description: 'Removes a shape' },
-    { command: 'clear', example: 'clear', description: 'Removes all shapes' },
+    { 
+      pattern: 'draw a [color] [shape]', 
+      example: 'Computer, draw a red square please',
+      description: 'Creates a new shape on the canvas' 
+    },
+    { 
+      pattern: 'color the [shape] [color]', 
+      example: 'Computer, color the square blue please',
+      description: 'Changes the color of an existing shape' 
+    },
+    { 
+      pattern: 'move the [shape] [direction] [distance]', 
+      example: 'Computer, move the circle left 100 please',
+      description: 'Moves a shape in any direction (distance is optional)' 
+    },
+    { 
+      pattern: 'delete the [shape]', 
+      example: 'Computer, delete the triangle please',
+      description: 'Removes a specific shape from the canvas' 
+    },
+    { 
+      pattern: 'clear', 
+      example: 'Computer, clear please',
+      description: 'Removes all shapes from the canvas' 
+    },
   ];
 
   const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown', 'black', 'white', 'gray'];
@@ -55,13 +90,33 @@ export const HelpPanel: React.FC = () => {
 
           {/* Commands */}
           <div>
-            <h3 className="font-semibold text-blue-900 mb-2">Available Commands</h3>
-            <div className="space-y-2">
+            <h3 className="font-semibold text-blue-900 mb-2">Try These Commands</h3>
+            <div className="space-y-3">
               {commands.map((cmd, index) => (
-                <div key={index} className="bg-white rounded p-2 text-sm">
-                  <div className="font-mono text-blue-800">{cmd.command}</div>
-                  <div className="text-xs text-gray-600 mt-1">
-                    Example: "{cmd.example}" - {cmd.description}
+                <div key={index} className="relative">
+                  {/* Speech bubble style example */}
+                  <div className="bg-white rounded-lg p-4 border-2 border-blue-200 shadow-sm hover:shadow-md transition-shadow cursor-default">
+                    <div className="flex items-start gap-2">
+                      <svg className="w-6 h-6 text-blue-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                      </svg>
+                      <div className="flex-1">
+                        <div className="font-medium text-base text-gray-900 mb-2">
+                          {cmd.example}
+                        </div>
+                        <div className="space-y-1">
+                          <div className="text-xs text-gray-600">
+                            <span className="font-semibold">Pattern:</span>{' '}
+                            <span className="font-mono font-semibold text-blue-700">
+                              {renderPattern(cmd.pattern)}
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {cmd.description}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
