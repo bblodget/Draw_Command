@@ -132,12 +132,6 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
     voiceServiceRef.current.stopListening();
   };
 
-  const handleClearTranscript = () => {
-    voiceServiceRef.current.clearTranscript();
-    setTranscript('');
-    setError(null);
-  };
-
   const testSpeak = async () => {
     try {
       await voiceServiceRef.current.speak('Voice interface is working correctly');
@@ -245,14 +239,6 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
           lastCommand={lastCommand || ''}
           commandResult={commandResult || null}
         />
-
-        <Button 
-          onClick={handleClearTranscript}
-          variant="secondary"
-          className="text-xs"
-        >
-          Clear Transcript
-        </Button>
 
         {/* Help Panel */}
         <HelpPanel />
