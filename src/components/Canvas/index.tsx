@@ -15,10 +15,16 @@ export const Canvas: React.FC<CanvasProps> = ({ onCanvasReady }) => {
   useEffect(() => {
     if (!canvasRef.current || fabricCanvasRef.current) return; // Prevent re-initialization
 
-    // Get container dimensions
-    const container = canvasRef.current.parentElement;
-    const containerWidth = container?.clientWidth || window.innerWidth;
-    const containerHeight = container?.clientHeight || window.innerHeight - 200; // Account for header/footer
+    // Get dimensions - use window height and calculate available space
+    const headerHeight = 80; // Approximate header height
+    const containerWidth = window.innerWidth;
+    const containerHeight = window.innerHeight - headerHeight;
+
+    // Debug logging
+    console.log('Canvas initialization:');
+    console.log('- Window dimensions:', window.innerWidth, 'x', window.innerHeight);
+    console.log('- Header height:', headerHeight);
+    console.log('- Calculated canvas dimensions:', containerWidth, 'x', containerHeight);
 
     // Initialize Fabric.js canvas
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
@@ -44,17 +50,36 @@ export const Canvas: React.FC<CanvasProps> = ({ onCanvasReady }) => {
       onCanvasReady(canvasServiceRef.current);
     }
 
-    // Handle window resize
+    // Handle window resize with debouncing
+    let resizeTimeout: NodeJS.Timeout;
     const handleResize = () => {
-      const newWidth = container?.clientWidth || window.innerWidth;
-      const newHeight = container?.clientHeight || window.innerHeight - 200;
-      fabricCanvas.setDimensions({ width: newWidth, height: newHeight });
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        const headerHeight = 80; // Approximate header height
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight - headerHeight;
+        
+        // Debug logging
+        console.log('Canvas resize:');
+        console.log('- Window dimensions:', window.innerWidth, 'x', window.innerHeight);
+        console.log('- Header height:', headerHeight);
+        console.log('- New canvas dimensions:', newWidth, 'x', newHeight);
+        
+        // Update canvas dimensions
+        fabricCanvas.setDimensions({ width: newWidth, height: newHeight });
+        
+        // Ensure all shapes stay within bounds after resize
+        canvasServiceRef.current.enforceCanvasBounds();
+        
+        fabricCanvas.renderAll();
+      }, 100); // 100ms debounce
     };
 
     window.addEventListener('resize', handleResize);
 
     // Cleanup function
     return () => {
+      clearTimeout(resizeTimeout);
       window.removeEventListener('resize', handleResize);
       fabricCanvas.dispose();
       fabricCanvasRef.current = null;
@@ -64,21 +89,16 @@ export const Canvas: React.FC<CanvasProps> = ({ onCanvasReady }) => {
 
 
   return (
-    <div className="w-full h-full relative">
-      <div className="w-full h-full bg-white border-2 border-gray-300 rounded-lg overflow-hidden shadow-lg">
-        <canvas
-          ref={canvasRef}
-          className="block w-full h-full"
-        />
-        {!isCanvasReady && (
-          <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-50">
-            <p className="text-lg">Loading canvas...</p>
-          </div>
-        )}
-      </div>
-      <div className="absolute bottom-4 left-4 text-xs text-gray-500 bg-white px-2 py-1 rounded shadow">
-        Click shapes to select • Drag to move • Use corners to resize/rotate
-      </div>
+    <div className="w-full h-full relative bg-white">
+      <canvas
+        ref={canvasRef}
+        className="block w-full h-full"
+      />
+      {!isCanvasReady && (
+        <div className="absolute inset-0 flex items-center justify-center text-gray-400 bg-gray-50">
+          <p className="text-lg">Loading canvas...</p>
+        </div>
+      )}
     </div>
   );
 };

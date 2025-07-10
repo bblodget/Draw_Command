@@ -34,6 +34,27 @@ export class CanvasService {
         canvas.renderAll();
       }
     });
+
+    // Add stronger bounds checking for object movement
+    canvas.on('object:moving', (e) => {
+      this.constrainObjectToCanvas(e.target);
+    });
+
+    canvas.on('object:scaling', (e) => {
+      this.constrainObjectToCanvas(e.target);
+    });
+
+    canvas.on('object:rotating', (e) => {
+      this.constrainObjectToCanvas(e.target);
+    });
+
+    // Add additional constraint on mouse:up to ensure final position is valid
+    canvas.on('mouse:up', (e) => {
+      if (e.target) {
+        this.constrainObjectToCanvas(e.target);
+        canvas.renderAll();
+      }
+    });
   }
 
   drawSquare(color: string = 'red', size: number = 100, position?: { x: number; y: number }): { id: string; wasReplaced: boolean; oldShape?: Shape } {
@@ -511,5 +532,112 @@ export class CanvasService {
     this.shapesByType.delete(shapeType);
 
     return true;
+  }
+
+  // Constrain object to canvas bounds during interaction
+  private constrainObjectToCanvas(obj: fabric.Object | null): void {
+    if (!obj || !this.fabricCanvas) return;
+
+    const canvasWidth = this.fabricCanvas.getWidth();
+    const canvasHeight = this.fabricCanvas.getHeight();
+    
+    // Get object bounding box
+    const objBounds = obj.getBoundingRect();
+    
+    let newLeft = obj.left || 0;
+    let newTop = obj.top || 0;
+    let changed = false;
+    
+    // Constrain horizontal position more aggressively
+    if (objBounds.left < 0) {
+      newLeft = obj.left! - objBounds.left;
+      changed = true;
+    } else if (objBounds.left + objBounds.width > canvasWidth) {
+      newLeft = obj.left! - (objBounds.left + objBounds.width - canvasWidth);
+      changed = true;
+    }
+    
+    // Constrain vertical position more aggressively
+    if (objBounds.top < 0) {
+      newTop = obj.top! - objBounds.top;
+      changed = true;
+    } else if (objBounds.top + objBounds.height > canvasHeight) {
+      newTop = obj.top! - (objBounds.top + objBounds.height - canvasHeight);
+      changed = true;
+    }
+    
+    // Apply constraints immediately and force update
+    if (changed) {
+      obj.set({
+        left: Math.max(0, Math.min(newLeft, canvasWidth - objBounds.width)),
+        top: Math.max(0, Math.min(newTop, canvasHeight - objBounds.height))
+      });
+      obj.setCoords();
+      
+      // Update our shape tracking immediately
+      const shapeEntry = Array.from(this.fabricObjects.entries())
+        .find(([, fabricObj]) => fabricObj === obj);
+      
+      if (shapeEntry) {
+        const [shapeId] = shapeEntry;
+        const shape = this.shapes.get(shapeId);
+        if (shape && obj.left !== undefined && obj.top !== undefined) {
+          shape.position = {
+            x: Math.round(obj.left),
+            y: Math.round(obj.top)
+          };
+        }
+      }
+    }
+  }
+
+  // Enforce canvas bounds for all objects (called after canvas resize)
+  enforceCanvasBounds(): void {
+    if (!this.fabricCanvas) return;
+
+    const objects = this.fabricCanvas.getObjects();
+    let needsUpdate = false;
+
+    objects.forEach(obj => {
+      const oldLeft = obj.left;
+      const oldTop = obj.top;
+      
+      this.constrainObjectToCanvas(obj);
+      
+      // Check if position was changed
+      if (obj.left !== oldLeft || obj.top !== oldTop) {
+        needsUpdate = true;
+        
+        // Update our shape tracking
+        const shapeEntry = Array.from(this.fabricObjects.entries())
+          .find(([, fabricObj]) => fabricObj === obj);
+        
+        if (shapeEntry) {
+          const [shapeId] = shapeEntry;
+          const shape = this.shapes.get(shapeId);
+          if (shape && obj.left !== undefined && obj.top !== undefined) {
+            shape.position = {
+              x: Math.round(obj.left),
+              y: Math.round(obj.top)
+            };
+          }
+        }
+      }
+    });
+
+    if (needsUpdate) {
+      this.fabricCanvas.renderAll();
+    }
+  }
+
+  // Get canvas dimensions
+  getCanvasDimensions(): { width: number; height: number } {
+    if (!this.fabricCanvas) {
+      return { width: 800, height: 600 }; // Default fallback
+    }
+    return {
+      width: this.fabricCanvas.getWidth(),
+      height: this.fabricCanvas.getHeight()
+    };
   }
 }

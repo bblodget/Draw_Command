@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { Header, StatusBar } from './components/UI';
+import { Header } from './components/UI';
 import { Canvas } from './components/Canvas';
 import { VoiceInterface } from './components/VoiceInterface';
 import { Alert } from './components/common';
@@ -202,7 +202,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       <Header />
       
       {/* Full-screen canvas container */}
@@ -217,8 +217,6 @@ function App() {
         commandResult={commandResult}
         isDraggable={true}
       />
-
-      <StatusBar />
     </div>
   );
 }
