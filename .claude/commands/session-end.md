@@ -48,6 +48,7 @@ End the current development session by:
        - If feature branch exists, merge to main and delete the branch
        - Switch back to main branch
        - Document the final merge commit
+       - **Update plan.md** to reflect completed tasks and current progress
    - **For PR Review:**
      - Document the final review decision
      - If approved, note that PR can be merged
