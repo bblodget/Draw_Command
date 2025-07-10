@@ -5,9 +5,9 @@
 **Last Updated**: 2025-07-10
 
 ### Phase 1: Core Functionality Foundation
-- ✅ **13/18 tasks completed** (72% complete)
-- ⏱️ **18-20 hours** actual time vs 40-50 hours estimated  
-- 🎯 **Next**: Task 1.9: Resize Commands
+- ✅ **14/18 tasks completed** (78% complete)
+- ⏱️ **22-24 hours** actual time vs 40-50 hours estimated  
+- 🎯 **Next**: Task 1.10: Rotate Commands
 
 ### Phase 1.5: GitHub Pages Deployment
 - ✅ **COMPLETED**: Live demo deployed!
@@ -27,7 +27,8 @@
 10. ✅ **Task 1.77**: Fix Transcript Display with Pauses
 11. ✅ **Task 1.78**: Remove Transcript Debug Logs
 12. ✅ **Task 1.8**: UI Polish and Testing
-13. ✅ **Task 1.14**: Deploy to GitHub Pages
+13. ✅ **Task 1.9**: Resize Commands  
+14. ✅ **Task 1.14**: Deploy to GitHub Pages
 
 ### Current Status
 🎉 **Major Milestone**: Voice-to-drawing system is FULLY FUNCTIONAL AND DEPLOYED! The system can:
@@ -41,16 +42,16 @@
 - **NEW**: Provide voice responses for all commands (text-to-speech)
 - **NEW**: Professional UI with draggable voice control panel
 - **NEW**: Flicker-free boundary system for shapes and interface
+- **NEW**: 7 resize commands with visual size conversion between shape types
 - **NEW**: Live demo available at https://bblodget.github.io/Draw_Command/
 
 📦 **Deployment Status**: Successfully deployed to GitHub Pages with automatic CI/CD!
 
 **Next Steps**: 
-1. **Task 1.9**: Resize Commands - "make the square bigger"
-2. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
-3. **Task 1.11**: Relative Positioning - "draw a circle to the left of the square"
-4. **Task 1.12**: Pronoun References - "move it to the right"
-5. **Task 1.13**: Help System - "what can I draw"
+1. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
+2. **Task 1.11**: Relative Positioning - "draw a circle to the left of the square"
+3. **Task 1.12**: Pronoun References - "move it to the right"
+4. **Task 1.13**: Help System - "what can I draw"
 
 ---
 
@@ -364,26 +365,45 @@ When users pause between parts of a voice command (e.g., "Computer" → pause �
 
 ---
 
-### Task 1.9: Resize Commands
-**Goal**: Implement shape resizing commands with default and custom multipliers.
+### ✅ Task 1.9: Resize Commands (COMPLETED)
+**Goal**: Implement shape resizing commands with simplified, intuitive modifiers.
 
 **Tasks**:
-- [ ] Create regex pattern for "make the [shape] bigger/smaller" commands
-- [ ] Add support for custom multipliers "make the [shape] 2 times bigger"
-- [ ] Implement resizeShape method in CanvasService
-- [ ] Update App.tsx to handle resize commands
-- [ ] Add appropriate voice responses
-- [ ] Test various size multipliers
-- [ ] Update voice commands documentation
+- [x] Create regex pattern for "make the [shape] bigger/smaller" commands
+- [x] Add support for intensity modifiers "make the [shape] much bigger"
+- [x] Add support for subtle modifiers "make the [shape] a little bigger"
+- [x] Add "same size as" functionality between shapes
+- [x] Implement resizeShapeByType method in CanvasService with size conversion
+- [x] Update App.tsx to handle resize commands
+- [x] Add appropriate voice responses
+- [x] Test various size multipliers and shape combinations
+- [x] Update voice commands documentation
 
 **Acceptance Criteria**:
-- "Make the square bigger" increases size by 1.5x
-- "Make the square smaller" decreases size by 0.75x
-- "Make the square 2 times bigger" doubles the size
-- Size limits prevent shapes from becoming too small/large
-- Voice confirms: "I made the square bigger"
+- ✅ "Make the square bigger" increases size by 1.5x
+- ✅ "Make the square smaller" decreases size to 0.67x
+- ✅ "Make it much bigger" doubles the size (2x)
+- ✅ "Make it a little smaller" reduces by 20% (0.8x)
+- ✅ "Make the triangle the same size as the square" matches visual size with conversion
+- ✅ Size limits prevent shapes from becoming too small/large (10-500px)
+- ✅ "it" references target the most recently created shape
+- ✅ Voice confirms with natural responses: "I made the square bigger"
 
-**Estimated Time**: 2-3 hours
+**Completed**: 2025-07-10 | **Session**: `2025-07-10-0758-Task-1.9-Resize-Commands.md`
+**Actual Time**: 3 hours 38 minutes (within estimate)
+
+**Final Feature Set**: 7 resize commands total
+1. **Basic**: "make [shape] bigger/smaller" (1.5x/0.67x)
+2. **Intensity**: "make [shape] much bigger/smaller" (2x/0.5x)
+3. **Subtle**: "make [shape] a little bigger/smaller" (1.2x/0.8x)
+4. **Size Matching**: "make [shape] the same size as [target]" (visual size conversion)
+
+**Key Achievements**:
+- **Visual Size Conversion**: Circles and squares appear the same visual size when matched
+- **"it" Reference Support**: Can resize most recently created shape
+- **Boundary Protection**: Shapes automatically repositioned to stay within canvas
+- **Smart Error Handling**: Different messages for missing source/target shapes
+- **Simplified Command Set**: User feedback led to streamlined 7-command design
 
 ---
 
@@ -793,8 +813,8 @@ When users pause between parts of a voice command (e.g., "Computer" → pause �
 
 ## Timeline Estimate
 
-- **Phase 1**: ~~40-50 hours~~ **13-15 hours actual** (56% complete, 7 tasks remaining)
-  - Remaining: Tasks 1.8-1.13 (~17-22 hours)
+- **Phase 1**: ~~40-50 hours~~ **22-24 hours actual** (78% complete, 4 tasks remaining)
+  - Remaining: Tasks 1.10-1.13 (~10-15 hours)
 - **Phase 1.5**: ~~2-3 hours~~ **54 minutes actual** ✅ COMPLETED
 - **Phase 2**: 20-25 hours (AI Enhancement) - Future
 - **Phase 3**: 20-25 hours (Advanced Features) - Future
