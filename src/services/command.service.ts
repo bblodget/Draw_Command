@@ -16,7 +16,11 @@ export class CommandService {
     delete: /(?:delete|remove)\s+(?:the\s+)?(square|circle|triangle)/i,
     
     // Matches: "clear", "clear all", "clear the canvas"
-    clear: /clear(?:\s+(?:all|the\s+canvas))?/i
+    clear: /clear(?:\s+(?:all|the\s+canvas))?/i,
+    
+    // Resize patterns - simplified to just essential commands
+    // Matches: "make the square bigger", "make it smaller", "make it much bigger", "make it a little smaller"
+    resize: /make\s+(?:the\s+)?(square|circle|triangle|it)\s+(bigger|larger|smaller|much bigger|much smaller|a little bigger|a little smaller)/i
   };
 
   // Color mapping for common colors
@@ -101,6 +105,42 @@ export class CommandService {
         type: 'move',
         shape,
         position: offset // This will be used as an offset, not absolute position
+      };
+    }
+
+    // Try to match resize commands
+    const resizeMatch = normalizedText.match(this.patterns.resize);
+    if (resizeMatch) {
+      let shape = resizeMatch[1];
+      const modifier = resizeMatch[2];
+      
+      // Handle "it" reference - for now, we'll need the canvas service to resolve this
+      let finalShape: 'square' | 'circle' | 'triangle' | undefined;
+      if (shape === 'it') {
+        finalShape = undefined; // Will be resolved by the app
+      } else {
+        finalShape = shape as 'square' | 'circle' | 'triangle';
+      }
+      
+      // Calculate resize factor based on modifier
+      let resizeFactor = 1.5; // Default for bigger/larger
+      if (modifier === 'smaller') {
+        resizeFactor = 0.67; // Make it about 2/3 the size
+      } else if (modifier === 'much bigger') {
+        resizeFactor = 2.0;
+      } else if (modifier === 'much smaller') {
+        resizeFactor = 0.5;
+      } else if (modifier === 'a little bigger') {
+        resizeFactor = 1.2;
+      } else if (modifier === 'a little smaller') {
+        resizeFactor = 0.8;
+      }
+      
+      return {
+        type: 'resize',
+        shape: finalShape,
+        resizeMode: 'relative',
+        resizeFactor
       };
     }
 

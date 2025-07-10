@@ -2,7 +2,6 @@ import { useState, useRef, useCallback } from 'react';
 import { Header } from './components/UI';
 import { Canvas } from './components/Canvas';
 import { VoiceInterface } from './components/VoiceInterface';
-import { Alert } from './components/common';
 import { CommandService } from './services/command.service';
 import { CanvasService } from './services/canvas.service';
 import { ResponseService } from './services/response.service';
@@ -146,6 +145,49 @@ function App() {
                 setCommandResult({ success: false, message: `Cannot move the ${command.shape} further ${direction}` });
                 responseService.current.speak(`I can't move the ${command.shape} any further in that direction`, 'normal');
               }
+            }
+          }
+          break;
+          
+        case 'resize':
+          // Handle "it" reference - get the most recent shape
+          let targetShape = command.shape;
+          if (!targetShape) {
+            const mostRecent = canvas.getMostRecentShape();
+            if (mostRecent) {
+              targetShape = mostRecent.type;
+            } else {
+              setCommandResult({ success: false, message: 'No shapes on canvas to resize' });
+              responseService.current.speak(`There are no shapes on the canvas to resize`, 'normal');
+              break;
+            }
+          }
+          
+          if (command.resizeMode === 'relative' && command.resizeFactor !== undefined) {
+            const resized = canvas.resizeShapeByType(targetShape, command.resizeFactor);
+            
+            if (resized) {
+              // Generate appropriate response based on resize factor
+              let message = '';
+              let spokenMessage = '';
+              
+              if (command.resizeFactor > 1) {
+                const adjective = command.resizeFactor >= 2 ? 'much bigger' : 
+                                 command.resizeFactor >= 1.5 ? 'bigger' : 'a little bigger';
+                message = `Made the ${targetShape} ${adjective}`;
+                spokenMessage = `I made the ${targetShape} ${adjective}`;
+              } else {
+                const adjective = command.resizeFactor <= 0.5 ? 'much smaller' : 
+                                 command.resizeFactor <= 0.67 ? 'smaller' : 'a little smaller';
+                message = `Made the ${targetShape} ${adjective}`;
+                spokenMessage = `I made the ${targetShape} ${adjective}`;
+              }
+              
+              setCommandResult({ success: true, message });
+              responseService.current.speak(spokenMessage, 'normal');
+            } else {
+              setCommandResult({ success: false, message: `No ${targetShape} to resize` });
+              responseService.current.speak(`There's no ${targetShape} on the canvas to resize`, 'normal');
             }
           }
           break;

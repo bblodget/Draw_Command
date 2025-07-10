@@ -114,6 +114,42 @@ These commands remove the specified shape from the canvas.
 - Success: "I deleted the square"
 - No shape: "There's no square on the canvas to delete"
 
+### Resize Commands
+These commands resize shapes on the canvas. They work with all three shape types and support "it" references for the most recently created shape.
+
+| Command | Example | Status | Notes |
+|---------|---------|--------|-------|
+| Make Bigger | "Computer, make the square bigger please" | ✅ Full Support | Increases size by 50% |
+| Make Smaller | "Computer, make the circle smaller please" | ✅ Full Support | Decreases size to 67% |
+| Much Bigger | "Computer, make it much bigger please" | ✅ Full Support | Doubles the size |
+| Much Smaller | "Computer, make it much smaller please" | ✅ Full Support | Halves the size |
+| A Little Bigger | "Computer, make it a little bigger please" | ✅ Full Support | Increases size by 20% |
+| A Little Smaller | "Computer, make it a little smaller please" | ✅ Full Support | Decreases size by 20% |
+
+**Format Variations:**
+- "make the [shape] [modifier]" - with article
+- "make [shape] [modifier]" - without article  
+- "make it [modifier]" - references most recent shape
+
+**Size Modifiers:**
+- **bigger/larger** - 1.5x current size
+- **smaller** - 0.67x current size
+- **much bigger** - 2x current size
+- **much smaller** - 0.5x current size
+- **a little bigger** - 1.2x current size
+- **a little smaller** - 0.8x current size
+
+**Size Limits:**
+- Minimum: 10 pixels
+- Maximum: 500 pixels
+- Shapes are automatically repositioned if resizing would push them off canvas
+
+**Voice Feedback:**
+- "I made the square bigger"
+- "I made the circle much smaller"
+- "I made it a little bigger"
+- No shape: "There are no shapes on the canvas to resize"
+
 ## 🟡 Planned Commands (Next Priority)
 
 These commands will be implemented using the three object model and enhanced regex parsing.
@@ -121,8 +157,6 @@ These commands will be implemented using the three object model and enhanced reg
 ### Shape Manipulation
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Resize Default | "Computer, make the square bigger please" | 📋 Task 1.9 | Multiplies size by 1.5 |
-| Resize Custom | "Computer, make the square 2 times bigger please" | 📋 Task 1.9 | Custom multiplier |
 | Rotate Default | "Computer, rotate the triangle please" | 📋 Task 1.10 | Rotates 90 degrees |
 | Rotate Custom | "Computer, rotate the triangle 45 degrees please" | 📋 Task 1.10 | Custom rotation |
 
@@ -235,13 +269,13 @@ The parser accepts various natural language variations:
 - ✅ Shape movement (with custom distances)
 - ✅ Color changing (single instance shapes)
 - ✅ Canvas clearing
+- ✅ Shape resizing (bigger/smaller/percentage/absolute)
 
 **In Progress**:
 - 📋 UI Polish and testing
-- 📋 Shape resizing (bigger/smaller)
 - 📋 Shape rotation (degrees)
 - 📋 Relative positioning
-- 📋 Pronoun references ("it")
+- 📋 Pronoun references ("it") - partial support (resize only)
 - 📋 Help system
 
 ### Phase 2: AI Enhancement 📅
@@ -272,13 +306,22 @@ To test the system, try these basic commands:
 3. "Computer, color the square blue please" (changes square to blue)
 4. "Computer, move the square left please" (moves square 50px left)
 5. "Computer, move the square up 100 please" (moves square 100px up)
-6. "Computer, delete the circle please" (removes the circle)
-7. "Computer, help please" (starts interactive help)
-8. "Computer, clear please" (removes all shapes)
+6. "Computer, make the square bigger please" (increases size by 50%)
+7. "Computer, make it much bigger please" (doubles the most recent shape)
+8. "Computer, make it a little smaller please" (reduces size by 20%)
+9. "Computer, delete the circle please" (removes the circle)
+10. "Computer, clear please" (removes all shapes)
+
+### Resize Commands Testing:
+- "Computer, make the square bigger please" (1.5x size)
+- "Computer, make it much smaller please" (0.5x size)
+- "Computer, make it a little bigger please" (1.2x size)
+- "Computer, make the circle smaller please" (0.67x size)
+- "Computer, make it much bigger please" (2x size)
+- "Computer, make it a little smaller please" (0.8x size)
 
 ### Planned Commands Testing (Future):
-- "Computer, make the square bigger please" (Task 1.9)
 - "Computer, rotate the triangle 45 degrees please" (Task 1.10)
 - "Computer, draw a circle to the left of the square please" (Task 1.11)
-- "Computer, move it to the right please" (Task 1.12)
-- "Computer, help with move please" (Task 1.13)
+- "Computer, move it to the right please" (Task 1.12 - for movement)
+- "Computer, help please" (Task 1.13)

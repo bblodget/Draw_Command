@@ -11,10 +11,9 @@ interface VoiceInterfaceProps {
   lastCommand?: string;
   commandResult?: { success: boolean; message: string } | null;
   isDraggable?: boolean;
-  initialPosition?: { x: number; y: number };
 }
 
-export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastCommand, commandResult, isDraggable = false, initialPosition }) => {
+export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastCommand, commandResult, isDraggable = false }) => {
   const voiceServiceRef = useRef<VoiceService>(new VoiceService());
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');

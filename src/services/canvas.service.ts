@@ -604,4 +604,77 @@ export class CanvasService {
       height: this.fabricCanvas.getHeight()
     };
   }
+
+  // Resize shape by type
+  resizeShapeByType(shapeType: string, resizeFactor: number): boolean {
+    if (!this.fabricCanvas) return false;
+
+    const shape = this.getShapeByType(shapeType);
+    if (!shape) return false;
+
+    const fabricObject = this.fabricObjects.get(shape.id);
+    if (!fabricObject) return false;
+
+    // Calculate new size based on resize factor
+    const newSize = Math.max(10, Math.min(500, Math.round(shape.size * resizeFactor)));
+
+    // Check if new size would cause shape to exceed canvas bounds
+    const testShape: Shape = {
+      ...shape,
+      size: newSize
+    };
+    const bounds = this.getShapeBounds(testShape);
+    
+    const canvasWidth = this.fabricCanvas.getWidth();
+    const canvasHeight = this.fabricCanvas.getHeight();
+    
+    // Adjust position if needed to keep shape within bounds
+    let adjustedPosition = { ...shape.position };
+    
+    if (bounds.right > canvasWidth) {
+      adjustedPosition.x = Math.max(0, canvasWidth - (bounds.right - bounds.left));
+    }
+    if (bounds.bottom > canvasHeight) {
+      adjustedPosition.y = Math.max(0, canvasHeight - (bounds.bottom - bounds.top));
+    }
+
+    // Update fabric object based on shape type
+    if (shape.type === 'circle') {
+      // For circles, size is the radius
+      (fabricObject as fabric.Circle).set({
+        radius: newSize,
+        left: adjustedPosition.x,
+        top: adjustedPosition.y
+      });
+    } else {
+      // For squares and triangles, size is width/height
+      fabricObject.set({
+        width: newSize,
+        height: newSize,
+        left: adjustedPosition.x,
+        top: adjustedPosition.y
+      });
+    }
+
+    // Update interactive controls and render
+    fabricObject.setCoords();
+    this.fabricCanvas.renderAll();
+
+    // Update our shape tracking
+    shape.size = newSize;
+    shape.position = adjustedPosition;
+
+    return true;
+  }
+
+  // Get the most recently added shape (for "it" references)
+  getMostRecentShape(): Shape | undefined {
+    if (this.shapes.size === 0) return undefined;
+    
+    // Get all shapes and sort by creation time
+    const shapesArray = Array.from(this.shapes.values());
+    shapesArray.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    
+    return shapesArray[0];
+  }
 }
