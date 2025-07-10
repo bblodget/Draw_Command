@@ -175,10 +175,21 @@ These commands will be implemented using the three object model and enhanced reg
 | Relative Draw | "Computer, draw a circle to the left of the square please" | 📋 Task 1.11 | Smart positioning |
 | Relative Move | "Computer, move the circle to the right of the square please" | 📋 Task 1.11 | Position relative to other shapes |
 
-### Context Commands
+### Context Commands - Pronoun References ("it")
+All commands support pronoun references using "it" to refer to the last interacted shape. The system tracks which shape was last created, moved, resized, or otherwise modified.
+
 | Command | Example | Status | Notes |
 |---------|---------|--------|-------|
-| Pronoun Reference | "Computer, move it to the right please" | 📋 Task 1.12 | References last shape |
+| Pronoun Move | "Computer, move it to the right please" | ✅ Full Support | Moves last interacted shape |
+| Pronoun Color | "Computer, color it red please" | ✅ Full Support | Changes last interacted shape color |
+| Pronoun Resize | "Computer, make it bigger please" | ✅ Full Support | Resizes last interacted shape |
+| Pronoun Delete | "Computer, delete it please" | ✅ Full Support | Deletes last interacted shape |
+
+**How "it" References Work:**
+- The system automatically tracks the last shape you interacted with
+- Any draw, move, resize, operation updates the "last interacted shape"
+- When you use "it" in a command, it refers to this tracked shape
+- If no shapes exist, you get helpful error messages like "There are no shapes to move"
 
 ### Interactive Help System
 | Command | Example | Status | Notes |
@@ -284,9 +295,12 @@ The parser accepts various natural language variations:
 - 📋 UI Polish and testing
 - 📋 Shape rotation (degrees)
 - 📋 Relative positioning
-- 📋 Pronoun references ("it") - partial support (resize only)
 - 📋 Help system
 
+**Recently Completed**:
+- ✅ **Task 1.12: Pronoun references ("it")** - Full support for all commands (move, color, delete,  resize)
+- ✅ Comprehensive lastShapeId tracking system for contextual references
+- ✅ Natural conversation flow: "draw a square" → "make it blue" → "move it left" → "delete it"
 ### Phase 2: AI Enhancement 📅
 - OpenAI API integration
 - Natural language processing
@@ -330,8 +344,14 @@ To test the system, try these basic commands:
 - "Computer, make it a little smaller please" (0.8x size)
 - "Computer, make the triangle the same size as the square please" (size matching)
 
+### Pronoun References Testing:
+- "Computer, draw a red square please" (creates square and makes it the last interacted shape)
+- "Computer, make it blue please" (changes the square to blue)
+- "Computer, move it to the right please" (moves the blue square right)
+- "Computer, make it bigger please" (resizes the square)
+- "Computer, delete it please" (deletes the square)
+
 ### Planned Commands Testing (Future):
 - "Computer, rotate the triangle 45 degrees please" (Task 1.10)
 - "Computer, draw a circle to the left of the square please" (Task 1.11)
-- "Computer, move it to the right please" (Task 1.12 - for movement)
 - "Computer, help please" (Task 1.13)
