@@ -2,12 +2,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { VoiceService } from '../../services/voice.service';
 import type { VoiceRecognitionCallbacks } from '../../services/voice.service';
 import { Button, Alert } from '../common';
+import { VoiceStatusIndicator } from './VoiceStatusIndicator';
+import { CommandDisplay } from './CommandDisplay';
+import { HelpPanel } from './HelpPanel';
 
 interface VoiceInterfaceProps {
   onCommand?: (command: string) => void;
+  lastCommand?: string;
+  commandResult?: { success: boolean; message: string } | null;
 }
 
-export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand }) => {
+export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastCommand, commandResult }) => {
   const voiceServiceRef = useRef<VoiceService>(new VoiceService());
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -97,8 +102,11 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand }) => 
   }
 
   return (
-    <div className="p-4 bg-gray-100 rounded-lg">
-      <h2 className="text-xl font-bold mb-4">Voice Interface</h2>
+    <div className="bg-white rounded-lg shadow-lg border border-gray-200">
+      <div className="px-4 py-3 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-800">Voice Control</h2>
+      </div>
+      <div className="p-4">
       
       {error && (
         <div className="mb-4">
@@ -115,6 +123,16 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand }) => 
       )}
 
       <div className="space-y-4">
+        {/* Status Indicator */}
+        <div className="flex items-center justify-between">
+          <VoiceStatusIndicator
+            isListening={isListening}
+            isSpeaking={isSpeaking}
+            hasTranscript={transcript.length > 0}
+            micPermission={micPermission}
+          />
+        </div>
+
         <div className="flex gap-2">
           <Button 
             onClick={handleStartListening} 
@@ -140,16 +158,12 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand }) => 
           </Button>
         </div>
 
-        <div className="text-sm text-gray-600">
-          <p><strong>Status:</strong> {isListening ? (isSpeaking ? 'Listening (speaking detected)' : 'Listening (waiting for speech)') : 'Not listening'}</p>
-        </div>
-
-        <div className="bg-white p-3 rounded border min-h-[100px]">
-          <div className="text-sm text-gray-500 mb-2">Current transcript:</div>
-          <div className="text-gray-800 font-mono text-sm">
-            {transcript || (isListening ? 'Say "Computer [command] please"...' : 'Click Start to begin voice recognition')}
-          </div>
-        </div>
+        {/* Command Display */}
+        <CommandDisplay
+          transcript={transcript}
+          lastCommand={lastCommand || ''}
+          commandResult={commandResult || null}
+        />
 
         <Button 
           onClick={handleClearTranscript}
@@ -159,13 +173,9 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand }) => 
           Clear Transcript
         </Button>
 
-        <div className="text-xs text-gray-500 space-y-1">
-          <p><strong>Usage:</strong></p>
-          <p>• Say "Computer" to get attention</p>
-          <p>• Give your command: "draw a red square"</p>
-          <p>• Say "please" to execute the command</p>
-          <p><strong>Example:</strong> "Computer, draw a red square please"</p>
-        </div>
+        {/* Help Panel */}
+        <HelpPanel />
+      </div>
       </div>
     </div>
   );

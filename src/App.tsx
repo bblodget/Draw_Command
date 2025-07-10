@@ -213,21 +213,6 @@ function App() {
           </Alert>
         </div>
 
-        {lastCommand && (
-          <div className="mb-6">
-            <Alert type="success">
-              Last command detected: "{lastCommand}"
-            </Alert>
-          </div>
-        )}
-
-        {commandResult && (
-          <div className="mb-6">
-            <Alert type={commandResult.success ? 'success' : 'error'}>
-              {commandResult.message}
-            </Alert>
-          </div>
-        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3">
@@ -235,7 +220,11 @@ function App() {
           </div>
           
           <div className="lg:col-span-1">
-            <VoiceInterface onCommand={handleVoiceCommand} />
+            <VoiceInterface 
+              onCommand={handleVoiceCommand} 
+              lastCommand={lastCommand}
+              commandResult={commandResult}
+            />
           </div>
         </div>
       </main>
