@@ -189,6 +189,31 @@ function App() {
               setCommandResult({ success: false, message: `No ${targetShape} to resize` });
               responseService.current.speak(`There's no ${targetShape} on the canvas to resize`, 'normal');
             }
+          } else if (command.resizeMode === 'match' && command.targetShape) {
+            const resized = canvas.resizeShapeByType(targetShape, 'match', command.targetShape);
+            
+            if (resized) {
+              const message = `Made the ${targetShape} the same size as the ${command.targetShape}`;
+              const spokenMessage = `I made the ${targetShape} the same size as the ${command.targetShape}`;
+              
+              setCommandResult({ success: true, message });
+              responseService.current.speak(spokenMessage, 'normal');
+            } else {
+              // Check which shape is missing
+              const sourceExists = canvas.getShapeByType(targetShape);
+              const targetExists = canvas.getShapeByType(command.targetShape);
+              
+              if (!sourceExists && !targetExists) {
+                setCommandResult({ success: false, message: `No ${targetShape} or ${command.targetShape} on the canvas` });
+                responseService.current.speak(`There's no ${targetShape} or ${command.targetShape} on the canvas`, 'normal');
+              } else if (!sourceExists) {
+                setCommandResult({ success: false, message: `No ${targetShape} to resize` });
+                responseService.current.speak(`There's no ${targetShape} on the canvas to resize`, 'normal');
+              } else {
+                setCommandResult({ success: false, message: `No ${command.targetShape} to match size with` });
+                responseService.current.speak(`There's no ${command.targetShape} on the canvas to match size with`, 'normal');
+              }
+            }
           }
           break;
           

@@ -605,8 +605,11 @@ export class CanvasService {
     };
   }
 
-  // Resize shape by type
-  resizeShapeByType(shapeType: string, resizeFactor: number): boolean {
+  // Resize shape by type (relative mode)
+  resizeShapeByType(shapeType: string, resizeFactor: number): boolean;
+  // Resize shape to match another shape's size
+  resizeShapeByType(shapeType: string, mode: 'match', targetShapeType: string): boolean;
+  resizeShapeByType(shapeType: string, resizeFactorOrMode: number | 'match', targetShapeType?: string): boolean {
     if (!this.fabricCanvas) return false;
 
     const shape = this.getShapeByType(shapeType);
@@ -615,8 +618,24 @@ export class CanvasService {
     const fabricObject = this.fabricObjects.get(shape.id);
     if (!fabricObject) return false;
 
-    // Calculate new size based on resize factor
-    const newSize = Math.max(10, Math.min(500, Math.round(shape.size * resizeFactor)));
+    let newSize: number;
+    
+    if (resizeFactorOrMode === 'match') {
+      // Match mode: resize to same size as target shape
+      if (!targetShapeType) return false;
+      
+      const targetShape = this.getShapeByType(targetShapeType);
+      if (!targetShape) return false;
+      
+      // Convert between different shape size measurements
+      newSize = this.convertSizeBetweenShapes(targetShape.type, shape.type, targetShape.size);
+    } else {
+      // Relative mode: apply resize factor
+      newSize = Math.round(shape.size * resizeFactorOrMode);
+    }
+
+    // Clamp size to reasonable bounds (min 10px, max 500px)
+    newSize = Math.max(10, Math.min(500, newSize));
 
     // Check if new size would cause shape to exceed canvas bounds
     const testShape: Shape = {
@@ -676,5 +695,45 @@ export class CanvasService {
     shapesArray.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     
     return shapesArray[0];
+  }
+
+  // Convert size between different shape types for "same size as" functionality
+  private convertSizeBetweenShapes(sourceType: string, targetType: string, sourceSize: number): number {
+    // If same shape type, use size directly
+    if (sourceType === targetType) {
+      return sourceSize;
+    }
+
+    // Convert to a common "visual size" measurement (approximate area-based)
+    let visualSize: number;
+    
+    // Convert source to visual size
+    switch (sourceType) {
+      case 'circle':
+        // Circle: size is radius, visual area = π * r²
+        // For matching, we'll use diameter (2 * radius) as visual size
+        visualSize = sourceSize * 2;
+        break;
+      case 'square':
+      case 'triangle':
+        // Square/Triangle: size is width/height, use directly
+        visualSize = sourceSize;
+        break;
+      default:
+        visualSize = sourceSize;
+    }
+
+    // Convert visual size to target shape size
+    switch (targetType) {
+      case 'circle':
+        // Circle: convert visual size (diameter) back to radius
+        return visualSize / 2;
+      case 'square':
+      case 'triangle':
+        // Square/Triangle: use visual size directly
+        return visualSize;
+      default:
+        return visualSize;
+    }
   }
 }

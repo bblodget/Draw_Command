@@ -20,7 +20,10 @@ export class CommandService {
     
     // Resize patterns - simplified to just essential commands
     // Matches: "make the square bigger", "make it smaller", "make it much bigger", "make it a little smaller"
-    resize: /make\s+(?:the\s+)?(square|circle|triangle|it)\s+(bigger|larger|smaller|much bigger|much smaller|a little bigger|a little smaller)/i
+    resize: /make\s+(?:the\s+)?(square|circle|triangle|it)\s+(bigger|larger|smaller|much bigger|much smaller|a little bigger|a little smaller)/i,
+    
+    // Matches: "make the triangle the same size as the square"
+    resizeSameAs: /make\s+(?:the\s+)?(square|circle|triangle|it)\s+(?:the\s+)?same\s+size\s+as\s+(?:the\s+)?(square|circle|triangle)/i
   };
 
   // Color mapping for common colors
@@ -141,6 +144,28 @@ export class CommandService {
         shape: finalShape,
         resizeMode: 'relative',
         resizeFactor
+      };
+    }
+
+    // Try to match "same size as" resize commands
+    const resizeSameAsMatch = normalizedText.match(this.patterns.resizeSameAs);
+    if (resizeSameAsMatch) {
+      let sourceShape = resizeSameAsMatch[1]; // Shape to resize
+      const targetShape = resizeSameAsMatch[2]; // Shape to match size of
+      
+      // Handle "it" reference for source shape
+      let finalSourceShape: 'square' | 'circle' | 'triangle' | undefined;
+      if (sourceShape === 'it') {
+        finalSourceShape = undefined; // Will be resolved by the app
+      } else {
+        finalSourceShape = sourceShape as 'square' | 'circle' | 'triangle';
+      }
+      
+      return {
+        type: 'resize',
+        shape: finalSourceShape,
+        resizeMode: 'match',
+        targetShape: targetShape as 'square' | 'circle' | 'triangle'
       };
     }
 

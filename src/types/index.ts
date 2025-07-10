@@ -5,8 +5,9 @@ export interface DrawCommand {
   size?: number;
   position?: { x: number; y: number };
   targetId?: string;
-  resizeMode?: 'relative';
+  resizeMode?: 'relative' | 'match';
   resizeFactor?: number;
+  targetShape?: 'square' | 'circle' | 'triangle';
 }
 
 export interface Shape {

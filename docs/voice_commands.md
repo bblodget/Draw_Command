@@ -125,11 +125,13 @@ These commands resize shapes on the canvas. They work with all three shape types
 | Much Smaller | "Computer, make it much smaller please" | ✅ Full Support | Halves the size |
 | A Little Bigger | "Computer, make it a little bigger please" | ✅ Full Support | Increases size by 20% |
 | A Little Smaller | "Computer, make it a little smaller please" | ✅ Full Support | Decreases size by 20% |
+| Same Size As | "Computer, make the triangle the same size as the square please" | ✅ Full Support | Matches another shape's visual size |
 
 **Format Variations:**
 - "make the [shape] [modifier]" - with article
 - "make [shape] [modifier]" - without article  
 - "make it [modifier]" - references most recent shape
+- "make the [shape] the same size as the [target-shape]" - size matching
 
 **Size Modifiers:**
 - **bigger/larger** - 1.5x current size
@@ -144,10 +146,17 @@ These commands resize shapes on the canvas. They work with all three shape types
 - Maximum: 500 pixels
 - Shapes are automatically repositioned if resizing would push them off canvas
 
+**Size Matching Logic:**
+- When matching sizes between different shape types, the system uses visual size equivalence
+- Circle-to-Square: Uses the circle's diameter to match the square's width
+- Square-to-Circle: Uses the square's width to set the circle's diameter
+- Same shape types: Direct size copying
+
 **Voice Feedback:**
 - "I made the square bigger"
 - "I made the circle much smaller"
 - "I made it a little bigger"
+- "I made the triangle the same size as the square"
 - No shape: "There are no shapes on the canvas to resize"
 
 ## 🟡 Planned Commands (Next Priority)
@@ -319,6 +328,7 @@ To test the system, try these basic commands:
 - "Computer, make the circle smaller please" (0.67x size)
 - "Computer, make it much bigger please" (2x size)
 - "Computer, make it a little smaller please" (0.8x size)
+- "Computer, make the triangle the same size as the square please" (size matching)
 
 ### Planned Commands Testing (Future):
 - "Computer, rotate the triangle 45 degrees please" (Task 1.10)
