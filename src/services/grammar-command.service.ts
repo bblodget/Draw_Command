@@ -65,9 +65,9 @@ export class GrammarCommandService {
   private convertToDrawCommand(parsed: ParsedCommand): DrawCommand | null {
     const { verb, object, preModifier, postModifier, value } = parsed;
     
-    // Get the shape or pronoun
-    const shape = object.type === 'shape' ? object.value as 'square' | 'circle' | 'triangle' : undefined;
-    const pronoun = object.type === 'pronoun' ? object.value as 'it' : undefined;
+    // Get the shape or pronoun (handle null object for commands like "clear")
+    const shape = object?.type === 'shape' ? object.value as 'square' | 'circle' | 'triangle' : undefined;
+    const pronoun = object?.type === 'pronoun' ? object.value as 'it' : undefined;
 
     switch (verb) {
       case 'draw':
