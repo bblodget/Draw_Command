@@ -189,8 +189,9 @@ export class VoiceService {
         const executeIndex = lowerTranscript.indexOf(this.EXECUTE_WORD);
 
         if (attentionIndex !== -1 && executeIndex !== -1 && executeIndex > attentionIndex) {
-            const commandStart = attentionIndex + this.ATTENTION_WORD.length;
-            const commandEnd = executeIndex;
+            // Include the full command from "computer" to "please" for the grammar parser
+            const commandStart = attentionIndex;
+            const commandEnd = executeIndex + this.EXECUTE_WORD.length;
             return transcript.substring(commandStart, commandEnd).trim();
         }
 

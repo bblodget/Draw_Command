@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Test</title>
+    <script src="https://unpkg.com/nearley@2.20.1/lib/nearley.js"></script>
+</head>
+<body>
+    <h1>Voice Commands Grammar Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        // We'll need to manually define the grammar here for testing
+        // This is a simplified version for quick testing
+        console.log('Testing grammar...');
+        
+        const testCases = [
+            'computer, draw a square please.',
+            'computer, draw a red circle please.',
+            'computer, move the square left please.',
+            'computer, make the square bigger please.',
+            'computer, color the triangle blue please.',
+            'computer, delete the circle please.'
+        ];
+        
+        const results = document.getElementById('results');
+        
+        testCases.forEach((testCase, index) => {
+            const div = document.createElement('div');
+            div.innerHTML = `<strong>Test ${index + 1}:</strong> "${testCase}" - <span style="color: orange;">Grammar needs to be loaded</span>`;
+            results.appendChild(div);
+        });
+        
+        // Note: This is a placeholder - we need to figure out how to load the compiled grammar
+        console.log('Grammar test page loaded. Need to integrate compiled grammar.');
+    </script>
+</body>
+</html>

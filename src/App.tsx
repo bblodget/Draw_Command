@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { Header } from './components/UI';
 import { Canvas } from './components/Canvas';
 import { VoiceInterface } from './components/VoiceInterface';
-import { CommandService } from './services/command.service';
+import { GrammarCommandService } from './services/grammar-command.service';
 import { CanvasService } from './services/canvas.service';
 import { ResponseService } from './services/response.service';
 import type { DrawCommand } from './types';
@@ -10,7 +10,7 @@ import type { DrawCommand } from './types';
 function App() {
   const [lastCommand, setLastCommand] = useState<string>('');
   const [commandResult, setCommandResult] = useState<{ success: boolean; message: string } | null>(null);
-  const commandService = useRef(new CommandService());
+  const commandService = useRef(new GrammarCommandService());
   const responseService = useRef(new ResponseService());
   const canvasServiceRef = useRef<CanvasService | null>(null);
 

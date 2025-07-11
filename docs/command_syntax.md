@@ -103,6 +103,21 @@ Modifiers can appear in two positions:
   - `"Computer, delete the square please"`
   - `"Computer, remove it please"`
 
+### Spatial Relationship Commands (BNF Grammar Target)
+- **Pattern**: `[verb] [FILLERS?] [color?] [FILLERS?] [shape] [FILLERS?] [spatial_relation] [FILLERS?] [reference_shape]`
+- **Examples**:
+  - `"Computer, move the triangle to the left of the square please"`
+  - `"Computer, draw a circle above the triangle please"`
+  - `"Computer, move it to the right of the square please"`
+  - `"Computer, draw a red circle below the triangle please"`
+
+### Complex Size Relationship Commands (BNF Grammar Target)
+- **Pattern**: `make [FILLERS?] [shape] [FILLERS?] [size_relation] [FILLERS?] [reference_shape]`
+- **Examples**:
+  - `"Computer, make the circle the same size as the triangle please"`
+  - `"Computer, make it twice as big as the square please"`
+  - `"Computer, make the triangle half the size of the circle please"`
+
 ## Supported Values
 
 ### Colors

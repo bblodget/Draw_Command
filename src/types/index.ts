@@ -1,6 +1,9 @@
+import type { SpatialRelation, SizeRelation } from './grammar';
+
 export interface DrawCommand {
-  type: 'draw' | 'move' | 'delete' | 'clear' | 'resize';
+  type: 'draw' | 'move' | 'delete' | 'clear' | 'resize' | 'rotate';
   shape?: 'square' | 'circle' | 'triangle' | 'line';
+  pronoun?: 'it';
   color?: string;
   size?: number;
   position?: { x: number; y: number };
@@ -8,6 +11,11 @@ export interface DrawCommand {
   resizeMode?: 'relative' | 'match';
   resizeFactor?: number;
   targetShape?: 'square' | 'circle' | 'triangle';
+  direction?: 'up' | 'down' | 'left' | 'right';
+  value?: number;
+  unit?: string;
+  spatialRelation?: SpatialRelation;
+  sizeRelation?: SizeRelation;
 }
 
 export interface Shape {
