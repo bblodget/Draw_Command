@@ -2,9 +2,9 @@
 
 This document presents a simplified BNF (Backus-Naur Form) grammar for the voice command system, built incrementally.
 
-## Current Grammar (Phase 1, Step 1.1)
+## Current Grammar (Phase 1, Step 1.2)
 
-We're expanding from the minimal grammar to support all three basic shapes.
+We're expanding to support all three basic shapes and common fillers.
 
 ### Main Structure
 ```bnf
@@ -23,7 +23,7 @@ We're expanding from the minimal grammar to support all three basic shapes.
 ```bnf
 <object-phrase> ::= <filler> <shape>
 
-<filler> ::= "a"
+<filler> ::= "a" | "an" | "the"
 
 <shape> ::= "square" | "circle" | "triangle"
 ```
@@ -32,15 +32,17 @@ We're expanding from the minimal grammar to support all three basic shapes.
 
 This grammar should handle:
 - `computer draw a square please`
+- `computer draw an circle please`
+- `computer draw the triangle please`
 - `computer draw a circle please`
-- `computer draw a triangle please`
+- `computer draw the square please`
 - `computer clear please`
 
 ## Next Steps
 
 Once this works, we'll incrementally add:
 1. ✅ More shapes (circle, triangle) - **COMPLETED**
-2. More fillers (the, an)
+2. ✅ More fillers (the, an) - **COMPLETED**
 3. More verbs (move, color, etc.)
 4. Modifiers (colors, directions)
 5. Complex relationships
