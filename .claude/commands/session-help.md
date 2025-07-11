@@ -10,6 +10,7 @@ The session system helps document development work for future reference and inte
 - `/project:session-start-pr [pr_number] [name]` - Start a new PR review session
 - `/project:session-update [commit]` - Update session with automatic summary (optionally commit changes)
 - `/project:session-end [abort]` - End session with comprehensive summary (optionally abort without merging)
+- `/project:session-refresh` - Refresh session context after compaction by reviewing key docs
 - `/project:session-list` - List all session files
 - `/project:session-current` - Show current session status
 - `/project:session-help` - Show this help
@@ -61,6 +62,18 @@ The session system helps document development work for future reference and inte
 - Cleans up PR branch if needed
 - **Abort option:** Can end session without merging (preserves documentation, discards code)
 
+### Session Refresh Command:
+
+The `/project:session-refresh` command is designed to be used after the `/compact` command when the context becomes too long. It refreshes Claude's understanding of the project by reviewing:
+
+- **Development Workflow** (`docs/development-workflow.md`) - Refreshes knowledge of development processes and conventions
+- **Project Plan** (`docs/plan.md`) - Reviews current project goals, milestones, and direction
+- **Current Session Log** (`.claude/sessions/.current-session`) - Understands what was being worked on and where the session left off
+
+After reviewing these documents, it provides a summary of the current project state, active development tasks, and the workflow to follow for continued work.
+
+**Usage:** Run after `/compact` to maintain project awareness and continue development seamlessly.
+
 ### Best Practices:
 
 - Start a session when beginning significant work
@@ -69,6 +82,7 @@ The session system helps document development work for future reference and inte
 - Follow the appropriate workflow: implement → test → commit → merge OR checkout → test → review → decide
 - End with thorough summary for future reference
 - Review past sessions before starting similar work
+- Use session-refresh after context compaction to maintain continuity
 
 ### Example Workflows:
 
