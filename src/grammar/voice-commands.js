@@ -1,5 +1,6 @@
 // Generated automatically by nearley, version 2.20.1
 // http://github.com/Hardmath123/nearley
+(function () {
 function id(x) { return x[0]; }
 var grammar = {
     Lexer: undefined,
@@ -23,10 +24,21 @@ var grammar = {
     {"name": "filler", "symbols": [{"literal":"a"}], "postprocess": id},
     {"name": "shape$string$1", "symbols": [{"literal":"s"}, {"literal":"q"}, {"literal":"u"}, {"literal":"a"}, {"literal":"r"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "shape", "symbols": ["shape$string$1"], "postprocess": id},
+    {"name": "shape$string$2", "symbols": [{"literal":"c"}, {"literal":"i"}, {"literal":"r"}, {"literal":"c"}, {"literal":"l"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "shape", "symbols": ["shape$string$2"], "postprocess": id},
+    {"name": "shape$string$3", "symbols": [{"literal":"t"}, {"literal":"r"}, {"literal":"i"}, {"literal":"a"}, {"literal":"n"}, {"literal":"g"}, {"literal":"l"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "shape", "symbols": ["shape$string$3"], "postprocess": id},
     {"name": "_$ebnf$1", "symbols": []},
     {"name": "_$ebnf$1", "symbols": ["_$ebnf$1", /[\s]/], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "_", "symbols": ["_$ebnf$1"], "postprocess": () => null}
 ]
   , ParserStart: "main"
 }
+if (typeof module !== 'undefined'&& typeof module.exports !== 'undefined') {
+   module.exports = grammar;
+} else {
+   window.grammar = grammar;
+}
+})();
+
 export default grammar;

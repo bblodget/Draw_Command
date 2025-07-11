@@ -1,5 +1,6 @@
-# Voice Commands Grammar - Minimal Version
-# Goal: Parse "computer draw a square please" and "computer clear please"
+# Voice Commands Grammar - Phase 1, Step 1.1
+# Goal: Parse "computer draw a [shape] please" and "computer clear please"
+# Supports: square, circle, triangle
 
 # Main rule
 main -> "computer" _ command _ "please"     {% ([,, cmd]) => cmd %}
@@ -26,6 +27,8 @@ filler -> "a" {% id %}
 
 # Shapes
 shape -> "square" {% id %}
+    | "circle" {% id %}
+    | "triangle" {% id %}
 
 # Whitespace
 _ -> [\s]:*  {% () => null %}
