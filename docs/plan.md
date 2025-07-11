@@ -2,10 +2,10 @@
 
 ## 📊 Current Progress
 
-**Last Updated**: 2025-07-10
+**Last Updated**: 2025-07-11
 
 ### Phase 1: Core Functionality Foundation
-- ✅ **14/18 tasks completed** (78% complete)
+- ✅ **14/19 tasks completed** (74% complete)
 - ⏱️ **22-24 hours** actual time vs 40-50 hours estimated  
 - 🎯 **Next**: Task 1.10: Rotate Commands
 
@@ -50,8 +50,9 @@
 **Next Steps**: 
 1. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
 2. **Task 1.11**: Relative Positioning - "draw a circle to the left of the square"
-3. **Task 1.12**: Pronoun References - "move it to the right"
+3. **Task 1.12**: Pronoun References - "move it to the right" (PARTIAL - resize only)
 4. **Task 1.13**: Help System - "what can I draw"
+5. **Task 1.15**: BNF Grammar Architecture - Replace regex with grammar-based parsing
 
 ---
 
@@ -407,6 +408,50 @@ When users pause between parts of a voice command (e.g., "Computer" → pause �
 
 ---
 
+### ❌ Task 1.12: Pronoun References (PARTIAL - SESSION ABANDONED)
+**Goal**: Track and reference the last interacted shape with "it".
+
+**Tasks**:
+- [ ] Implement lastShapeId tracking in CanvasService
+- [ ] Update all shape operations to set lastShapeId
+- [ ] Create regex pattern for commands with "it"
+- [ ] Modify command parser to handle pronoun references
+- [ ] Update App.tsx to resolve "it" to specific shape
+- [ ] Add appropriate voice responses
+- [ ] Test pronoun references with various commands
+- [ ] Update voice commands documentation
+
+**Acceptance Criteria**:
+- "Move it to the right" moves the last acted upon shape
+- "Make it bigger" resizes the last shape
+- "Delete it" removes the last shape
+- Clear error if no shape has been interacted with
+- Voice confirms action with shape name: "I moved the square to the right"
+
+**Status**: 2025-07-11 | **Session**: `Task 1.12: Pronoun References` (ABANDONED)
+**Actual Time**: ~2 hours (documentation and attempted implementation)
+
+**Session Summary**: 
+- **✅ Documentation Created**: Enhanced docs/voice_commands.md and docs/command_syntax.md
+- **✅ Command Syntax Template**: Universal template for all voice commands
+- **❌ Implementation Failed**: Session abandoned due to critical "make" command bug
+- **❌ Code Changes Reverted**: Introduced new bugs, changes were stashed and not merged
+
+**Current Status**: 
+- **✅ Resize commands have "it" support** (implemented in Task 1.9)
+- **❌ Move, delete, color commands lack "it" support**
+- **🐛 Critical Bug**: "Computer, make the square bigger please" changes color to black instead of resizing
+- **📚 Documentation committed**: Enhanced command syntax documentation preserved
+
+**Root Cause**: Color regex pattern includes "make" alternative, causing pattern matching conflicts:
+```typescript
+color: /(?:color|make)\s+(?:the\s+)?(square|circle|triangle)\s+(\w+)/i,
+```
+
+**Next Steps**: Fix the "make" command bug before implementing full pronoun references.
+
+---
+
 ### Task 1.10: Rotate Commands
 **Goal**: Implement shape rotation with default and custom angles.
 
@@ -455,27 +500,50 @@ When users pause between parts of a voice command (e.g., "Computer" → pause �
 
 ---
 
-### Task 1.12: Pronoun References  
-**Goal**: Track and reference the last interacted shape with "it".
+### Task 1.15: BNF Grammar Architecture
+**Goal**: Replace regex-based parsing with grammar-based parsing to support complex natural language commands and spatial relationships.
+
+**Background**: 
+During Task 1.12 session, we discovered that regex patterns have fundamental limitations for natural language processing. Commands like "make the triangle the same size as the rectangle" and "move the triangle to the left of the rectangle" require more sophisticated parsing than regex can provide. The current regex approach also suffers from pattern matching conflicts (e.g., the "make" command bug).
 
 **Tasks**:
-- [ ] Implement lastShapeId tracking in CanvasService
-- [ ] Update all shape operations to set lastShapeId
-- [ ] Create regex pattern for commands with "it"
-- [ ] Modify command parser to handle pronoun references
-- [ ] Update App.tsx to resolve "it" to specific shape
-- [ ] Add appropriate voice responses
-- [ ] Test pronoun references with various commands
+- [ ] Research and select appropriate parsing library (Nearley.js, PEG.js, ANTLR, or Chevrotain)
+- [ ] Design BNF grammar for voice commands based on universal template
+- [ ] Implement grammar-based parser to replace CommandService regex patterns
+- [ ] Add support for spatial relationship commands ("to the left of", "above", "below")
+- [ ] Add support for complex size relationships ("same size as", "twice as big as")
+- [ ] Implement pronoun reference resolution within grammar
+- [ ] Add comprehensive error handling and fallback mechanisms
+- [ ] Test grammar parser with all existing commands for regression
+- [ ] Test new spatial relationship commands
 - [ ] Update voice commands documentation
+- [ ] Migration guide for moving from regex to grammar-based parsing
 
 **Acceptance Criteria**:
-- "Move it to the right" moves the last acted upon shape
-- "Make it bigger" resizes the last shape
-- "Delete it" removes the last shape
-- Clear error if no shape has been interacted with
-- Voice confirms action with shape name: "I moved the square to the right"
+- All existing commands continue to work without regression
+- "Computer, make the triangle the same size as the rectangle please" works correctly
+- "Computer, move the triangle to the left of the rectangle please" works correctly
+- "Computer, draw a circle above the square please" works correctly
+- Grammar handles natural language variations and filler words
+- Clear error messages for invalid command structures
+- Performance is acceptable (parsing within 50ms)
+- Code is maintainable and extensible for future commands
 
-**Estimated Time**: 2-3 hours
+**Grammar Features**:
+- **Spatial Relationships**: "to the left of", "to the right of", "above", "below", "next to"
+- **Size Relationships**: "same size as", "twice as big as", "half the size of"
+- **Pronoun References**: "it" referring to last interacted shape
+- **Filler Word Support**: Articles, prepositions, and other natural language elements
+- **Command Chaining**: Future support for multiple operations in one command
+
+**Estimated Time**: 6-8 hours
+
+**Technical Considerations**:
+- **Parser Selection**: Nearley.js recommended for JavaScript/TypeScript integration
+- **Grammar Design**: Based on universal template from docs/command_syntax.md
+- **Performance**: Parser compilation and caching for production use
+- **Error Handling**: Graceful degradation to simpler parsing when grammar fails
+- **Migration**: Phased rollout with fallback to regex patterns during transition
 
 ---
 
@@ -813,8 +881,8 @@ When users pause between parts of a voice command (e.g., "Computer" → pause �
 
 ## Timeline Estimate
 
-- **Phase 1**: ~~40-50 hours~~ **22-24 hours actual** (78% complete, 4 tasks remaining)
-  - Remaining: Tasks 1.10-1.13 (~10-15 hours)
+- **Phase 1**: ~~40-50 hours~~ **22-24 hours actual** (74% complete, 5 tasks remaining)
+  - Remaining: Tasks 1.10-1.13, 1.15 (~16-23 hours)
 - **Phase 1.5**: ~~2-3 hours~~ **54 minutes actual** ✅ COMPLETED
 - **Phase 2**: 20-25 hours (AI Enhancement) - Future
 - **Phase 3**: 20-25 hours (Advanced Features) - Future
