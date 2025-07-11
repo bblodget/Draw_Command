@@ -68,10 +68,11 @@ export class GrammarCommandService {
     // Get the shape or pronoun (handle null object for commands like "clear")
     const shape = object?.type === 'shape' ? object.value as 'square' | 'circle' | 'triangle' : undefined;
     const pronoun = object?.type === 'pronoun' ? object.value as 'it' : undefined;
+    const color = object?.color; // Get color from object
 
     switch (verb) {
       case 'draw':
-        return this.handleDrawCommand(shape, pronoun, preModifier, postModifier, value);
+        return this.handleDrawCommand(shape, pronoun, color, preModifier, postModifier, value);
       
       case 'move':
         return this.handleMoveCommand(shape, pronoun, preModifier, postModifier, value);
@@ -102,14 +103,14 @@ export class GrammarCommandService {
     }
   }
 
-  private handleDrawCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', preModifier?: any, postModifier?: any, _value?: any): DrawCommand | null {
+  private handleDrawCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectColor?: string, preModifier?: any, postModifier?: any, _value?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Draw command needs a shape or pronoun');
       return null;
     }
 
-    // Get color from modifiers
-    const color = this.extractColor(preModifier, postModifier);
+    // Get color from object first, then from modifiers as fallback
+    const color = objectColor || this.extractColor(preModifier, postModifier);
     
     // Handle spatial relationships
     const spatialRelation = this.extractSpatialRelation(preModifier, postModifier);

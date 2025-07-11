@@ -11,6 +11,7 @@ export interface ParsedCommand {
 export interface ObjectPhrase {
   type: 'shape' | 'pronoun';
   value: string;
+  color?: string;
   preFillers?: string[];
   postFillers?: string[];
 }
