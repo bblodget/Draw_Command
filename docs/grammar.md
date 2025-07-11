@@ -2,9 +2,9 @@
 
 This document presents a simplified BNF (Backus-Naur Form) grammar for the voice command system, built incrementally.
 
-## Current Grammar (Phase 2, Step 2.2)
+## Current Grammar (Phase 3, Step 3.1)
 
-We're expanding to support all three basic shapes, common fillers, and colored drawing commands.
+We're expanding to support all three basic shapes, common fillers, colored drawing commands, and movement commands.
 
 ### Main Structure
 ```bnf
@@ -16,15 +16,22 @@ We're expanding to support all three basic shapes, common fillers, and colored d
 
 ### Verbs
 ```bnf
-<verb> ::= "draw" | "clear"
+<verb> ::= "draw" | "clear" | "move"
 ```
 
 ### Object Phrases
 ```bnf
-<object-phrase> ::= <filler> <shape>
-                  | <filler> <color> <shape>
+<object-phrase> ::= <fillers> <shape>
+                  | <fillers> <color> <shape>
+                  | <fillers> <shape> <direction>
+                  | <fillers> <color> <shape> <direction>
+                  | <fillers> <shape> <fillers> <direction>
+                  | <fillers> <color> <shape> <fillers> <direction>
 
-<filler> ::= "a" | "an" | "the"
+<fillers> ::= <filler>
+            | <fillers> <filler>
+
+<filler> ::= "a" | "an" | "the" | "to"
 
 <shape> ::= "square" | "circle" | "triangle"
 ```
@@ -34,16 +41,24 @@ We're expanding to support all three basic shapes, common fillers, and colored d
 <color> ::= "red" | "blue" | "green" | "yellow" | "purple" | "orange" | "black" | "white" | "pink" | "brown" | "gray" | "grey"
 ```
 
+### Directions
+```bnf
+<direction> ::= "up" | "down" | "left" | "right"
+```
+
 ## Test Commands
 
 This grammar should handle:
 - `computer draw a square please`
-- `computer draw an circle please`
-- `computer draw the triangle please`
 - `computer draw a red square please`
 - `computer draw a blue circle please`
-- `computer draw the green triangle please`
+- `computer move the square left please`
+- `computer move the square to the right please`
+- `computer move the red circle to up please`
+- `computer move the blue triangle to the left please`
 - `computer clear please`
+
+**Note**: `<fillers>` can match one or more filler words, so "a", "the", "to", "to the", etc. all work naturally.
 
 ## Next Steps
 
@@ -52,9 +67,9 @@ Once this works, we'll incrementally add:
 2. ✅ More fillers (the, an) - **COMPLETED**
 3. ✅ Color list (red, blue, etc.) - **COMPLETED**
 4. ✅ Colors in draw commands - **COMPLETED**
-5. More verbs (move, color, etc.)
-6. Modifiers (colors, directions)
-7. Complex relationships
+5. ✅ Move verb and directions - **COMPLETED**
+6. More verbs (color, delete, etc.)
+7. Modifiers and complex relationships
 
 ## Implementation Notes
 

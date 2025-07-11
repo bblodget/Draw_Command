@@ -65,17 +65,23 @@ export class GrammarCommandService {
   private convertToDrawCommand(parsed: ParsedCommand): DrawCommand | null {
     const { verb, object, preModifier, postModifier, value } = parsed;
     
+    // Debug logging
+    console.log('Converting parsed command:', { verb, object, preModifier, postModifier, value });
+    
     // Get the shape or pronoun (handle null object for commands like "clear")
     const shape = object?.type === 'shape' ? object.value as 'square' | 'circle' | 'triangle' : undefined;
     const pronoun = object?.type === 'pronoun' ? object.value as 'it' : undefined;
     const color = object?.color; // Get color from object
+    const direction = object?.direction; // Get direction from object
+    
+    console.log('Extracted values:', { shape, pronoun, color, direction });
 
     switch (verb) {
       case 'draw':
         return this.handleDrawCommand(shape, pronoun, color, preModifier, postModifier, value);
       
       case 'move':
-        return this.handleMoveCommand(shape, pronoun, preModifier, postModifier, value);
+        return this.handleMoveCommand(shape, pronoun, direction, preModifier, postModifier, value);
       
       case 'color':
       case 'colour':
@@ -134,14 +140,14 @@ export class GrammarCommandService {
     return command;
   }
 
-  private handleMoveCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', preModifier?: any, postModifier?: any, value?: any): DrawCommand | null {
+  private handleMoveCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectDirection?: string, preModifier?: any, postModifier?: any, value?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Move command needs a shape or pronoun');
       return null;
     }
 
-    // Get direction from modifiers
-    const direction = this.extractDirection(preModifier, postModifier);
+    // Get direction from object first, then from modifiers as fallback
+    const direction = objectDirection || this.extractDirection(preModifier, postModifier);
     
     // Handle spatial relationships
     const spatialRelation = this.extractSpatialRelation(preModifier, postModifier);

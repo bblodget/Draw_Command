@@ -12,6 +12,7 @@ export interface ObjectPhrase {
   type: 'shape' | 'pronoun';
   value: string;
   color?: string;
+  direction?: string;
   preFillers?: string[];
   postFillers?: string[];
 }
