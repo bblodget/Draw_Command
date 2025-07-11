@@ -500,24 +500,89 @@ color: /(?:color|make)\s+(?:the\s+)?(square|circle|triangle)\s+(\w+)/i,
 
 ---
 
-### Task 1.15: BNF Grammar Architecture
+### 🚧 Task 1.15: BNF Grammar Architecture (IN PROGRESS)
 **Goal**: Replace regex-based parsing with grammar-based parsing to support complex natural language commands and spatial relationships.
 
 **Background**: 
 During Task 1.12 session, we discovered that regex patterns have fundamental limitations for natural language processing. Commands like "make the triangle the same size as the rectangle" and "move the triangle to the left of the rectangle" require more sophisticated parsing than regex can provide. The current regex approach also suffers from pattern matching conflicts (e.g., the "make" command bug).
 
 **Tasks**:
-- [ ] Research and select appropriate parsing library (Nearley.js, PEG.js, ANTLR, or Chevrotain)
-- [ ] Design BNF grammar for voice commands based on universal template
-- [ ] Implement grammar-based parser to replace CommandService regex patterns
+- [x] Research and select appropriate parsing library (Nearley.js, PEG.js, ANTLR, or Chevrotain)
+- [x] Design BNF grammar for voice commands based on universal template
+- [x] Implement grammar-based parser to replace CommandService regex patterns
 - [ ] Add support for spatial relationship commands ("to the left of", "above", "below")
 - [ ] Add support for complex size relationships ("same size as", "twice as big as")
 - [ ] Implement pronoun reference resolution within grammar
-- [ ] Add comprehensive error handling and fallback mechanisms
-- [ ] Test grammar parser with all existing commands for regression
+- [x] Add comprehensive error handling and fallback mechanisms
+- [x] Test grammar parser with all existing commands for regression
 - [ ] Test new spatial relationship commands
 - [ ] Update voice commands documentation
 - [ ] Migration guide for moving from regex to grammar-based parsing
+
+**Current Status**: 2025-07-11 | **Session**: `2025-07-11-1533-Task 1.15: BNF Grammar Architecture.md`
+**Progress**: Minimal grammar working with "computer draw a square please" and "computer clear please"
+
+**Incremental Grammar Expansion Plan**:
+
+#### Phase 1: Basic Shapes & Fillers
+**Step 1.1**: Add remaining shapes
+- Add `circle` and `triangle` to shape rule
+- Test: "computer draw a circle please", "computer draw a triangle please"
+
+**Step 1.2**: Add common fillers
+- Add `the` and `an` to filler rule  
+- Test: "computer draw the square please", "computer draw an circle please"
+
+#### Phase 2: Colors in Drawing
+**Step 2.1**: Add color list
+- Create color rule with basic colors (red, blue, green, yellow, etc.)
+- Test standalone color parsing
+
+**Step 2.2**: Add colors to draw commands
+- Modify object_phrase to support optional color before shape
+- Test: "computer draw a red square please", "computer draw a blue circle please"
+
+#### Phase 3: Movement Commands
+**Step 3.1**: Add move verb and directions
+- Add `move` to verb rule
+- Create direction rule (up, down, left, right)
+- Create movement object phrase
+- Test: "computer move the square left please"
+
+**Step 3.2**: Add optional distance (later phase)
+- Will add numeric values and units support
+
+#### Phase 4: Delete Command
+**Step 4.1**: Add delete/remove verbs
+- Add `delete` and `remove` to verb rule
+- Test: "computer delete the square please"
+
+#### Phase 5: Color Command (as verb)
+**Step 5.1**: Add color verb
+- Add `color` as a verb
+- Modify command structure to handle "color [shape] [color]"
+- Test: "computer color the square red please"
+
+#### Phase 6: Make/Resize Commands
+**Step 6.1**: Add make verb and size modifiers
+- Add `make` and `resize` to verb rule
+- Create size_modifier rule (bigger, smaller, much bigger, etc.)
+- Test: "computer make the square bigger please"
+
+#### Phase 7: Pronoun Support
+**Step 7.1**: Add "it" as shape alternative
+- Modify shape rule to include "it"
+- Test: "computer move it left please", "computer make it bigger please"
+
+#### Phase 8: Advanced Features
+**Step 8.1**: Numeric values and units
+- Add number parsing
+- Add units (pixels, degrees, etc.)
+- Test: "computer move the square left 100 pixels please"
+
+**Step 8.2**: Spatial relationships
+- Add spatial prepositions (to the left of, above, etc.)
+- Test: "computer move the square to the left of the circle please"
 
 **Acceptance Criteria**:
 - All existing commands continue to work without regression
@@ -538,12 +603,12 @@ During Task 1.12 session, we discovered that regex patterns have fundamental lim
 
 **Estimated Time**: 6-8 hours
 
-**Technical Considerations**:
-- **Parser Selection**: Nearley.js recommended for JavaScript/TypeScript integration
-- **Grammar Design**: Based on universal template from docs/command_syntax.md
-- **Performance**: Parser compilation and caching for production use
-- **Error Handling**: Graceful degradation to simpler parsing when grammar fails
-- **Migration**: Phased rollout with fallback to regex patterns during transition
+**Technical Decisions**:
+- **Parser Selected**: Nearley.js chosen for excellent JavaScript/TypeScript integration
+- **Grammar Design**: Incremental approach starting with minimal viable grammar
+- **Implementation**: Type-safe integration with existing application architecture
+- **Error Handling**: Graceful fallback to regex patterns when grammar fails
+- **Migration**: Phased rollout with incremental feature additions
 
 ---
 
