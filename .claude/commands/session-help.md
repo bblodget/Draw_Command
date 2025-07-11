@@ -8,7 +8,7 @@ The session system helps document development work for future reference and inte
 
 - `/project:session-start [name]` - Start a new feature development session
 - `/project:session-start-pr [pr_number] [name]` - Start a new PR review session
-- `/project:session-update [commit]` - Update session with automatic summary (optionally commit changes)
+- `/project:session-update [commit] ["note"]` - Update session with automatic summary (optionally commit changes and/or add custom note)
 - `/project:session-end [abort]` - End session with comprehensive summary (optionally abort without merging)
 - `/project:session-refresh` - Refresh session context after compaction by reviewing key docs
 - `/project:session-list` - List all session files
@@ -41,6 +41,12 @@ The session system helps document development work for future reference and inte
 - Cleans up feature branch
 - Documents all changes and learnings
 - **Abort option:** Can end session without merging (preserves documentation, discards code)
+
+**Session Updates:**
+- **Automatic Summary:** Always generates a comprehensive summary of recent activities
+- **Custom Notes:** Can include custom notes with quoted strings (e.g., `"Added grammar plan to docs"`)
+- **Commit Integration:** Can optionally commit changes with the update
+- **Combined Usage:** Supports both custom notes and commits together
 
 ### PR Review Workflow Integration:
 
@@ -91,11 +97,11 @@ After reviewing these documents, it provides a summary of the current project st
 /project:session-start add-physics-engine
 # Creates feature-add-physics-engine branch
 # Implements physics engine
-/project:session-update
-# Automatically summarizes recent activities
+/project:session-update "Implemented physics engine integration"
+# Automatically summarizes recent activities with custom note
 # User tests the implementation
-/project:session-update commit
-# Summarizes activities and commits changes to feature branch
+/project:session-update commit "User approved physics implementation"
+# Summarizes activities with custom note and commits changes to feature branch
 /project:session-end
 # Merges to main, deletes feature branch, documents session
 

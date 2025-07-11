@@ -26,13 +26,18 @@ Update the current development session by:
    - Code changes made
    - **Testing feedback:** Track user testing results and approval status
 
-4. **Optional:** If `$ARGUMENTS` contains "commit", also commit recent code changes with the session update
+4. **Optional Arguments:**
+   - If `$ARGUMENTS` contains "commit", also commit recent code changes with the session update
+   - If `$ARGUMENTS` contains a quoted string (custom note), include that note in the session update
+   - Both can be combined: "commit" + custom note
 
 Keep updates concise but comprehensive for future reference.
 
 **Usage:**
 - `/session-update` - Create summary and update session (no commit)
 - `/session-update commit` - Create summary, update session, and commit changes
+- `/session-update "custom note"` - Create summary, update session with custom note (no commit)
+- `/session-update commit "custom note"` - Create summary, update session with custom note, and commit changes
 
 **Feature Development Phases:**
 - 🔧 **Implementation:** Code changes being made, uncommitted
