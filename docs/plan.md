@@ -5,8 +5,9 @@
 **Last Updated**: 2025-07-12
 
 ### Phase 1: Core Functionality Foundation
-- ✅ **16/20 tasks completed** (80% complete)
+- ✅ **16/21 tasks completed** (76% complete)
 - ⏱️ **43-46 hours** actual time vs 40-50 hours estimated  
+- 🐛 **URGENT**: Task 1.9.6: Fix Shape Size Preservation During Color Changes
 - 🎯 **Next**: Task 1.10: Rotate Commands
 
 ### Phase 1.5: GitHub Pages Deployment
@@ -55,11 +56,12 @@
 📦 **Deployment Status**: Successfully deployed to GitHub Pages with automatic CI/CD!
 
 **Next Steps**: 
-1. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
-2. **Task 1.13**: Help System - "what can I draw"
-3. ✅ **Task 1.9.5**: Fix GitHub Pages Grammar Deployment Issue (COMPLETED)
-4. ✅ **Task 1.11**: Relative Positioning - "draw a circle to the left of the square" (COMPLETED in Task 1.15)
-5. ✅ **Task 1.12**: Pronoun References - "move it to the right" (COMPLETED in Task 1.15)
+1. 🐛 **Task 1.9.6**: Fix Shape Size Preservation During Color Changes - URGENT BUG
+2. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
+3. **Task 1.13**: Help System - "what can I draw"
+4. ✅ **Task 1.9.5**: Fix GitHub Pages Grammar Deployment Issue (COMPLETED)
+5. ✅ **Task 1.11**: Relative Positioning - "draw a circle to the left of the square" (COMPLETED in Task 1.15)
+6. ✅ **Task 1.12**: Pronoun References - "move it to the right" (COMPLETED in Task 1.15)
 
 **Revolutionary BNF Grammar Achievement**: Task 1.15 successfully replaced regex-based parsing with sophisticated BNF grammar architecture, delivering spatial relationships, pronoun support, and advanced natural language processing capabilities that exceed the original Phase 1 goals.
 
@@ -490,6 +492,34 @@ The live demo at https://bblodget.github.io/Draw_Command/ shows a console error:
 
 ---
 
+### Task 1.9.6: Fix Shape Size Preservation During Color Changes
+**Goal**: Preserve custom shape sizes when changing colors instead of resetting to default size.
+
+**Background**: 
+When a user resizes a shape (e.g., "make the square bigger") and then changes its color (e.g., "color the square blue"), the shape returns to its original default size instead of maintaining the custom size. This breaks the user's expectation that only the color should change.
+
+**Tasks**:
+- [ ] Investigate current color change implementation in CanvasService
+- [ ] Identify why shape replacement resets size to default
+- [ ] Modify color change logic to preserve existing shape properties
+- [ ] Ensure position, size, and other properties are maintained during color changes
+- [ ] Test color changes after various resize operations
+- [ ] Test with all shape types (square, circle, triangle)
+- [ ] Update voice response to confirm only color changed
+- [ ] Add regression testing for property preservation
+
+**Acceptance Criteria**:
+- Changing shape color preserves custom size set by previous resize commands
+- Shape position remains unchanged during color modifications
+- Color changes work correctly after "make bigger/smaller" commands
+- Color changes work correctly after "same size as" commands
+- Voice responses accurately reflect that only color changed
+- No regression in existing color change functionality
+
+**Estimated Time**: 1-2 hours
+
+---
+
 ### Task 1.10: Rotate Commands
 **Goal**: Implement shape rotation with default and custom angles.
 
@@ -832,8 +862,8 @@ All planned phases successfully implemented with comprehensive testing:
 
 ## Timeline Estimate
 
-- **Phase 1**: ~~40-50 hours~~ **43-46 hours actual** (80% complete, 2 tasks remaining)
-  - Remaining: Tasks 1.10, 1.13 (~5-7 hours)
+- **Phase 1**: ~~40-50 hours~~ **43-46 hours actual** (76% complete, 3 tasks remaining)
+  - Remaining: Tasks 1.9.6, 1.10, 1.13 (~6-9 hours)
 - **Phase 1.5**: ~~2-3 hours~~ **54 minutes actual** ✅ COMPLETED
 - **Phase 2**: 15-20 hours (Polish & Advanced Features)
 - **Total**: ~~82-103 hours~~ **60-75 hours projected** (significantly under original estimate!)
