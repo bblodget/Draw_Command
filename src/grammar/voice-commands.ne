@@ -8,24 +8,24 @@
 # Main rule
 main -> "computer" _ command _ "please"     {% ([,, cmd]) => cmd %}
 
-# Command structure
-command -> verb  {% (d) => ({
-    verb: d[0],
-    object: null
-}) %}
-    | verb _ object_phrase  {% (d) => ({
-    verb: d[0],
-    object: d[2]
-}) %}
+# Command structure with explicit verb-object relationships
+command -> clear_command {% id %}
+    | draw_command {% id %}
+    | move_command {% id %}
+    | delete_command {% id %}
 
-# Verbs
-verb -> "draw" {% id %}
-    | "clear" {% id %}
-    | "move" {% id %}
+# Command types
+clear_command -> "clear"  {% () => ({ verb: 'clear', object: null }) %}
 
-# Object phrases
-object_phrase -> draw_object_phrase {% id %}
-    | move_object_phrase {% id %}
+draw_command -> "draw" _ draw_object_phrase  {% ([,, object]) => ({ verb: 'draw', object: object }) %}
+
+move_command -> "move" _ move_object_phrase  {% ([,, object]) => ({ verb: 'move', object: object }) %}
+
+delete_command -> delete_verb _ delete_object_phrase  {% ([verb,, object]) => ({ verb: verb, object: object }) %}
+
+# Delete verb (handles both delete and remove)
+delete_verb -> "delete" {% id %}
+    | "remove" {% id %}
 
 # Draw object phrases (no direction)
 draw_object_phrase -> fillers _ shape  {% ([, , shape]) => ({ type: 'shape', value: shape }) %}
@@ -36,6 +36,9 @@ draw_object_phrase -> fillers _ shape  {% ([, , shape]) => ({ type: 'shape', val
 move_object_phrase -> fillers _ shape optional_fillers _ direction  {% ([, , shape, , , direction]) => ({ type: 'shape', value: shape, direction: direction }) %}
     | fillers _ shape optional_fillers _ direction _ number  {% ([, , shape, , , direction, , number]) => ({ type: 'shape', value: shape, direction: direction, distance: number }) %}
     | fillers _ shape optional_fillers _ direction _ number _ unit  {% ([, , shape, , , direction, , number, , unit]) => ({ type: 'shape', value: shape, direction: direction, distance: number, unit: unit }) %}
+
+# Delete object phrases (simple shape reference, no color needed)
+delete_object_phrase -> fillers _ shape  {% ([, , shape]) => ({ type: 'shape', value: shape }) %}
 
 # Optional fillers (can be empty or contain fillers)
 optional_fillers -> null {% () => null %}
@@ -81,7 +84,6 @@ number -> [1-9] [0-9]:* {% (d) => parseInt(d[0] + d[1].join('')) %}
 
 # Units
 unit -> "pixels" {% id %}
-    | "px" {% id %}
 
 # Whitespace
 _ -> [\s]:*  {% () => null %}

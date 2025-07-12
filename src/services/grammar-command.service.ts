@@ -100,7 +100,7 @@ export class GrammarCommandService {
       
       case 'delete':
       case 'remove':
-        return this.handleDeleteCommand(shape, pronoun);
+        return this.handleDeleteCommand(shape, pronoun, preModifier, postModifier, value);
       
       case 'clear':
         return { type: 'clear' };
@@ -301,7 +301,7 @@ export class GrammarCommandService {
     };
   }
 
-  private handleDeleteCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it'): DrawCommand | null {
+  private handleDeleteCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', preModifier?: any, postModifier?: any, value?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Delete command needs a shape or pronoun');
       return null;

@@ -10,29 +10,27 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 ```bnf
 <command-phrase> ::= "computer" <command> "please"
 
-<command> ::= <verb>
-            | <verb> <object-phrase>
-```
+<command> ::= <clear>
+            | <draw> <draw-object-phrase>
+            | <move> <move-object-phrase>
+            | <delete> <delete-object-phrase>
 
-### Verbs
-```bnf
-<verb> ::= "draw" | "clear" | "move"
+<delete> ::= "delete" | "remove"
 ```
 
 ### Object Phrases
 
-**Note**: Move commands intentionally don't support color specification because the three-object model (one square, one circle, one triangle) makes color redundant. "Move the square" uniquely identifies the shape regardless of its current color.
+**Note**: Move and delete commands intentionally don't support color specification because the three-object model (one square, one circle, one triangle) makes color redundant. "Move the square" or "delete the square" uniquely identifies the shape regardless of its current color.
 
 ```bnf
-<object-phrase> ::= <draw-object-phrase>
-                  | <move-object-phrase>
-
 <draw-object-phrase> ::= <fillers> <shape>
                        | <fillers> <color> <shape>
 
 <move-object-phrase> ::= <fillers> <shape> <fillers>? <direction>
                        | <fillers> <shape> <fillers>? <direction> <number>
                        | <fillers> <shape> <fillers>? <direction> <number> <unit>
+
+<delete-object-phrase> ::= <fillers> <shape>
 
 <fillers> ::= <filler>
             | <fillers> <filler>
@@ -55,7 +53,7 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 ### Numbers and Units
 ```bnf
 <number> ::= [1-9][0-9]*
-<unit> ::= "pixels" | "px"
+<unit> ::= "pixels"
 ```
 
 ## Test Commands
@@ -71,6 +69,8 @@ This grammar should handle:
 - `computer move the square up 100 please`
 - `computer move the square up 100 pixels please`
 - `computer move the circle left 50 please`
+- `computer delete the square please`
+- `computer remove the circle please`
 - `computer clear please`
 
 **Note**: `<fillers>` can match one or more filler words, so "a", "the", "to", "to the", etc. all work naturally.
