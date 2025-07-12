@@ -94,12 +94,12 @@ function App() {
             // Generate response messages
             if (result?.wasReplaced && result.oldShape) {
               const oldColorName = responseService.current.getColorNameFromHex(result.oldShape.color);
-              const newColorName = responseService.current.getColorNameFromHex(shapeColor || '#FF0000');
+              const newColorName = responseService.current.getColorNameFromHex(result.actualColor);
               const spatialText = command.spatialRelation ? ` ${command.spatialRelation.relation.replace('_', ' ')} the ${command.spatialRelation.reference}` : '';
               setCommandResult({ success: true, message: `Replaced the ${oldColorName} ${command.shape} with a ${newColorName} one${spatialText}` });
               responseService.current.speak(`I replaced the ${oldColorName} ${command.shape} with a ${newColorName} one${spatialText}`);
             } else {
-              const colorName = responseService.current.getColorNameFromHex(shapeColor || '#FF0000');
+              const colorName = responseService.current.getColorNameFromHex(result.actualColor);
               const spatialText = command.spatialRelation ? ` ${command.spatialRelation.relation.replace('_', ' ')} the ${command.spatialRelation.reference}` : '';
               setCommandResult({ success: true, message: `Drew a ${colorName} ${command.shape}${spatialText}` });
               responseService.current.speak(`I drew a ${colorName} ${command.shape}${spatialText}`);

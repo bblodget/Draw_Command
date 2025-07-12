@@ -42,7 +42,7 @@ export class CanvasService {
     });
   }
 
-  drawSquare(color: string = 'red', size: number = 100, position?: { x: number; y: number }): { id: string; wasReplaced: boolean; oldShape?: Shape } {
+  drawSquare(color: string = 'red', size: number = 100, position?: { x: number; y: number }): { id: string; wasReplaced: boolean; oldShape?: Shape; actualColor: string } {
     if (!this.fabricCanvas) throw new Error('Canvas not initialized');
 
     // Check if a square already exists
@@ -108,10 +108,10 @@ export class CanvasService {
     };
 
     this.addShape(shape);
-    return { id, wasReplaced, oldShape };
+    return { id, wasReplaced, oldShape, actualColor: color };
   }
 
-  drawCircle(color: string = 'blue', size: number = 50, position?: { x: number; y: number }): { id: string; wasReplaced: boolean; oldShape?: Shape } {
+  drawCircle(color: string = 'blue', size: number = 50, position?: { x: number; y: number }): { id: string; wasReplaced: boolean; oldShape?: Shape; actualColor: string } {
     if (!this.fabricCanvas) throw new Error('Canvas not initialized');
 
     // Check if a circle already exists
@@ -176,10 +176,10 @@ export class CanvasService {
     };
 
     this.addShape(shape);
-    return { id, wasReplaced, oldShape };
+    return { id, wasReplaced, oldShape, actualColor: color };
   }
 
-  drawTriangle(color: string = 'green', size: number = 100, position?: { x: number; y: number }): { id: string; wasReplaced: boolean; oldShape?: Shape } {
+  drawTriangle(color: string = 'green', size: number = 100, position?: { x: number; y: number }): { id: string; wasReplaced: boolean; oldShape?: Shape; actualColor: string } {
     if (!this.fabricCanvas) throw new Error('Canvas not initialized');
 
     // Check if a triangle already exists
@@ -245,7 +245,7 @@ export class CanvasService {
     };
 
     this.addShape(shape);
-    return { id, wasReplaced, oldShape };
+    return { id, wasReplaced, oldShape, actualColor: color };
   }
 
   private addShape(shape: Shape): void {
