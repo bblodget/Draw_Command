@@ -22,15 +22,13 @@ var grammar = {
     {"name": "verb", "symbols": ["verb$string$2"], "postprocess": id},
     {"name": "verb$string$3", "symbols": [{"literal":"m"}, {"literal":"o"}, {"literal":"v"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "verb", "symbols": ["verb$string$3"], "postprocess": id},
-    {"name": "object_phrase", "symbols": ["fillers", "_", "shape"], "postprocess": ([, , shape]) => ({ type: 'shape', value: shape })},
-    {"name": "object_phrase", "symbols": ["fillers", "_", "color", "_", "shape"], "postprocess": ([, , color, , shape]) => ({ type: 'shape', value: shape, color: color })},
-    {"name": "object_phrase", "symbols": ["fillers", "_", "shape", "_", "direction"], "postprocess": ([, , shape, , direction]) => ({ type: 'shape', value: shape, direction: direction })},
-    {"name": "object_phrase", "symbols": ["fillers", "_", "color", "_", "shape", "_", "direction"], "postprocess": ([, , color, , shape, , direction]) => ({ type: 'shape', value: shape, color: color, direction: direction })},
-    {"name": "object_phrase", "symbols": ["fillers", "_", "shape", "_", "fillers", "_", "direction"], "postprocess":  (d) => {
-            console.log('Grammar debug - fillers_shape_fillers_direction:', d);
-            return { type: 'shape', value: d[2], direction: d[6] };
-        } },
-    {"name": "object_phrase", "symbols": ["fillers", "_", "color", "_", "shape", "_", "fillers", "_", "direction"], "postprocess": ([, , color, , shape, , , direction]) => ({ type: 'shape', value: shape, color: color, direction: direction })},
+    {"name": "object_phrase", "symbols": ["draw_object_phrase"], "postprocess": id},
+    {"name": "object_phrase", "symbols": ["move_object_phrase"], "postprocess": id},
+    {"name": "draw_object_phrase", "symbols": ["fillers", "_", "shape"], "postprocess": ([, , shape]) => ({ type: 'shape', value: shape })},
+    {"name": "draw_object_phrase", "symbols": ["fillers", "_", "color", "_", "shape"], "postprocess": ([, , color, , shape]) => ({ type: 'shape', value: shape, color: color })},
+    {"name": "move_object_phrase", "symbols": ["fillers", "_", "shape", "optional_fillers", "_", "direction"], "postprocess": ([, , shape, , , direction]) => ({ type: 'shape', value: shape, direction: direction })},
+    {"name": "optional_fillers", "symbols": [], "postprocess": () => null},
+    {"name": "optional_fillers", "symbols": ["_", "fillers"], "postprocess": () => null},
     {"name": "fillers", "symbols": ["filler"], "postprocess": () => null},
     {"name": "fillers", "symbols": ["fillers", "_", "filler"], "postprocess": () => null},
     {"name": "filler", "symbols": [{"literal":"a"}], "postprocess": id},

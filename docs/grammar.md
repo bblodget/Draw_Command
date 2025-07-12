@@ -20,13 +20,17 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 ```
 
 ### Object Phrases
+
+**Note**: Move commands intentionally don't support color specification because the three-object model (one square, one circle, one triangle) makes color redundant. "Move the square" uniquely identifies the shape regardless of its current color.
+
 ```bnf
-<object-phrase> ::= <fillers> <shape>
-                  | <fillers> <color> <shape>
-                  | <fillers> <shape> <direction>
-                  | <fillers> <color> <shape> <direction>
-                  | <fillers> <shape> <fillers> <direction>
-                  | <fillers> <color> <shape> <fillers> <direction>
+<object-phrase> ::= <draw-object-phrase>
+                  | <move-object-phrase>
+
+<draw-object-phrase> ::= <fillers> <shape>
+                       | <fillers> <color> <shape>
+
+<move-object-phrase> ::= <fillers> <shape> <fillers>? <direction>
 
 <fillers> ::= <filler>
             | <fillers> <filler>
@@ -54,8 +58,8 @@ This grammar should handle:
 - `computer draw a blue circle please`
 - `computer move the square left please`
 - `computer move the square to the right please`
-- `computer move the red circle to up please`
-- `computer move the blue triangle to the left please`
+- `computer move the circle up please`
+- `computer move the triangle to the left please`
 - `computer clear please`
 
 **Note**: `<fillers>` can match one or more filler words, so "a", "the", "to", "to the", etc. all work naturally.

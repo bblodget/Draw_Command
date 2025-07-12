@@ -24,15 +24,20 @@ verb -> "draw" {% id %}
     | "move" {% id %}
 
 # Object phrases
-object_phrase -> fillers _ shape  {% ([, , shape]) => ({ type: 'shape', value: shape }) %}
+object_phrase -> draw_object_phrase {% id %}
+    | move_object_phrase {% id %}
+
+# Draw object phrases (no direction)
+draw_object_phrase -> fillers _ shape  {% ([, , shape]) => ({ type: 'shape', value: shape }) %}
     | fillers _ color _ shape  {% ([, , color, , shape]) => ({ type: 'shape', value: shape, color: color }) %}
-    | fillers _ shape _ direction  {% ([, , shape, , direction]) => ({ type: 'shape', value: shape, direction: direction }) %}
-    | fillers _ color _ shape _ direction  {% ([, , color, , shape, , direction]) => ({ type: 'shape', value: shape, color: color, direction: direction }) %}
-    | fillers _ shape _ fillers _ direction  {% (d) => {
-        console.log('Grammar debug - fillers_shape_fillers_direction:', d);
-        return { type: 'shape', value: d[2], direction: d[6] };
-    } %}
-    | fillers _ color _ shape _ fillers _ direction  {% ([, , color, , shape, , , direction]) => ({ type: 'shape', value: shape, color: color, direction: direction }) %}
+
+# Move object phrases (with direction, no color allowed)
+# Using optional_fillers to simulate <fillers>? pattern
+move_object_phrase -> fillers _ shape optional_fillers _ direction  {% ([, , shape, , , direction]) => ({ type: 'shape', value: shape, direction: direction }) %}
+
+# Optional fillers (can be empty or contain fillers)
+optional_fillers -> null {% () => null %}
+    | _ fillers {% () => null %}
 
 # Fillers (one or more)
 fillers -> filler {% () => null %}
