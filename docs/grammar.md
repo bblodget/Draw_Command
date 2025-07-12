@@ -15,6 +15,8 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
             | <move> <move-object-phrase>
             | <delete> <delete-object-phrase>
 
+<draw> ::= "draw"
+<move> ::= "move"
 <delete> ::= "delete" | "remove"
 ```
 
