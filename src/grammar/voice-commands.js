@@ -1,8 +1,8 @@
 // Generated automatically by nearley, version 2.20.1
 // http://github.com/Hardmath123/nearley
-(function () {
+const grammar = (function () {
 function id(x) { return x[0]; }
-var grammar = {
+var compiledGrammar = {
     Lexer: undefined,
     ParserRules: [
     {"name": "main$string$1", "symbols": [{"literal":"c"}, {"literal":"o"}, {"literal":"m"}, {"literal":"p"}, {"literal":"u"}, {"literal":"t"}, {"literal":"e"}, {"literal":"r"}], "postprocess": function joiner(d) {return d.join('');}},
@@ -159,10 +159,11 @@ var grammar = {
   , ParserStart: "main"
 }
 if (typeof module !== 'undefined'&& typeof module.exports !== 'undefined') {
-   module.exports = grammar;
+   module.exports = compiledGrammar;
 } else {
-   window.grammar = grammar;
+   window.grammar = compiledGrammar;
 }
+return compiledGrammar;
 })();
 
 export default grammar;
