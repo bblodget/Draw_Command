@@ -5,9 +5,8 @@
 **Last Updated**: 2025-07-12
 
 ### Phase 1: Core Functionality Foundation
-- ✅ **16/21 tasks completed** (76% complete)
-- ⏱️ **43-46 hours** actual time vs 40-50 hours estimated  
-- 🐛 **URGENT**: Task 1.9.6: Fix Shape Size Preservation During Color Changes
+- ✅ **17/21 tasks completed** (81% complete)
+- ⏱️ **44-47 hours** actual time vs 40-50 hours estimated  
 - 🎯 **Next**: Task 1.10: Rotate Commands
 
 ### Phase 1.5: GitHub Pages Deployment
@@ -31,8 +30,9 @@
 12. ✅ **Task 1.8**: UI Polish and Testing
 13. ✅ **Task 1.9**: Resize Commands  
 14. ✅ **Task 1.9.5**: Fix GitHub Pages Grammar Deployment Issue
-15. ✅ **Task 1.14**: Deploy to GitHub Pages
-16. ✅ **Task 1.15**: BNF Grammar Architecture
+15. ✅ **Task 1.9.6**: Fix Shape Size Preservation During Color Changes
+16. ✅ **Task 1.14**: Deploy to GitHub Pages
+17. ✅ **Task 1.15**: BNF Grammar Architecture
 
 ### Current Status
 🎉 **Major Milestone**: Voice-to-drawing system is FULLY FUNCTIONAL AND DEPLOYED! The system can:
@@ -56,9 +56,9 @@
 📦 **Deployment Status**: Successfully deployed to GitHub Pages with automatic CI/CD!
 
 **Next Steps**: 
-1. 🐛 **Task 1.9.6**: Fix Shape Size Preservation During Color Changes - URGENT BUG
-2. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
-3. **Task 1.13**: Help System - "what can I draw"
+1. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
+2. **Task 1.13**: Help System - "what can I draw"
+3. ✅ **Task 1.9.6**: Fix Shape Size Preservation During Color Changes (COMPLETED)
 4. ✅ **Task 1.9.5**: Fix GitHub Pages Grammar Deployment Issue (COMPLETED)
 5. ✅ **Task 1.11**: Relative Positioning - "draw a circle to the left of the square" (COMPLETED in Task 1.15)
 6. ✅ **Task 1.12**: Pronoun References - "move it to the right" (COMPLETED in Task 1.15)
@@ -492,31 +492,43 @@ The live demo at https://bblodget.github.io/Draw_Command/ shows a console error:
 
 ---
 
-### Task 1.9.6: Fix Shape Size Preservation During Color Changes
+### ✅ Task 1.9.6: Fix Shape Size Preservation During Color Changes (COMPLETED)
 **Goal**: Preserve custom shape sizes when changing colors instead of resetting to default size.
 
 **Background**: 
 When a user resizes a shape (e.g., "make the square bigger") and then changes its color (e.g., "color the square blue"), the shape returns to its original default size instead of maintaining the custom size. This breaks the user's expectation that only the color should change.
 
 **Tasks**:
-- [ ] Investigate current color change implementation in CanvasService
-- [ ] Identify why shape replacement resets size to default
-- [ ] Modify color change logic to preserve existing shape properties
-- [ ] Ensure position, size, and other properties are maintained during color changes
-- [ ] Test color changes after various resize operations
-- [ ] Test with all shape types (square, circle, triangle)
-- [ ] Update voice response to confirm only color changed
-- [ ] Add regression testing for property preservation
+- [x] Investigate current color change implementation in CanvasService
+- [x] Identify why shape replacement resets size to default
+- [x] Modify color change logic to preserve existing shape properties
+- [x] Ensure position, size, and other properties are maintained during color changes
+- [x] Test color changes after various resize operations
+- [x] Test with all shape types (square, circle, triangle)
+- [x] Update voice response to confirm only color changed
+- [x] Add regression testing for property preservation
 
 **Acceptance Criteria**:
-- Changing shape color preserves custom size set by previous resize commands
-- Shape position remains unchanged during color modifications
-- Color changes work correctly after "make bigger/smaller" commands
-- Color changes work correctly after "same size as" commands
-- Voice responses accurately reflect that only color changed
-- No regression in existing color change functionality
+- ✅ Changing shape color preserves custom size set by previous resize commands
+- ✅ Shape position remains unchanged during color modifications
+- ✅ Color changes work correctly after "make bigger/smaller" commands
+- ✅ Color changes work correctly after "same size as" commands
+- ✅ Voice responses accurately reflect that only color changed
+- ✅ No regression in existing color change functionality
 
-**Estimated Time**: 1-2 hours
+**Completed**: 2025-07-12 | **Session**: `2025-07-12-1435-Task 1.9.6: Fix Shape Size Preservation During Color Changes.md`
+**Actual Time**: 1 hour (within estimate)
+
+**Root Cause & Solution**:
+- **Issue**: Color command handler in App.tsx used hardcoded `size: 100` and `position: { x: 200, y: 200 }` instead of preserving existing shape properties
+- **Fix**: Modified to call `canvas.getShapeByType()` to retrieve existing shape and preserve its size and position
+- **Result**: Color changes now maintain custom sizes from resize operations while only changing color
+
+**Technical Achievements**:
+- **Property Preservation**: Size and position now maintained during color changes
+- **Enhanced Error Handling**: Added checks for missing shapes during color operations
+- **Zero Regression**: Existing color change functionality preserved
+- **Build Verification**: Fix compiles successfully and passes build tests
 
 ---
 
@@ -862,8 +874,8 @@ All planned phases successfully implemented with comprehensive testing:
 
 ## Timeline Estimate
 
-- **Phase 1**: ~~40-50 hours~~ **43-46 hours actual** (76% complete, 3 tasks remaining)
-  - Remaining: Tasks 1.9.6, 1.10, 1.13 (~6-9 hours)
+- **Phase 1**: ~~40-50 hours~~ **44-47 hours actual** (81% complete, 2 tasks remaining)
+  - Remaining: Tasks 1.10, 1.13 (~5-7 hours)
 - **Phase 1.5**: ~~2-3 hours~~ **54 minutes actual** ✅ COMPLETED
 - **Phase 2**: 15-20 hours (Polish & Advanced Features)
 - **Total**: ~~82-103 hours~~ **60-75 hours projected** (significantly under original estimate!)
