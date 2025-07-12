@@ -9,7 +9,7 @@ Recreate the 1980s TI professional computer demo where users can draw and manipu
 The system must recognize and execute the following types of voice commands:
 
 #### Drawing Commands
-- Draw basic shapes (square, circle, triangle, rectangle)
+- Draw basic shapes (square, circle, triangle)
 - Specify colors for shapes
 - Specify sizes for shapes
 - Specify positions for shapes
@@ -22,13 +22,9 @@ The system must recognize and execute the following types of voice commands:
 
 #### Spatial Relationship Commands
 - Position shapes relative to other shapes ("to the left of", "above", "next to")
-- Arrange multiple shapes in patterns
-- Group shapes together
 
 #### System Commands
 - Clear the entire canvas
-- Undo last action
-- Save/load drawings (future enhancement)
 
 ### Voice Recognition Requirements
 - Real-time speech-to-text conversion
@@ -54,41 +50,29 @@ The system must recognize and execute the following types of voice commands:
 ### Performance Requirements
 - Voice command response time under 2 seconds
 - Smooth canvas rendering and shape manipulation
-- Support for at least 50 shapes on screen simultaneously
 - Real-time speech recognition with minimal latency
 
 ### Usability Requirements
 - Intuitive voice command interface
 - Clear visual feedback for all user actions
 - Responsive design that works on desktop and tablet
-- Accessibility features for users with disabilities
 
 ### Reliability Requirements
 - Graceful handling of unrecognized speech
-- Recovery from network connectivity issues
 - Consistent behavior across different browsers
-- Error handling for failed API calls
 
 ### Security Requirements
-- Secure handling of API keys and credentials
-- No exposure of sensitive data in client-side code
 - Protection against common web vulnerabilities
 
 ## User Experience Requirements
 
 ### Voice Interaction
 - Natural conversation flow with the system
-- Support for conversational commands ("computer, what can I draw?")
-- Ability to correct or modify previous commands
 - Context awareness (referring to "it" or "the square")
 
 ### System Response Requirements
 - **Text-to-Speech Output**: System responds to questions and informational requests using speech synthesis
 - **Visual Text Display**: All system responses also displayed as text on screen for accessibility
-- **Response Examples**:
-  - "Computer, what shapes can I draw, please?" → "You can draw squares, circles, triangles, and rectangles"
-  - "Computer, what colors are available, please?" → "Available colors include red, blue, green, yellow, and more"
-  - "Computer, help please?" → "I can help you draw shapes, change colors, move objects, and more"
 - **Confirmation Responses**: System confirms successful actions ("Square drawn successfully", "Color changed to blue")
 - **Error Responses**: Clear spoken feedback for unrecognized commands or failed actions
 
@@ -103,20 +87,6 @@ The system must recognize and execute the following types of voice commands:
 - Discoverable command patterns
 - Help system or command suggestions
 - Progressive disclosure of advanced features
-
-## Future Enhancement Requirements
-
-### Advanced Features (Phase 2)
-- Complex shape creation (polygons, curves, text)
-- Animation and motion commands
-- Layer management and grouping
-- Export/import functionality
-
-### Integration Requirements
-- Ability to integrate with other drawing tools
-- API for external applications
-- Plugin architecture for custom commands
-- Multi-user collaboration features
 
 ## Success Criteria
 - Users can successfully draw and manipulate shapes using only voice commands
