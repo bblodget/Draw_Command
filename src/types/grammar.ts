@@ -18,6 +18,8 @@ export interface ObjectPhrase {
   sizeModifier?: string;
   sizeRelation?: string;
   targetShape?: string;
+  spatialRelation?: string;
+  referenceShape?: string;
   preFillers?: string[];
   postFillers?: string[];
 }

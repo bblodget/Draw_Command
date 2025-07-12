@@ -764,4 +764,93 @@ export class CanvasService {
   private updateLastInteractedShape(shapeType: string): void {
     this.lastInteractedShapeType = shapeType;
   }
+
+  // Spatial relationship positioning
+  calculateSpatialPosition(shapeSize: number, shapeType: string, relation: string, referenceShapeType: string): { x: number; y: number } | null {
+    if (!this.fabricCanvas) return null;
+
+    const referenceShape = this.getShapeByType(referenceShapeType);
+    if (!referenceShape) {
+      console.warn(`Reference shape ${referenceShapeType} not found for spatial positioning`);
+      return null;
+    }
+
+    const refBounds = this.getShapeBounds(referenceShape);
+    const spacing = 20; // Spacing between shapes
+    const canvasWidth = this.fabricCanvas.getWidth();
+    const canvasHeight = this.fabricCanvas.getHeight();
+
+    let position: { x: number; y: number };
+
+    switch (relation) {
+      case 'left_of':
+      case 'to_the_left_of':
+        position = {
+          x: refBounds.left - shapeSize - spacing,
+          y: refBounds.top + (refBounds.bottom - refBounds.top - shapeSize) / 2
+        };
+        break;
+
+      case 'right_of':
+      case 'to_the_right_of':
+        position = {
+          x: refBounds.right + spacing,
+          y: refBounds.top + (refBounds.bottom - refBounds.top - shapeSize) / 2
+        };
+        break;
+
+      case 'above':
+        position = {
+          x: refBounds.left + (refBounds.right - refBounds.left - shapeSize) / 2,
+          y: refBounds.top - shapeSize - spacing
+        };
+        break;
+
+      case 'below':
+        position = {
+          x: refBounds.left + (refBounds.right - refBounds.left - shapeSize) / 2,
+          y: refBounds.bottom + spacing
+        };
+        break;
+
+      case 'next_to':
+        // Try positions in priority order: left, right, above, below
+        const positions = [
+          { x: refBounds.left - shapeSize - spacing, y: refBounds.top + (refBounds.bottom - refBounds.top - shapeSize) / 2 },
+          { x: refBounds.right + spacing, y: refBounds.top + (refBounds.bottom - refBounds.top - shapeSize) / 2 },
+          { x: refBounds.left + (refBounds.right - refBounds.left - shapeSize) / 2, y: refBounds.top - shapeSize - spacing },
+          { x: refBounds.left + (refBounds.right - refBounds.left - shapeSize) / 2, y: refBounds.bottom + spacing }
+        ];
+
+        for (const pos of positions) {
+          if (this.isPositionOnCanvas(pos, shapeSize, shapeType)) {
+            position = pos;
+            break;
+          }
+        }
+
+        if (!position!) {
+          // If no position works, use the first one anyway
+          position = positions[0];
+        }
+        break;
+
+      default:
+        console.warn(`Unknown spatial relation: ${relation}`);
+        return null;
+    }
+
+    // Ensure position is within canvas bounds
+    if (shapeType === 'circle') {
+      // For circles, position is center, so ensure center + radius is within bounds
+      position.x = Math.max(shapeSize, Math.min(canvasWidth - shapeSize, position.x));
+      position.y = Math.max(shapeSize, Math.min(canvasHeight - shapeSize, position.y));
+    } else {
+      // For squares and triangles, position is top-left
+      position.x = Math.max(0, Math.min(canvasWidth - shapeSize, position.x));
+      position.y = Math.max(0, Math.min(canvasHeight - shapeSize, position.y));
+    }
+
+    return position;
+  }
 }

@@ -78,16 +78,18 @@ export class GrammarCommandService {
     const sizeModifier = object?.sizeModifier; // Get size modifier from object
     const sizeRelation = object?.sizeRelation; // Get size relation from object
     const targetShape = object?.targetShape; // Get target shape for size relation
+    const spatialRelation = object?.spatialRelation; // Get spatial relation from object
+    const referenceShape = object?.referenceShape; // Get reference shape for spatial relation
     
-    console.log('Extracted values:', { shape, pronoun, color, direction, distance, unit, sizeModifier, sizeRelation, targetShape });
-    console.log('Size relation details:', { sizeRelation, targetShape });
+    console.log('Extracted values:', { shape, pronoun, color, direction, distance, unit, sizeModifier, sizeRelation, targetShape, spatialRelation, referenceShape });
+    console.log('Spatial relation details:', { spatialRelation, referenceShape });
 
     switch (verb) {
       case 'draw':
-        return this.handleDrawCommand(shape, pronoun, color, preModifier, postModifier, value);
+        return this.handleDrawCommand(shape, pronoun, color, spatialRelation, referenceShape, preModifier, postModifier, value);
       
       case 'move':
-        return this.handleMoveCommand(shape, pronoun, direction, distance, unit, preModifier, postModifier, value);
+        return this.handleMoveCommand(shape, pronoun, direction, distance, unit, spatialRelation, referenceShape, preModifier, postModifier, value);
       
       case 'color':
       case 'colour':
@@ -116,7 +118,7 @@ export class GrammarCommandService {
     }
   }
 
-  private handleDrawCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectColor?: string, preModifier?: any, postModifier?: any, _value?: any): DrawCommand | null {
+  private handleDrawCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectColor?: string, objectSpatialRelation?: string, objectReferenceShape?: string, preModifier?: any, postModifier?: any, _value?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Draw command needs a shape or pronoun');
       return null;
@@ -125,8 +127,9 @@ export class GrammarCommandService {
     // Get color from object first, then from modifiers as fallback
     const color = objectColor || this.extractColor(preModifier, postModifier);
     
-    // Handle spatial relationships
-    const spatialRelation = this.extractSpatialRelation(preModifier, postModifier);
+    // Get spatial relationship from object first, then from modifiers as fallback
+    const spatialRelationString = objectSpatialRelation || this.extractSpatialRelationString(preModifier, postModifier);
+    const referenceShape = objectReferenceShape || this.extractReferenceShape(preModifier, postModifier);
     
     // Set appropriate default size for each shape
     const defaultSize = shape === 'circle' ? 50 : 100;
@@ -140,14 +143,15 @@ export class GrammarCommandService {
       position: { x: 200, y: 200 } // Default position (center of canvas)
     };
 
-    if (spatialRelation) {
-      command.spatialRelation = spatialRelation;
+    // Handle spatial relationships from the new grammar structure
+    if (spatialRelationString && referenceShape) {
+      command.spatialRelation = this.createSpatialRelation(spatialRelationString, referenceShape);
     }
 
     return command;
   }
 
-  private handleMoveCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectDirection?: string, objectDistance?: number, objectUnit?: string, preModifier?: any, postModifier?: any, value?: any): DrawCommand | null {
+  private handleMoveCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectDirection?: string, objectDistance?: number, objectUnit?: string, objectSpatialRelation?: string, objectReferenceShape?: string, preModifier?: any, postModifier?: any, value?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Move command needs a shape or pronoun');
       return null;
@@ -156,16 +160,17 @@ export class GrammarCommandService {
     // Get direction from object first, then from modifiers as fallback
     const direction = objectDirection || this.extractDirection(preModifier, postModifier);
     
-    // Handle spatial relationships
-    const spatialRelation = this.extractSpatialRelation(preModifier, postModifier);
+    // Get spatial relationship from object first, then from modifiers as fallback
+    const spatialRelationString = objectSpatialRelation || this.extractSpatialRelationString(preModifier, postModifier);
+    const referenceShape = objectReferenceShape || this.extractReferenceShape(preModifier, postModifier);
     
-    if (spatialRelation) {
-      // Spatial relationship move
+    // Handle spatial relationships from the new grammar structure
+    if (spatialRelationString && referenceShape) {
       return {
         type: 'move',
         shape,
         pronoun,
-        spatialRelation
+        spatialRelation: this.createSpatialRelation(spatialRelationString, referenceShape)
       };
     }
     
@@ -450,5 +455,46 @@ export class GrammarCommandService {
   private normalizeColor(color: string): string {
     const normalized = color.toLowerCase();
     return this.colorMap[normalized] || normalized;
+  }
+
+  // New helper methods for spatial relationships
+  private extractSpatialRelationString(preModifier?: any, postModifier?: any): string | undefined {
+    const modifiers = [preModifier, postModifier].filter(Boolean);
+    
+    for (const modifier of modifiers) {
+      if (modifier?.type === 'spatial') {
+        return modifier.value?.relation;
+      }
+    }
+    
+    return undefined;
+  }
+
+  private extractReferenceShape(preModifier?: any, postModifier?: any): string | undefined {
+    const modifiers = [preModifier, postModifier].filter(Boolean);
+    
+    for (const modifier of modifiers) {
+      if (modifier?.type === 'spatial') {
+        return modifier.value?.reference;
+      }
+    }
+    
+    return undefined;
+  }
+
+  private createSpatialRelation(relationString: string, referenceShape: string): SpatialRelation {
+    // Map grammar spatial relation strings to our type system
+    const relationMap: Record<string, 'left_of' | 'right_of' | 'above' | 'below' | 'next_to'> = {
+      'to_the_left_of': 'left_of',
+      'to_the_right_of': 'right_of',
+      'above': 'above',
+      'below': 'below',
+      'next_to': 'next_to'
+    };
+
+    return {
+      relation: relationMap[relationString] || 'next_to',
+      reference: referenceShape
+    };
   }
 }

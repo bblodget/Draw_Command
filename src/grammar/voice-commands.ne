@@ -48,6 +48,8 @@ resize_verb -> "resize" {% id %}
 # Draw object phrases (no direction)
 draw_object_phrase -> fillers _ shape  {% ([, , shape]) => ({ type: 'shape', value: shape }) %}
     | fillers _ color _ shape  {% ([, , color, , shape]) => ({ type: 'shape', value: shape, color: color }) %}
+    | fillers _ shape _ spatial_relationship optional_fillers _ shape  {% ([, , shape, , spatial, , , refShape]) => ({ type: 'shape', value: shape, spatialRelation: spatial, referenceShape: refShape }) %}
+    | fillers _ color _ shape _ spatial_relationship optional_fillers _ shape  {% ([, , color, , shape, , spatial, , , refShape]) => ({ type: 'shape', value: shape, color: color, spatialRelation: spatial, referenceShape: refShape }) %}
 
 # Move object phrases (with direction, no color allowed)
 # Using optional_fillers to simulate <fillers>? pattern
@@ -56,6 +58,7 @@ move_object_phrase -> pronoun_or_shape optional_fillers _ direction  {% ([obj, ,
     | pronoun_or_shape optional_fillers _ direction _ number _ unit  {% ([obj, , , direction, , number, , unit]) => ({ ...obj, direction: direction, distance: number, unit: unit }) %}
     | pronoun_or_shape optional_fillers _ number optional_fillers _ direction  {% ([obj, , , number, , , direction]) => ({ ...obj, direction: direction, distance: number }) %}
     | pronoun_or_shape optional_fillers _ number _ unit optional_fillers _ direction  {% ([obj, , , number, , unit, , , direction]) => ({ ...obj, direction: direction, distance: number, unit: unit }) %}
+    | pronoun_or_shape optional_fillers _ spatial_relationship optional_fillers _ shape  {% ([obj, , , spatial, , , refShape]) => ({ ...obj, spatialRelation: spatial, referenceShape: refShape }) %}
 
 # Delete object phrases (simple shape reference, no color needed)
 delete_object_phrase -> pronoun_or_shape  {% ([obj]) => obj %}
@@ -94,6 +97,13 @@ pronoun_or_shape -> the_shape {% id %}
 shape -> "square" {% id %}
     | "circle" {% id %}
     | "triangle" {% id %}
+
+# Spatial relationships
+spatial_relationship -> "to" _ "the" _ "left" _ "of" {% () => "to_the_left_of" %}
+    | "to" _ "the" _ "right" _ "of" {% () => "to_the_right_of" %}
+    | "above" {% () => "above" %}
+    | "below" {% () => "below" %}
+    | "next" _ "to" {% () => "next_to" %}
 
 # Colors
 color -> "red" {% id %}

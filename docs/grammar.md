@@ -2,9 +2,9 @@
 
 This document presents a simplified BNF (Backus-Naur Form) grammar for the voice command system, built incrementally.
 
-## Current Grammar (Phase 6, Step 6.2)
+## Current Grammar (Phase 8, Step 8.2)
 
-We're expanding to support all three basic shapes, common fillers, colored drawing commands, movement commands, delete commands, color change commands, resize commands, and pronoun support.
+We're expanding to support all three basic shapes, common fillers, colored drawing commands, movement commands, delete commands, color change commands, resize commands, pronoun support, and spatial relationships.
 
 ### Main Structure
 ```bnf
@@ -31,12 +31,15 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 ```bnf
 <draw-object-phrase> ::= <fillers> <shape>
                        | <fillers> <color> <shape>
+                       | <fillers> <shape> <spatial-relationship> <fillers>? <shape>
+                       | <fillers> <color> <shape> <spatial-relationship> <fillers>? <shape>
 
 <move-object-phrase> ::= <pronoun-or-shape> <fillers>? <direction>
                        | <pronoun-or-shape> <fillers>? <direction> <number>
                        | <pronoun-or-shape> <fillers>? <direction> <number> <unit>
                        | <pronoun-or-shape> <fillers>? <number> <fillers>? <direction>
                        | <pronoun-or-shape> <fillers>? <number> <unit> <fillers>? <direction>
+                       | <pronoun-or-shape> <fillers>? <spatial-relationship> <fillers>? <shape>
 
 <delete-object-phrase> ::= <pronoun-or-shape>
 
@@ -55,6 +58,15 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 <filler> ::= "a" | "an" | "the" | "to" | "with"
 
 <shape> ::= "square" | "circle" | "triangle"
+```
+
+### Spatial Relationships
+```bnf
+<spatial-relationship> ::= "to" "the" "left" "of"
+                         | "to" "the" "right" "of"
+                         | "above"
+                         | "below"
+                         | "next" "to"
 ```
 
 ### Colors
@@ -109,6 +121,16 @@ This grammar should handle:
 - `computer make it bigger please`
 - `computer move it up 50 pixels please`
 
+**New spatial relationship support:**
+- `computer draw a circle to the left of the square please`
+- `computer draw a red triangle to the right of the circle please`
+- `computer draw a square above the triangle please`
+- `computer draw a blue circle below the square please`
+- `computer draw a triangle next to the circle please`
+- `computer move the square to the left of the circle please`
+- `computer move it above the triangle please`
+- `computer move the circle next to the square please`
+
 **Note**: `<fillers>` can match one or more filler words, so "a", "the", "to", "to the", etc. all work naturally. The pronoun "it" refers to the last shape that was operated on and doesn't require filler words.
 
 ## Next Steps
@@ -122,8 +144,28 @@ Once this works, we'll incrementally add:
 6. ✅ More verbs (color, delete, etc.) - **COMPLETED**
 7. ✅ Resize commands (make bigger/smaller) - **COMPLETED**
 8. ✅ Pronoun support ("it") - **COMPLETED**
-9. Modifiers and complex relationships
+9. ✅ Spatial relationships ("to the left of", "above", etc.) - **COMPLETED**
+10. Advanced modifiers and complex relationships
 
 ## Implementation Notes
 
 The actual Nearley grammar will include JavaScript postprocessing functions to build command objects, but we'll keep the structure simple and focused.
+
+### Spatial Relationship Implementation Details
+
+When implementing spatial relationships, the system should:
+
+1. **Calculate relative positions** based on the reference shape's bounds
+2. **Avoid overlaps** by positioning shapes with appropriate spacing
+3. **Handle edge cases** when reference shapes don't exist
+4. **Support all four directions** with natural positioning logic:
+   - **Left/Right**: Position horizontally with spacing
+   - **Above/Below**: Position vertically with spacing  
+   - **Next to**: Try positioning in this priority order:
+     1. To the left of the reference shape
+     2. To the right of the reference shape  
+     3. Above the reference shape
+     4. Below the reference shape
+     If a position would place the shape outside canvas bounds, try the next option in the sequence.
+
+The spatial relationship commands work with both draw and move operations, allowing users to create shapes in specific positions relative to existing shapes or move existing shapes to new relative positions.

@@ -40,6 +40,19 @@ function App() {
     return null;
   };
 
+  // Helper function to calculate position for spatial relationships
+  const calculateDrawPosition = (command: DrawCommand, canvas: CanvasService): { x: number; y: number } | null => {
+    if (command.spatialRelation) {
+      return canvas.calculateSpatialPosition(
+        command.size || 100, 
+        command.shape!, 
+        command.spatialRelation.relation, 
+        command.spatialRelation.reference
+      );
+    }
+    return command.position || { x: 200, y: 200 };
+  };
+
   const executeCommand = (command: DrawCommand) => {
     if (!canvasServiceRef.current) {
       setCommandResult({ success: false, message: 'Canvas not ready' });
@@ -51,90 +64,45 @@ function App() {
       
       switch (command.type) {
         case 'draw':
-          if (command.shape && command.position) {
-            // Drawing a new shape
+          if (command.shape) {
+            // Calculate position based on spatial relationship or use provided position
+            const position = calculateDrawPosition(command, canvas);
+            
+            if (!position) {
+              setCommandResult({ success: false, message: `Cannot find ${command.spatialRelation?.reference} to position relative to` });
+              responseService.current.speak(`I can't find the ${command.spatialRelation?.reference} to position the ${command.shape} relative to`);
+              break;
+            }
+
+            // Drawing a new shape - simplified with spatial relationship support
+            let result;
+            const shapeColor = command.color;
+            const shapeSize = command.size;
+            
             switch (command.shape) {
               case 'square':
-                const squareResult = canvas.drawSquare(command.color, command.size, command.position);
-                if (squareResult.wasReplaced && squareResult.oldShape) {
-                  const oldColorName = responseService.current.getColorNameFromHex(squareResult.oldShape.color);
-                  const newColorName = responseService.current.getColorNameFromHex(command.color || 'red');
-                  setCommandResult({ success: true, message: `Replaced the ${oldColorName} square with a ${newColorName} one` });
-                  responseService.current.speak(`I replaced the ${oldColorName} square with a ${newColorName} one`);
-                } else {
-                  const colorName = responseService.current.getColorNameFromHex(command.color || '#FF0000');
-                  setCommandResult({ success: true, message: `Drew a ${colorName} square` });
-                  responseService.current.respondToDrawCommand('square', command.color);
-                }
+                result = canvas.drawSquare(shapeColor, shapeSize, position);
                 break;
               case 'circle':
-                const circleResult = canvas.drawCircle(command.color, command.size, command.position);
-                if (circleResult.wasReplaced && circleResult.oldShape) {
-                  const oldColorName = responseService.current.getColorNameFromHex(circleResult.oldShape.color);
-                  const newColorName = responseService.current.getColorNameFromHex(command.color || 'blue');
-                  setCommandResult({ success: true, message: `Replaced the ${oldColorName} circle with a ${newColorName} one` });
-                  responseService.current.speak(`I replaced the ${oldColorName} circle with a ${newColorName} one`);
-                } else {
-                  const colorName = responseService.current.getColorNameFromHex(command.color || '#0000FF');
-                  setCommandResult({ success: true, message: `Drew a ${colorName} circle` });
-                  responseService.current.respondToDrawCommand('circle', command.color);
-                }
+                result = canvas.drawCircle(shapeColor, shapeSize, position);
                 break;
               case 'triangle':
-                const triangleResult = canvas.drawTriangle(command.color, command.size, command.position);
-                if (triangleResult.wasReplaced && triangleResult.oldShape) {
-                  const oldColorName = responseService.current.getColorNameFromHex(triangleResult.oldShape.color);
-                  const newColorName = responseService.current.getColorNameFromHex(command.color || 'green');
-                  setCommandResult({ success: true, message: `Replaced the ${oldColorName} triangle with a ${newColorName} one` });
-                  responseService.current.speak(`I replaced the ${oldColorName} triangle with a ${newColorName} one`);
-                } else {
-                  const colorName = responseService.current.getColorNameFromHex(command.color || '#00FF00');
-                  setCommandResult({ success: true, message: `Drew a ${colorName} triangle` });
-                  responseService.current.respondToDrawCommand('triangle', command.color);
-                }
+                result = canvas.drawTriangle(shapeColor, shapeSize, position);
                 break;
             }
-          } else if (command.shape && command.color) {
-            // Color change command (interpreted as draw with color)
-            // For Phase 1, we'll create a new shape with the specified color
-            // In Phase 2, this will change the color of existing shapes
-            switch (command.shape) {
-              case 'square':
-                const squareColorResult = canvas.drawSquare(command.color);
-                if (squareColorResult.wasReplaced && squareColorResult.oldShape) {
-                  const newColorName = responseService.current.getColorNameFromHex(command.color);
-                  setCommandResult({ success: true, message: `Changed the square to ${newColorName}` });
-                  responseService.current.speak(`I changed the square to ${newColorName}`);
-                } else {
-                  const colorName = responseService.current.getColorNameFromHex(command.color);
-                  setCommandResult({ success: true, message: `Drew a ${colorName} square` });
-                  responseService.current.respondToDrawCommand('square', command.color);
-                }
-                break;
-              case 'circle':
-                const circleColorResult = canvas.drawCircle(command.color);
-                if (circleColorResult.wasReplaced && circleColorResult.oldShape) {
-                  const newColorName = responseService.current.getColorNameFromHex(command.color);
-                  setCommandResult({ success: true, message: `Changed the circle to ${newColorName}` });
-                  responseService.current.speak(`I changed the circle to ${newColorName}`);
-                } else {
-                  const colorName = responseService.current.getColorNameFromHex(command.color);
-                  setCommandResult({ success: true, message: `Drew a ${colorName} circle` });
-                  responseService.current.respondToDrawCommand('circle', command.color);
-                }
-                break;
-              case 'triangle':
-                const triangleColorResult = canvas.drawTriangle(command.color);
-                if (triangleColorResult.wasReplaced && triangleColorResult.oldShape) {
-                  const newColorName = responseService.current.getColorNameFromHex(command.color);
-                  setCommandResult({ success: true, message: `Changed the triangle to ${newColorName}` });
-                  responseService.current.speak(`I changed the triangle to ${newColorName}`);
-                } else {
-                  const colorName = responseService.current.getColorNameFromHex(command.color);
-                  setCommandResult({ success: true, message: `Drew a ${colorName} triangle` });
-                  responseService.current.respondToDrawCommand('triangle', command.color);
-                }
-                break;
+
+            // Generate response messages
+            if (result?.wasReplaced && result.oldShape) {
+              const oldColorName = responseService.current.getColorNameFromHex(result.oldShape.color);
+              const newColorName = responseService.current.getColorNameFromHex(shapeColor || '#FF0000');
+              const spatialText = command.spatialRelation ? ` ${command.spatialRelation.relation.replace('_', ' ')} the ${command.spatialRelation.reference}` : '';
+              setCommandResult({ success: true, message: `Replaced the ${oldColorName} ${command.shape} with a ${newColorName} one${spatialText}` });
+              responseService.current.speak(`I replaced the ${oldColorName} ${command.shape} with a ${newColorName} one${spatialText}`);
+            } else {
+              const colorName = responseService.current.getColorNameFromHex(shapeColor || '#FF0000');
+              const spatialText = command.spatialRelation ? ` ${command.spatialRelation.relation.replace('_', ' ')} the ${command.spatialRelation.reference}` : '';
+              setCommandResult({ success: true, message: `Drew a ${colorName} ${command.shape}${spatialText}` });
+              responseService.current.speak(`I drew a ${colorName} ${command.shape}${spatialText}`);
             }
           }
           break;
@@ -146,8 +114,44 @@ function App() {
             responseService.current.speak(`There are no shapes on the canvas to move`, 'normal');
             break;
           }
-          
-          if (command.position) {
+
+          // Handle spatial relationship moves
+          if (command.spatialRelation) {
+            const existingShape = canvas.getShapeByType(moveShape);
+            if (!existingShape) {
+              setCommandResult({ success: false, message: `No ${moveShape} to move` });
+              responseService.current.speak(`There's no ${moveShape} on the canvas to move`, 'normal');
+              break;
+            }
+
+            const spatialPosition = canvas.calculateSpatialPosition(
+              existingShape.size,
+              moveShape,
+              command.spatialRelation.relation,
+              command.spatialRelation.reference
+            );
+
+            if (!spatialPosition) {
+              setCommandResult({ success: false, message: `Cannot find ${command.spatialRelation.reference} to position relative to` });
+              responseService.current.speak(`I can't find the ${command.spatialRelation.reference} to position the ${moveShape} relative to`, 'normal');
+              break;
+            }
+
+            const offset = {
+              x: spatialPosition.x - existingShape.position.x,
+              y: spatialPosition.y - existingShape.position.y
+            };
+
+            const moved = canvas.moveShapeByType(moveShape, offset);
+            if (moved) {
+              const relationText = command.spatialRelation.relation.replace('_', ' ');
+              setCommandResult({ success: true, message: `Moved the ${moveShape} ${relationText} the ${command.spatialRelation.reference}` });
+              responseService.current.speak(`I moved the ${moveShape} ${relationText} the ${command.spatialRelation.reference}`, 'normal');
+            } else {
+              setCommandResult({ success: false, message: `Cannot move the ${moveShape} to that position` });
+              responseService.current.speak(`I can't move the ${moveShape} to that position`, 'normal');
+            }
+          } else if (command.position) {
             // command.position contains the offset (x, y) from directionMap
             // Determine direction name from offset
             let direction = '';
