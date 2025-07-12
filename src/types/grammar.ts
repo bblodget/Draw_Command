@@ -13,6 +13,8 @@ export interface ObjectPhrase {
   value: string;
   color?: string;
   direction?: string;
+  distance?: number;
+  unit?: string;
   preFillers?: string[];
   postFillers?: string[];
 }

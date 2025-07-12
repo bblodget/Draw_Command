@@ -31,6 +31,8 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
                        | <fillers> <color> <shape>
 
 <move-object-phrase> ::= <fillers> <shape> <fillers>? <direction>
+                       | <fillers> <shape> <fillers>? <direction> <number>
+                       | <fillers> <shape> <fillers>? <direction> <number> <unit>
 
 <fillers> ::= <filler>
             | <fillers> <filler>
@@ -50,6 +52,12 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 <direction> ::= "up" | "down" | "left" | "right"
 ```
 
+### Numbers and Units
+```bnf
+<number> ::= [1-9][0-9]*
+<unit> ::= "pixels" | "px"
+```
+
 ## Test Commands
 
 This grammar should handle:
@@ -60,6 +68,9 @@ This grammar should handle:
 - `computer move the square to the right please`
 - `computer move the circle up please`
 - `computer move the triangle to the left please`
+- `computer move the square up 100 please`
+- `computer move the square up 100 pixels please`
+- `computer move the circle left 50 please`
 - `computer clear please`
 
 **Note**: `<fillers>` can match one or more filler words, so "a", "the", "to", "to the", etc. all work naturally.

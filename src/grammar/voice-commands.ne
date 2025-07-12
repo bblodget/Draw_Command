@@ -34,6 +34,8 @@ draw_object_phrase -> fillers _ shape  {% ([, , shape]) => ({ type: 'shape', val
 # Move object phrases (with direction, no color allowed)
 # Using optional_fillers to simulate <fillers>? pattern
 move_object_phrase -> fillers _ shape optional_fillers _ direction  {% ([, , shape, , , direction]) => ({ type: 'shape', value: shape, direction: direction }) %}
+    | fillers _ shape optional_fillers _ direction _ number  {% ([, , shape, , , direction, , number]) => ({ type: 'shape', value: shape, direction: direction, distance: number }) %}
+    | fillers _ shape optional_fillers _ direction _ number _ unit  {% ([, , shape, , , direction, , number, , unit]) => ({ type: 'shape', value: shape, direction: direction, distance: number, unit: unit }) %}
 
 # Optional fillers (can be empty or contain fillers)
 optional_fillers -> null {% () => null %}
@@ -73,6 +75,13 @@ direction -> "up" {% id %}
     | "down" {% id %}
     | "left" {% id %}
     | "right" {% id %}
+
+# Numbers (simple integer support for now)
+number -> [1-9] [0-9]:* {% (d) => parseInt(d[0] + d[1].join('')) %}
+
+# Units
+unit -> "pixels" {% id %}
+    | "px" {% id %}
 
 # Whitespace
 _ -> [\s]:*  {% () => null %}

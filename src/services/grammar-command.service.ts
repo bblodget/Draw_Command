@@ -73,15 +73,17 @@ export class GrammarCommandService {
     const pronoun = object?.type === 'pronoun' ? object.value as 'it' : undefined;
     const color = object?.color; // Get color from object
     const direction = object?.direction; // Get direction from object
+    const distance = object?.distance; // Get distance from object
+    const unit = object?.unit; // Get unit from object
     
-    console.log('Extracted values:', { shape, pronoun, color, direction });
+    console.log('Extracted values:', { shape, pronoun, color, direction, distance, unit });
 
     switch (verb) {
       case 'draw':
         return this.handleDrawCommand(shape, pronoun, color, preModifier, postModifier, value);
       
       case 'move':
-        return this.handleMoveCommand(shape, pronoun, direction, preModifier, postModifier, value);
+        return this.handleMoveCommand(shape, pronoun, direction, distance, unit, preModifier, postModifier, value);
       
       case 'color':
       case 'colour':
@@ -140,7 +142,7 @@ export class GrammarCommandService {
     return command;
   }
 
-  private handleMoveCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectDirection?: string, preModifier?: any, postModifier?: any, value?: any): DrawCommand | null {
+  private handleMoveCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectDirection?: string, objectDistance?: number, objectUnit?: string, preModifier?: any, postModifier?: any, value?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Move command needs a shape or pronoun');
       return null;
@@ -167,15 +169,14 @@ export class GrammarCommandService {
       return null;
     }
 
-    // Get distance from value
-    const distance = value?.number || 50;
-    const clampedDistance = Math.max(10, Math.min(500, distance));
+    // Get distance from object first, then from value, then default to 100
+    const distance = objectDistance || value?.number || 100;
     
     // Calculate offset with custom distance
     const baseOffset = this.directionMap[direction];
     const offset = {
-      x: baseOffset.x === 0 ? 0 : (baseOffset.x > 0 ? clampedDistance : -clampedDistance),
-      y: baseOffset.y === 0 ? 0 : (baseOffset.y > 0 ? clampedDistance : -clampedDistance)
+      x: baseOffset.x === 0 ? 0 : (baseOffset.x > 0 ? distance : -distance),
+      y: baseOffset.y === 0 ? 0 : (baseOffset.y > 0 ? distance : -distance)
     };
     
     return {
@@ -183,8 +184,8 @@ export class GrammarCommandService {
       shape,
       pronoun,
       direction: direction as 'up' | 'down' | 'left' | 'right',
-      value: clampedDistance,
-      unit: value?.unit || undefined,
+      value: distance,
+      unit: objectUnit || value?.unit || undefined,
       position: offset // This will be used as an offset, not absolute position
     };
   }
