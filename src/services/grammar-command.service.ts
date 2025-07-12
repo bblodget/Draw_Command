@@ -132,7 +132,7 @@ export class GrammarCommandService {
     const referenceShape = objectReferenceShape || this.extractReferenceShape(preModifier, postModifier);
     
     // Set appropriate default size for each shape
-    const defaultSize = shape === 'circle' ? 50 : 100;
+    const defaultSize = 100; // All shapes now use the same default size
     
     const command: DrawCommand = {
       type: 'draw',
