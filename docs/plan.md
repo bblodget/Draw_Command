@@ -5,16 +5,15 @@
 **Last Updated**: 2025-07-12
 
 ### Phase 1: Core Functionality Foundation
-- ✅ **15/20 tasks completed** (75% complete)
-- ⏱️ **42-45 hours** actual time vs 40-50 hours estimated  
-- 🚨 **URGENT**: Task 1.9.5: Fix GitHub Pages Grammar Deployment Issue
+- ✅ **16/20 tasks completed** (80% complete)
+- ⏱️ **43-46 hours** actual time vs 40-50 hours estimated  
 - 🎯 **Next**: Task 1.10: Rotate Commands
 
 ### Phase 1.5: GitHub Pages Deployment
 - ✅ **COMPLETED**: Live demo deployed!
 - 🌐 **Live Demo**: https://bblodget.github.io/Draw_Command/
-- 🚨 **ISSUE**: Grammar module loading error in production (Task 1.9.5)
-- ⭐ **Success**: Fully functional voice-controlled drawing available locally
+- ✅ **FIXED**: Grammar module loading error resolved (Task 1.9.5)
+- ⭐ **Success**: Fully functional voice-controlled drawing available online
 
 ### Completed Tasks
 1. ✅ **Task 1.1**: Project Setup and Basic React App
@@ -30,8 +29,9 @@
 11. ✅ **Task 1.78**: Remove Transcript Debug Logs
 12. ✅ **Task 1.8**: UI Polish and Testing
 13. ✅ **Task 1.9**: Resize Commands  
-14. ✅ **Task 1.14**: Deploy to GitHub Pages
-15. ✅ **Task 1.15**: BNF Grammar Architecture
+14. ✅ **Task 1.9.5**: Fix GitHub Pages Grammar Deployment Issue
+15. ✅ **Task 1.14**: Deploy to GitHub Pages
+16. ✅ **Task 1.15**: BNF Grammar Architecture
 
 ### Current Status
 🎉 **Major Milestone**: Voice-to-drawing system is FULLY FUNCTIONAL AND DEPLOYED! The system can:
@@ -55,11 +55,11 @@
 📦 **Deployment Status**: Successfully deployed to GitHub Pages with automatic CI/CD!
 
 **Next Steps**: 
-1. 🚨 **Task 1.9.5**: Fix GitHub Pages Grammar Deployment Issue - URGENT
-2. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
-3. ✅ **Task 1.11**: Relative Positioning - "draw a circle to the left of the square" (COMPLETED in Task 1.15)
-4. ✅ **Task 1.12**: Pronoun References - "move it to the right" (COMPLETED in Task 1.15)
-5. **Task 1.13**: Help System - "what can I draw"
+1. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
+2. **Task 1.13**: Help System - "what can I draw"
+3. ✅ **Task 1.9.5**: Fix GitHub Pages Grammar Deployment Issue (COMPLETED)
+4. ✅ **Task 1.11**: Relative Positioning - "draw a circle to the left of the square" (COMPLETED in Task 1.15)
+5. ✅ **Task 1.12**: Pronoun References - "move it to the right" (COMPLETED in Task 1.15)
 
 **Revolutionary BNF Grammar Achievement**: Task 1.15 successfully replaced regex-based parsing with sophisticated BNF grammar architecture, delivering spatial relationships, pronoun support, and advanced natural language processing capabilities that exceed the original Phase 1 goals.
 
@@ -453,28 +453,40 @@ When users pause between parts of a voice command (e.g., "Computer" → pause �
 
 ---
 
-### Task 1.9.5: Fix GitHub Pages Grammar Deployment Issue
+### ✅ Task 1.9.5: Fix GitHub Pages Grammar Deployment Issue (COMPLETED)
 **Goal**: Resolve "grammar is not defined" error in production deployment.
 
 **Background**: 
 The live demo at https://bblodget.github.io/Draw_Command/ shows a console error: "Uncaught ReferenceError: grammar is not defined" which prevents the voice command parsing from working correctly in the deployed version.
 
 **Tasks**:
-- [ ] Investigate grammar module loading in production build
-- [ ] Check Vite build configuration for grammar file inclusion
-- [ ] Verify Nearley.js grammar compilation for production
-- [ ] Test grammar import/export statements in bundled code
-- [ ] Fix module resolution issues in GitHub Pages deployment
-- [ ] Verify live demo functionality after fix
-- [ ] Update deployment documentation if needed
+- [x] Investigate grammar module loading in production build
+- [x] Check Vite build configuration for grammar file inclusion
+- [x] Verify Nearley.js grammar compilation for production
+- [x] Test grammar import/export statements in bundled code
+- [x] Fix module resolution issues in GitHub Pages deployment
+- [x] Verify live demo functionality after fix
+- [x] Update deployment documentation if needed
 
 **Acceptance Criteria**:
-- Live demo at https://bblodget.github.io/Draw_Command/ loads without console errors
-- Voice command parsing works correctly in production
-- Grammar module is properly bundled and accessible
-- All voice commands function as expected in deployed version
+- ✅ Live demo at https://bblodget.github.io/Draw_Command/ loads without console errors
+- ✅ Voice command parsing works correctly in production
+- ✅ Grammar module is properly bundled and accessible
+- ✅ All voice commands function as expected in deployed version
 
-**Estimated Time**: 1-2 hours
+**Completed**: 2025-07-12 | **Session**: `2025-07-12-1330-Task 1.9.5: Fix GitHub Pages Grammar Deployment Issue.md`
+**Actual Time**: 1 hour (within estimate)
+
+**Root Cause & Solution**:
+- **Issue**: Nearley.js compiled grammar had IIFE scope issue - `grammar` variable defined inside IIFE but `export default grammar;` outside scope
+- **Fix**: Restructured IIFE to assign return value: `const grammar = (function() { ... return compiledGrammar; })();`
+- **Result**: Grammar module now properly exports and bundles in production, eliminating console errors
+
+**Technical Achievements**:
+- **Fixed IIFE Export Structure**: Proper variable scoping for ES module export
+- **Resolved Naming Conflicts**: Renamed internal variable to avoid collisions
+- **Production Build Success**: Grammar module correctly included in Vite bundle
+- **Zero Console Errors**: Clean production deployment without JavaScript errors
 
 ---
 
@@ -820,8 +832,8 @@ All planned phases successfully implemented with comprehensive testing:
 
 ## Timeline Estimate
 
-- **Phase 1**: ~~40-50 hours~~ **42-45 hours actual** (75% complete, 3 tasks remaining)
-  - Remaining: Tasks 1.9.5, 1.10, 1.13 (~6-9 hours)
+- **Phase 1**: ~~40-50 hours~~ **43-46 hours actual** (80% complete, 2 tasks remaining)
+  - Remaining: Tasks 1.10, 1.13 (~5-7 hours)
 - **Phase 1.5**: ~~2-3 hours~~ **54 minutes actual** ✅ COMPLETED
 - **Phase 2**: 15-20 hours (Polish & Advanced Features)
 - **Total**: ~~82-103 hours~~ **60-75 hours projected** (significantly under original estimate!)
