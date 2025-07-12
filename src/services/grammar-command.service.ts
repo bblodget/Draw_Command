@@ -408,17 +408,6 @@ export class GrammarCommandService {
     return undefined;
   }
 
-  private extractSpatialRelation(preModifier?: any, postModifier?: any): SpatialRelation | undefined {
-    const modifiers = [preModifier, postModifier].filter(Boolean);
-    
-    for (const modifier of modifiers) {
-      if (modifier?.type === 'spatial') {
-        return modifier.value as SpatialRelation;
-      }
-    }
-    
-    return undefined;
-  }
 
   private extractSizeRelation(preModifier?: any, postModifier?: any): SizeRelation | undefined {
     const modifiers = [preModifier, postModifier].filter(Boolean);

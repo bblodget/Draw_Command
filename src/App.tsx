@@ -98,7 +98,7 @@ function App() {
               const spatialText = command.spatialRelation ? ` ${command.spatialRelation.relation.replace('_', ' ')} the ${command.spatialRelation.reference}` : '';
               setCommandResult({ success: true, message: `Replaced the ${oldColorName} ${command.shape} with a ${newColorName} one${spatialText}` });
               responseService.current.speak(`I replaced the ${oldColorName} ${command.shape} with a ${newColorName} one${spatialText}`);
-            } else {
+            } else if (result) {
               const colorName = responseService.current.getColorNameFromHex(result.actualColor);
               const spatialText = command.spatialRelation ? ` ${command.spatialRelation.relation.replace('_', ' ')} the ${command.spatialRelation.reference}` : '';
               setCommandResult({ success: true, message: `Drew a ${colorName} ${command.shape}${spatialText}` });
