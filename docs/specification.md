@@ -11,11 +11,11 @@
 - **Web Speech API** - Browser-native speech recognition and synthesis
   - `SpeechRecognition` for real-time speech-to-text
   - `SpeechSynthesis` for text-to-speech responses
-- **Fallback**: OpenAI Whisper API for improved accuracy (serverless function)
 
 ### Natural Language Processing
-- **OpenAI GPT-4 API** - Parse natural language commands into structured actions
-- **Serverless Function** - Secure API key handling and command processing
+- **Nearley.js** - BNF grammar-based parser for sophisticated command parsing
+- **Custom Grammar** - Comprehensive BNF grammar supporting spatial relationships and pronouns
+- **TypeScript Integration** - Type-safe command parsing and validation
 
 ### Graphics Rendering
 - **HTML5 Canvas** - Primary drawing surface
@@ -23,14 +23,15 @@
 - **Custom Shape Classes** - Extensible shape system
 
 ### Deployment & Infrastructure
-- **Vercel** - Hosting and serverless functions
-- **GitHub** - Version control and CI/CD integration
+- **GitHub Pages** - Static site hosting with automatic CI/CD
+- **GitHub Actions** - Automated build and deployment pipeline
+- **Vite Build** - Optimized production builds
 
 ## System Architecture
 
 ### High-Level Architecture
 ```
-User Speech → Web Speech API → React App → Serverless Function → OpenAI API → Command Parser → Canvas Engine → Visual Output
+User Speech → Web Speech API → React App → BNF Grammar Parser → Command Parser → Canvas Engine → Visual Output
 ```
 
 ### Component Structure
@@ -53,13 +54,17 @@ App/
 │       ├── Button.tsx
 │       └── Modal.tsx
 ├── services/
-│   ├── voiceService.ts
-│   ├── commandParser.ts
-│   ├── canvasService.ts
-│   └── apiService.ts
+│   ├── voice.service.ts
+│   ├── grammar-command.service.ts
+│   ├── canvas.service.ts
+│   └── response.service.ts
+├── grammar/
+│   ├── voice-commands.ne
+│   ├── voice-commands.js
+│   └── voice-commands.d.ts
 ├── types/
-│   ├── commands.ts
-│   ├── shapes.ts
+│   ├── index.ts
+│   ├── grammar.ts
 │   └── voice.ts
 └── utils/
     ├── colorUtils.ts
@@ -93,46 +98,54 @@ interface SpeechResult {
 - Process complete command phrase
 
 #### Error Handling
-- Fallback to OpenAI Whisper for unclear speech
+- Graceful degradation for unclear speech
 - Retry mechanism for failed recognition
 - User feedback for recognition issues
+- Grammar parsing fallbacks for malformed commands
 
 ### 2. Command Processing Pipeline
 
 #### Command Structure
 ```typescript
-interface Command {
-  action: 'draw' | 'modify' | 'move' | 'delete' | 'system';
-  target?: string; // shape identifier
-  properties?: {
-    shape?: 'square' | 'circle' | 'triangle' | 'rectangle';
-    color?: string;
-    size?: { width: number; height: number };
-    position?: { x: number; y: number };
-    relativeTo?: string; // spatial relationships
-  };
-  context?: {
-    lastShape?: string;
-    selectedShape?: string;
-  };
+interface DrawCommand {
+  type: 'draw' | 'move' | 'color' | 'resize' | 'delete' | 'clear';
+  shape?: 'square' | 'circle' | 'triangle';
+  pronoun?: 'it';
+  color?: string;
+  size?: number;
+  position?: { x: number; y: number };
+  direction?: 'up' | 'down' | 'left' | 'right';
+  value?: number;
+  unit?: string;
+  resizeMode?: 'relative' | 'match';
+  resizeFactor?: number;
+  targetShape?: 'square' | 'circle' | 'triangle';
+  spatialRelation?: SpatialRelation;
 }
 ```
 
-#### OpenAI Integration
+#### BNF Grammar Integration
 ```typescript
-// Serverless function: /api/parse-command
-interface ParseCommandRequest {
-  speech: string;
-  context: {
-    existingShapes: Shape[];
-    lastCommand?: Command;
-  };
+interface SpatialRelation {
+  relation: 'left_of' | 'right_of' | 'above' | 'below' | 'next_to';
+  reference: string;
 }
 
-interface ParseCommandResponse {
-  command: Command;
-  confidence: number;
-  alternatives?: Command[];
+interface ParsedCommand {
+  verb: string;
+  object?: {
+    type: 'shape' | 'pronoun';
+    value: string;
+    color?: string;
+    direction?: string;
+    distance?: number;
+    unit?: string;
+    spatialRelation?: string;
+    referenceShape?: string;
+  };
+  preModifier?: any;
+  postModifier?: any;
+  value?: any;
 }
 ```
 
@@ -142,28 +155,20 @@ interface ParseCommandResponse {
 ```typescript
 interface Shape {
   id: string;
-  type: 'square' | 'circle' | 'triangle' | 'rectangle';
-  properties: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    color: string;
-    rotation: number;
-  };
-  metadata: {
-    createdAt: Date;
-    lastModified: Date;
-    createdBy: string; // command that created it
-  };
+  type: 'square' | 'circle' | 'triangle';
+  color: string;
+  position: { x: number; y: number };
+  size: number;
+  createdAt: Date;
 }
 ```
 
 #### Fabric.js Integration
 - Use Fabric.js for object manipulation
-- Custom shape classes for each shape type
+- Three-object model (one square, one circle, one triangle)
 - Event handling for selection and modification
-- Undo/redo system using command history
+- Spatial relationship positioning with boundary protection
+- Unified coordinate system for perfect shape alignment
 
 ### 4. Voice Response System
 
@@ -187,48 +192,37 @@ interface ResponseTemplates {
 - Priority handling for confirmations vs. help
 - Interruption handling for urgent messages
 
-## API Design
+## Grammar Design
 
-### Serverless Functions
+### BNF Grammar Structure
 
-#### `/api/parse-command`
-```typescript
-POST /api/parse-command
-{
-  "speech": "computer draw a red square please",
-  "context": {
-    "existingShapes": [...],
-    "lastCommand": {...}
-  }
-}
+#### Core Grammar Rules
+```bnf
+<command> ::= <clear>
+            | <draw> <draw-object-phrase>
+            | <move> <move-object-phrase>
+            | <delete> <delete-object-phrase>
+            | <color> <color-object-phrase>
+            | <make> <make-object-phrase>
 
-Response:
-{
-  "command": {
-    "action": "draw",
-    "properties": {
-      "shape": "square",
-      "color": "red"
-    }
-  },
-  "confidence": 0.95
-}
+<draw-object-phrase> ::= <fillers> <shape>
+                       | <fillers> <color> <shape>
+                       | <fillers> <shape> <spatial-relationship> <fillers> <shape>
+                       | <fillers> <color> <shape> <spatial-relationship> <fillers> <shape>
+
+<spatial-relationship> ::= "to" "the" "left" "of"
+                         | "to" "the" "right" "of"
+                         | "above"
+                         | "below"
+                         | "next" "to"
 ```
 
-#### `/api/fallback-speech`
-```typescript
-POST /api/fallback-speech
-{
-  "audio": "base64-encoded-audio",
-  "language": "en-US"
-}
-
-Response:
-{
-  "transcript": "computer draw a red square please",
-  "confidence": 0.92
-}
-```
+#### Supported Features
+- **5 Spatial Relationships**: Comprehensive positioning relative to other shapes
+- **Pronoun Support**: "it" references with last-interacted shape tracking
+- **Size Relationships**: "same size as" with visual size conversion
+- **Natural Language Variations**: Multiple ways to express the same command
+- **Numeric Values**: Distance and angle specifications with units
 
 ## Data Flow
 
@@ -240,11 +234,11 @@ Response:
 5. Speech sent to command parser
 
 ### 2. Command Processing Flow
-1. Raw speech sent to serverless function
-2. OpenAI GPT-4 parses natural language
-3. Structured command returned to frontend
-4. Command validated against current state
-5. Canvas engine executes command
+1. Raw speech processed by Nearley.js grammar parser
+2. BNF grammar rules parse natural language into structured commands
+3. Grammar service converts parsed result to DrawCommand interface
+4. Command validated against current canvas state
+5. Canvas engine executes command with spatial relationship support
 
 ### 3. Response Flow
 1. Command execution result determined
@@ -255,19 +249,20 @@ Response:
 
 ## Security Considerations
 
-### API Key Management
-- OpenAI API keys stored in Vercel environment variables
-- No client-side exposure of sensitive credentials
-- Rate limiting on serverless functions
+### Client-Side Security
+- No external API dependencies or keys required
+- All processing happens in browser environment
+- Grammar parsing prevents code injection attacks
 
 ### Input Validation
-- Sanitize all user speech input
-- Validate command structure before execution
-- Prevent malicious canvas operations
+- Sanitize all user speech input through grammar validation
+- Strict command structure validation before execution
+- Prevent malicious canvas operations through type safety
 
-### CORS Configuration
-- Configure CORS for Vercel deployment
-- Secure communication between frontend and API
+### Deployment Security
+- Static site deployment with no server-side vulnerabilities
+- HTTPS-only access for microphone permissions
+- No sensitive data storage or processing
 
 ## Performance Optimization
 
@@ -277,44 +272,49 @@ Response:
 - Canvas rendering optimization
 - Lazy loading for non-critical features
 
-### API Optimizations
-- Caching for common command patterns
-- Batch processing for multiple commands
-- Connection pooling for OpenAI API calls
+### Grammar Parsing Optimizations
+- Sub-50ms parsing performance with Nearley.js
+- Efficient grammar compilation and caching
+- Minimal memory footprint for grammar rules
+- Type-safe command processing pipeline
 
 ## Development Phases
 
-### Phase 1: Core Functionality
+### Phase 1: Core Functionality ✅ COMPLETED
 - Basic speech recognition and synthesis
-- Simple shape drawing (square, circle)
-- Basic command parsing with regex
+- Shape drawing (square, circle, triangle)
+- **BNF grammar-based command parsing** (replaced regex)
 - Canvas rendering with Fabric.js
+- **Spatial relationship commands**
+- **Pronoun support and context awareness**
+- **Natural language processing with 12 colors**
+- **Size relationships and numeric values**
 
-### Phase 2: AI Enhancement
-- OpenAI integration for natural language
-- Advanced command parsing
-- Context awareness and references
-- Error handling and fallbacks
-
-### Phase 3: Advanced Features
-- Complex shapes and patterns
-- Spatial relationship commands
+### Phase 2: Advanced Features (Future)
+- Interactive help system
+- Rotation commands
 - Undo/redo system
 - Export/import functionality
+
+### Phase 3: Polish and Enhancement (Future)
+- Performance optimization
+- Advanced error handling
+- Accessibility improvements
+- Demo presentation features
 
 ## Testing Strategy
 
 ### Unit Tests
-- Command parser logic
+- BNF grammar parsing logic
 - Shape manipulation functions
 - Voice recognition utilities
-- Canvas operations
+- Canvas operations and spatial relationships
 
 ### Integration Tests
 - End-to-end voice command flow
-- API integration testing
-- Cross-browser compatibility
-- Performance benchmarks
+- Grammar parsing integration
+- Cross-browser compatibility (Web Speech API)
+- Performance benchmarks for parsing and rendering
 
 ### User Testing
 - Demo presentation testing
@@ -325,12 +325,17 @@ Response:
 ## Deployment Strategy
 
 ### Development Environment
-- Local development with Vercel CLI
+- Local development with Vite dev server
 - Hot reloading for rapid iteration
-- Environment variable management
+- Grammar compilation workflow with Nearley.js
 
 ### Production Deployment
-- GitHub integration with Vercel
-- Automatic deployments on main branch
-- Preview deployments for pull requests
-- Environment-specific configurations 
+- GitHub Pages with automatic deployment
+- GitHub Actions for CI/CD pipeline
+- Static site generation with Vite build
+- No server-side dependencies or configuration required
+
+### Live Demo
+- **Production URL**: https://bblodget.github.io/Draw_Command/
+- **HTTPS Required**: For microphone access via Web Speech API
+- **Fully Functional**: Complete voice-controlled drawing system 
