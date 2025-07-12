@@ -18,6 +18,28 @@ function App() {
     canvasServiceRef.current = canvasService;
   }, []);
 
+  // Helper function to resolve pronouns to shape types
+  const resolveShapeReference = (command: DrawCommand, canvas: CanvasService): string | null => {
+    if (command.shape) {
+      return command.shape;
+    }
+    
+    if (command.pronoun === 'it') {
+      const lastInteractedType = canvas.getLastInteractedShapeType();
+      if (lastInteractedType) {
+        return lastInteractedType;
+      }
+      
+      // Fallback to most recent shape if no interaction tracked yet
+      const mostRecent = canvas.getMostRecentShape();
+      if (mostRecent) {
+        return mostRecent.type;
+      }
+    }
+    
+    return null;
+  };
+
   const executeCommand = (command: DrawCommand) => {
     if (!canvasServiceRef.current) {
       setCommandResult({ success: false, message: 'Canvas not ready' });
@@ -118,7 +140,14 @@ function App() {
           break;
           
         case 'move':
-          if (command.shape && command.position) {
+          const moveShape = resolveShapeReference(command, canvas);
+          if (!moveShape) {
+            setCommandResult({ success: false, message: 'No shapes on canvas to move' });
+            responseService.current.speak(`There are no shapes on the canvas to move`, 'normal');
+            break;
+          }
+          
+          if (command.position) {
             // command.position contains the offset (x, y) from directionMap
             // Determine direction name from offset
             let direction = '';
@@ -127,44 +156,62 @@ function App() {
             else if (command.position.y > 0) direction = 'down';
             else if (command.position.y < 0) direction = 'up';
             
-            const moved = canvas.moveShapeByType(command.shape, command.position);
+            const moved = canvas.moveShapeByType(moveShape, command.position);
             if (moved) {
               // Calculate distance from offset
               const distance = Math.abs(command.position.x || command.position.y);
-              const distanceText = distance === 50 ? '' : ` ${distance} pixels`;
+              const distanceText = distance === 100 ? '' : ` ${distance} pixels`;
               
-              setCommandResult({ success: true, message: `Moved the ${command.shape} ${direction}${distanceText}` });
-              responseService.current.respondToMoveCommand(command.shape, `${direction}${distanceText}`);
+              setCommandResult({ success: true, message: `Moved the ${moveShape} ${direction}${distanceText}` });
+              responseService.current.respondToMoveCommand(moveShape, `${direction}${distanceText}`);
             } else {
               // Either shape doesn't exist or would move off canvas
-              const shapeExists = canvas.getShapeByType(command.shape);
+              const shapeExists = canvas.getShapeByType(moveShape);
               if (!shapeExists) {
-                setCommandResult({ success: false, message: `No ${command.shape} to move` });
-                responseService.current.speak(`There's no ${command.shape} on the canvas to move`, 'normal');
+                setCommandResult({ success: false, message: `No ${moveShape} to move` });
+                responseService.current.speak(`There's no ${moveShape} on the canvas to move`, 'normal');
               } else {
-                setCommandResult({ success: false, message: `Cannot move the ${command.shape} further ${direction}` });
-                responseService.current.speak(`I can't move the ${command.shape} any further in that direction`, 'normal');
+                setCommandResult({ success: false, message: `Cannot move the ${moveShape} further ${direction}` });
+                responseService.current.speak(`I can't move the ${moveShape} any further in that direction`, 'normal');
               }
             }
           }
           break;
           
+        case 'color':
+          const colorShape = resolveShapeReference(command, canvas);
+          if (!colorShape) {
+            setCommandResult({ success: false, message: 'No shapes on canvas to color' });
+            responseService.current.speak(`There are no shapes on the canvas to color`, 'normal');
+            break;
+          }
+          
+          if (command.color) {
+            // For color commands, we create a new shape with the specified color
+            // This follows the three-object model where each shape type has one instance
+            const colorCommand: DrawCommand = {
+              type: 'draw',
+              shape: colorShape as 'square' | 'circle' | 'triangle',
+              color: command.color,
+              size: 100, // Will be determined by existing shape
+              position: { x: 200, y: 200 } // Will be determined by existing shape
+            };
+            
+            // Execute the draw command which will replace the existing shape
+            executeCommand(colorCommand);
+          }
+          break;
+          
         case 'resize':
-          // Handle "it" reference - get the most recent shape
-          let targetShape = command.shape;
-          if (!targetShape) {
-            const mostRecent = canvas.getMostRecentShape();
-            if (mostRecent) {
-              targetShape = mostRecent.type;
-            } else {
-              setCommandResult({ success: false, message: 'No shapes on canvas to resize' });
-              responseService.current.speak(`There are no shapes on the canvas to resize`, 'normal');
-              break;
-            }
+          const resizeShape = resolveShapeReference(command, canvas);
+          if (!resizeShape) {
+            setCommandResult({ success: false, message: 'No shapes on canvas to resize' });
+            responseService.current.speak(`There are no shapes on the canvas to resize`, 'normal');
+            break;
           }
           
           if (command.resizeMode === 'relative' && command.resizeFactor !== undefined) {
-            const resized = canvas.resizeShapeByType(targetShape, command.resizeFactor);
+            const resized = canvas.resizeShapeByType(resizeShape, command.resizeFactor);
             
             if (resized) {
               // Generate appropriate response based on resize factor
@@ -174,41 +221,41 @@ function App() {
               if (command.resizeFactor > 1) {
                 const adjective = command.resizeFactor >= 2 ? 'much bigger' : 
                                  command.resizeFactor >= 1.5 ? 'bigger' : 'a little bigger';
-                message = `Made the ${targetShape} ${adjective}`;
-                spokenMessage = `I made the ${targetShape} ${adjective}`;
+                message = `Made the ${resizeShape} ${adjective}`;
+                spokenMessage = `I made the ${resizeShape} ${adjective}`;
               } else {
                 const adjective = command.resizeFactor <= 0.5 ? 'much smaller' : 
                                  command.resizeFactor <= 0.67 ? 'smaller' : 'a little smaller';
-                message = `Made the ${targetShape} ${adjective}`;
-                spokenMessage = `I made the ${targetShape} ${adjective}`;
+                message = `Made the ${resizeShape} ${adjective}`;
+                spokenMessage = `I made the ${resizeShape} ${adjective}`;
               }
               
               setCommandResult({ success: true, message });
               responseService.current.speak(spokenMessage, 'normal');
             } else {
-              setCommandResult({ success: false, message: `No ${targetShape} to resize` });
-              responseService.current.speak(`There's no ${targetShape} on the canvas to resize`, 'normal');
+              setCommandResult({ success: false, message: `No ${resizeShape} to resize` });
+              responseService.current.speak(`There's no ${resizeShape} on the canvas to resize`, 'normal');
             }
           } else if (command.resizeMode === 'match' && command.targetShape) {
-            const resized = canvas.resizeShapeByType(targetShape, 'match', command.targetShape);
+            const resized = canvas.resizeShapeByType(resizeShape, 'match', command.targetShape);
             
             if (resized) {
-              const message = `Made the ${targetShape} the same size as the ${command.targetShape}`;
-              const spokenMessage = `I made the ${targetShape} the same size as the ${command.targetShape}`;
+              const message = `Made the ${resizeShape} the same size as the ${command.targetShape}`;
+              const spokenMessage = `I made the ${resizeShape} the same size as the ${command.targetShape}`;
               
               setCommandResult({ success: true, message });
               responseService.current.speak(spokenMessage, 'normal');
             } else {
               // Check which shape is missing
-              const sourceExists = canvas.getShapeByType(targetShape);
+              const sourceExists = canvas.getShapeByType(resizeShape);
               const targetExists = canvas.getShapeByType(command.targetShape);
               
               if (!sourceExists && !targetExists) {
-                setCommandResult({ success: false, message: `No ${targetShape} or ${command.targetShape} on the canvas` });
-                responseService.current.speak(`There's no ${targetShape} or ${command.targetShape} on the canvas`, 'normal');
+                setCommandResult({ success: false, message: `No ${resizeShape} or ${command.targetShape} on the canvas` });
+                responseService.current.speak(`There's no ${resizeShape} or ${command.targetShape} on the canvas`, 'normal');
               } else if (!sourceExists) {
-                setCommandResult({ success: false, message: `No ${targetShape} to resize` });
-                responseService.current.speak(`There's no ${targetShape} on the canvas to resize`, 'normal');
+                setCommandResult({ success: false, message: `No ${resizeShape} to resize` });
+                responseService.current.speak(`There's no ${resizeShape} on the canvas to resize`, 'normal');
               } else {
                 setCommandResult({ success: false, message: `No ${command.targetShape} to match size with` });
                 responseService.current.speak(`There's no ${command.targetShape} on the canvas to match size with`, 'normal');
@@ -218,15 +265,20 @@ function App() {
           break;
           
         case 'delete':
-          if (command.shape) {
-            const deleted = canvas.deleteShapeByType(command.shape);
-            if (deleted) {
-              setCommandResult({ success: true, message: `Deleted the ${command.shape}` });
-              responseService.current.respondToDeleteCommand(command.shape);
-            } else {
-              setCommandResult({ success: false, message: `No ${command.shape} to delete` });
-              responseService.current.speak(`There's no ${command.shape} on the canvas to delete`, 'normal');
-            }
+          const deleteShape = resolveShapeReference(command, canvas);
+          if (!deleteShape) {
+            setCommandResult({ success: false, message: 'No shapes on canvas to delete' });
+            responseService.current.speak(`There are no shapes on the canvas to delete`, 'normal');
+            break;
+          }
+          
+          const deleted = canvas.deleteShapeByType(deleteShape);
+          if (deleted) {
+            setCommandResult({ success: true, message: `Deleted the ${deleteShape}` });
+            responseService.current.respondToDeleteCommand(deleteShape);
+          } else {
+            setCommandResult({ success: false, message: `No ${deleteShape} to delete` });
+            responseService.current.speak(`There's no ${deleteShape} on the canvas to delete`, 'normal');
           }
           break;
           

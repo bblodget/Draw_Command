@@ -2,9 +2,9 @@
 
 This document presents a simplified BNF (Backus-Naur Form) grammar for the voice command system, built incrementally.
 
-## Current Grammar (Phase 6, Step 6.1)
+## Current Grammar (Phase 6, Step 6.2)
 
-We're expanding to support all three basic shapes, common fillers, colored drawing commands, movement commands, delete commands, color change commands, and resize commands.
+We're expanding to support all three basic shapes, common fillers, colored drawing commands, movement commands, delete commands, color change commands, resize commands, and pronoun support.
 
 ### Main Structure
 ```bnf
@@ -32,18 +32,22 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 <draw-object-phrase> ::= <fillers> <shape>
                        | <fillers> <color> <shape>
 
-<move-object-phrase> ::= <fillers> <shape> <fillers>? <direction>
-                       | <fillers> <shape> <fillers>? <direction> <number>
-                       | <fillers> <shape> <fillers>? <direction> <number> <unit>
-                       | <fillers> <shape> <fillers>? <number> <fillers>? <direction>
-                       | <fillers> <shape> <fillers>? <number> <unit> <fillers>? <direction>
+<move-object-phrase> ::= <pronoun-or-shape> <fillers>? <direction>
+                       | <pronoun-or-shape> <fillers>? <direction> <number>
+                       | <pronoun-or-shape> <fillers>? <direction> <number> <unit>
+                       | <pronoun-or-shape> <fillers>? <number> <fillers>? <direction>
+                       | <pronoun-or-shape> <fillers>? <number> <unit> <fillers>? <direction>
 
-<delete-object-phrase> ::= <fillers> <shape>
+<delete-object-phrase> ::= <pronoun-or-shape>
 
-<color-object-phrase> ::= <fillers> <shape> <fillers>? <color>
+<color-object-phrase> ::= <pronoun-or-shape> <fillers>? <color>
 
-<resize-object-phrase> ::= <fillers> <shape> <fillers>? <size-modifier>
-                         | <fillers> <shape> <fillers>? "same" "size" "as" <fillers>? <shape>
+<resize-object-phrase> ::= <pronoun-or-shape> <fillers>? <size-modifier>
+                         | <pronoun-or-shape> <fillers>? "same" "size" "as" <fillers>? <shape>
+
+<the-shape> ::= <fillers> <shape>
+<pronoun> ::= "it"
+<pronoun-or-shape> ::= <the-shape> | <pronoun>
 
 <fillers> ::= <filler>
             | <fillers> <filler>
@@ -98,7 +102,14 @@ This grammar should handle:
 - `computer make the square the same size as the circle please`
 - `computer clear please`
 
-**Note**: `<fillers>` can match one or more filler words, so "a", "the", "to", "to the", etc. all work naturally.
+**New pronoun support:**
+- `computer move it to the right please`
+- `computer color it blue please`
+- `computer delete it please`
+- `computer make it bigger please`
+- `computer move it up 50 pixels please`
+
+**Note**: `<fillers>` can match one or more filler words, so "a", "the", "to", "to the", etc. all work naturally. The pronoun "it" refers to the last shape that was operated on and doesn't require filler words.
 
 ## Next Steps
 
@@ -110,7 +121,8 @@ Once this works, we'll incrementally add:
 5. ✅ Move verb and directions - **COMPLETED**
 6. ✅ More verbs (color, delete, etc.) - **COMPLETED**
 7. ✅ Resize commands (make bigger/smaller) - **COMPLETED**
-7. Modifiers and complex relationships
+8. ✅ Pronoun support ("it") - **COMPLETED**
+9. Modifiers and complex relationships
 
 ## Implementation Notes
 

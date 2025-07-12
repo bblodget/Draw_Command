@@ -1,7 +1,7 @@
-# Voice Commands Grammar - Phase 6, Step 6.1
+# Voice Commands Grammar - Phase 6, Step 6.2
 # Goal: Parse "computer [verb] [filler] [color?] [shape] [direction?] please" and "computer clear please"
-# Supports: square, circle, triangle
-# Fillers: a, an, the, to, with, same, size, as, much, little
+# Supports: square, circle, triangle, it (pronoun)
+# Fillers: a, an, the, to, with
 # Colors: red, blue, green, yellow, purple, orange, black, white, pink, brown, gray, grey
 # Directions: up, down, left, right
 # Size modifiers: bigger, smaller, larger, much bigger, much smaller, a little bigger, a little smaller
@@ -50,21 +50,21 @@ draw_object_phrase -> fillers _ shape  {% ([, , shape]) => ({ type: 'shape', val
 
 # Move object phrases (with direction, no color allowed)
 # Using optional_fillers to simulate <fillers>? pattern
-move_object_phrase -> fillers _ shape optional_fillers _ direction  {% ([, , shape, , , direction]) => ({ type: 'shape', value: shape, direction: direction }) %}
-    | fillers _ shape optional_fillers _ direction _ number  {% ([, , shape, , , direction, , number]) => ({ type: 'shape', value: shape, direction: direction, distance: number }) %}
-    | fillers _ shape optional_fillers _ direction _ number _ unit  {% ([, , shape, , , direction, , number, , unit]) => ({ type: 'shape', value: shape, direction: direction, distance: number, unit: unit }) %}
-    | fillers _ shape optional_fillers _ number optional_fillers _ direction  {% ([, , shape, , , number, , , direction]) => ({ type: 'shape', value: shape, direction: direction, distance: number }) %}
-    | fillers _ shape optional_fillers _ number _ unit optional_fillers _ direction  {% ([, , shape, , , number, , unit, , , direction]) => ({ type: 'shape', value: shape, direction: direction, distance: number, unit: unit }) %}
+move_object_phrase -> pronoun_or_shape optional_fillers _ direction  {% ([obj, , , direction]) => ({ ...obj, direction: direction }) %}
+    | pronoun_or_shape optional_fillers _ direction _ number  {% ([obj, , , direction, , number]) => ({ ...obj, direction: direction, distance: number }) %}
+    | pronoun_or_shape optional_fillers _ direction _ number _ unit  {% ([obj, , , direction, , number, , unit]) => ({ ...obj, direction: direction, distance: number, unit: unit }) %}
+    | pronoun_or_shape optional_fillers _ number optional_fillers _ direction  {% ([obj, , , number, , , direction]) => ({ ...obj, direction: direction, distance: number }) %}
+    | pronoun_or_shape optional_fillers _ number _ unit optional_fillers _ direction  {% ([obj, , , number, , unit, , , direction]) => ({ ...obj, direction: direction, distance: number, unit: unit }) %}
 
 # Delete object phrases (simple shape reference, no color needed)
-delete_object_phrase -> fillers _ shape  {% ([, , shape]) => ({ type: 'shape', value: shape }) %}
+delete_object_phrase -> pronoun_or_shape  {% ([obj]) => obj %}
 
 # Color object phrases (shape and target color)
-color_object_phrase -> fillers _ shape optional_fillers _ color  {% ([, , shape, , , color]) => ({ type: 'shape', value: shape, color: color }) %}
+color_object_phrase -> pronoun_or_shape optional_fillers _ color  {% ([obj, , , color]) => ({ ...obj, color: color }) %}
 
 # Resize object phrases (shape and size modifier or size relation)
-resize_object_phrase -> fillers _ shape optional_fillers _ size_modifier  {% ([, , shape, , , modifier]) => ({ type: 'shape', value: shape, sizeModifier: modifier }) %}
-    | fillers _ shape optional_fillers _ "same" _ "size" _ "as" optional_fillers _ shape  {% ([, , shape, , , , , , , , , , target]) => ({ type: 'shape', value: shape, sizeRelation: 'same_size_as', targetShape: target }) %}
+resize_object_phrase -> pronoun_or_shape optional_fillers _ size_modifier  {% ([obj, , , modifier]) => ({ ...obj, sizeModifier: modifier }) %}
+    | pronoun_or_shape optional_fillers _ "same" _ "size" _ "as" optional_fillers _ shape  {% ([obj, , , , , , , , , , shape]) => ({ ...obj, sizeRelation: 'same_size_as', targetShape: shape }) %}
 
 # Optional fillers (can be empty or contain fillers)
 optional_fillers -> null {% () => null %}
@@ -80,11 +80,14 @@ filler -> "a" {% id %}
     | "the" {% id %}
     | "to" {% id %}
     | "with" {% id %}
-    | "same" {% id %}
-    | "size" {% id %}
-    | "as" {% id %}
-    | "much" {% id %}
-    | "little" {% id %}
+
+# Pronoun and shape rules
+the_shape -> fillers _ shape {% ([, , shape]) => ({ type: 'shape', value: shape }) %}
+
+pronoun -> "it" {% () => ({ type: 'pronoun', value: 'it' }) %}
+
+pronoun_or_shape -> the_shape {% id %}
+    | pronoun {% id %}
 
 # Shapes
 shape -> "square" {% id %}

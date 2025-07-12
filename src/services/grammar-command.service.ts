@@ -210,7 +210,7 @@ export class GrammarCommandService {
     }
 
     return {
-      type: 'draw', // We'll use 'draw' type but the app will interpret it as color change
+      type: 'color',
       shape,
       pronoun,
       color: this.normalizeColor(color)
@@ -275,7 +275,7 @@ export class GrammarCommandService {
     const color = objectColor || this.extractColor(preModifier, postModifier);
     if (color) {
       return {
-        type: 'draw', // We'll use 'draw' type but the app will interpret it as color change
+        type: 'color',
         shape,
         pronoun,
         color: this.normalizeColor(color)

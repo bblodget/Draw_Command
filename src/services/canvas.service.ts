@@ -7,6 +7,7 @@ export class CanvasService {
   private fabricCanvas: fabric.Canvas | null = null;
   private fabricObjects: Map<string, fabric.Object> = new Map();
   private shapesByType: Map<string, string> = new Map(); // shape type -> shape id
+  private lastInteractedShapeType: string | null = null; // Track last shape type for pronoun resolution
 
   setCanvas(canvas: fabric.Canvas): void {
     this.fabricCanvas = canvas;
@@ -92,6 +93,9 @@ export class CanvasService {
     // Add event listener to track position changes
     this.addMoveListener(rect, id);
     
+    // Update last interacted shape for pronoun resolution
+    this.updateLastInteractedShape('square');
+    
     this.fabricCanvas.renderAll(); // Force canvas to render
 
     const shape: Shape = {
@@ -156,6 +160,9 @@ export class CanvasService {
     
     // Add event listener to track position changes
     this.addMoveListener(circle, id);
+    
+    // Update last interacted shape for pronoun resolution
+    this.updateLastInteractedShape('circle');
     
     this.fabricCanvas.renderAll(); // Force canvas to render
 
@@ -222,6 +229,9 @@ export class CanvasService {
     
     // Add event listener to track position changes
     this.addMoveListener(triangle, id);
+    
+    // Update last interacted shape for pronoun resolution
+    this.updateLastInteractedShape('triangle');
     
     this.fabricCanvas.renderAll(); // Force canvas to render
 
@@ -495,6 +505,9 @@ export class CanvasService {
     // Update our shape tracking
     shape.position = { x: newX, y: newY };
 
+    // Update last interacted shape for pronoun resolution
+    this.updateLastInteractedShape(shapeType);
+
     return true;
   }
 
@@ -514,6 +527,9 @@ export class CanvasService {
     this.shapes.delete(shape.id);
     this.fabricObjects.delete(shape.id);
     this.shapesByType.delete(shapeType);
+
+    // Update last interacted shape for pronoun resolution
+    this.updateLastInteractedShape(shapeType);
 
     return true;
   }
@@ -683,6 +699,9 @@ export class CanvasService {
     shape.size = newSize;
     shape.position = adjustedPosition;
 
+    // Update last interacted shape for pronoun resolution
+    this.updateLastInteractedShape(shapeType);
+
     return true;
   }
 
@@ -735,5 +754,14 @@ export class CanvasService {
       default:
         return visualSize;
     }
+  }
+
+  // Pronoun resolution support
+  getLastInteractedShapeType(): string | null {
+    return this.lastInteractedShapeType;
+  }
+
+  private updateLastInteractedShape(shapeType: string): void {
+    this.lastInteractedShapeType = shapeType;
   }
 }

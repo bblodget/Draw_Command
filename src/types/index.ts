@@ -1,7 +1,7 @@
 import type { SpatialRelation, SizeRelation } from './grammar';
 
 export interface DrawCommand {
-  type: 'draw' | 'move' | 'delete' | 'clear' | 'resize' | 'rotate';
+  type: 'draw' | 'move' | 'delete' | 'clear' | 'resize' | 'rotate' | 'color';
   shape?: 'square' | 'circle' | 'triangle' | 'line';
   pronoun?: 'it';
   color?: string;
