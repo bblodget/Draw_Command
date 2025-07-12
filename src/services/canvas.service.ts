@@ -814,10 +814,10 @@ export class CanvasService {
         break;
 
       case 'next_to':
-        // Try positions in priority order: left, right, above, below
+        // Try positions in priority order: right, left, above, below
         const positions = [
-          { x: refBounds.left - shapeSize - spacing, y: refBounds.top + (refBounds.bottom - refBounds.top - shapeSize) / 2 },
           { x: refBounds.right + spacing, y: refBounds.top + (refBounds.bottom - refBounds.top - shapeSize) / 2 },
+          { x: refBounds.left - shapeSize - spacing, y: refBounds.top + (refBounds.bottom - refBounds.top - shapeSize) / 2 },
           { x: refBounds.left + (refBounds.right - refBounds.left - shapeSize) / 2, y: refBounds.top - shapeSize - spacing },
           { x: refBounds.left + (refBounds.right - refBounds.left - shapeSize) / 2, y: refBounds.bottom + spacing }
         ];

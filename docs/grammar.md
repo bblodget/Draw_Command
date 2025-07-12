@@ -162,8 +162,8 @@ When implementing spatial relationships, the system should:
    - **Left/Right**: Position horizontally with spacing
    - **Above/Below**: Position vertically with spacing  
    - **Next to**: Try positioning in this priority order:
-     1. To the left of the reference shape
-     2. To the right of the reference shape  
+     1. To the right of the reference shape
+     2. To the left of the reference shape  
      3. Above the reference shape
      4. Below the reference shape
      If a position would place the shape outside canvas bounds, try the next option in the sequence.
