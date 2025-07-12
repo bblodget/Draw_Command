@@ -87,10 +87,11 @@ export class GrammarCommandService {
       
       case 'color':
       case 'colour':
-        return this.handleColorCommand(shape, pronoun, preModifier, postModifier);
+      case 'fill':
+        return this.handleColorCommand(shape, pronoun, color, preModifier, postModifier);
       
       case 'make':
-        return this.handleMakeCommand(shape, pronoun, preModifier, postModifier, value);
+        return this.handleMakeColorCommand(shape, pronoun, color, preModifier, postModifier, value);
       
       case 'resize':
         return this.handleResizeCommand(shape, pronoun, preModifier, postModifier, value);
@@ -190,14 +191,14 @@ export class GrammarCommandService {
     };
   }
 
-  private handleColorCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', preModifier?: any, postModifier?: any): DrawCommand | null {
+  private handleColorCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectColor?: string, preModifier?: any, postModifier?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Color command needs a shape or pronoun');
       return null;
     }
 
-    // Get color from modifiers
-    const color = this.extractColor(preModifier, postModifier);
+    // Get color from object first, then from modifiers as fallback
+    const color = objectColor || this.extractColor(preModifier, postModifier);
     
     if (!color) {
       console.warn('Color command needs a color');
@@ -212,7 +213,7 @@ export class GrammarCommandService {
     };
   }
 
-  private handleMakeCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', preModifier?: any, postModifier?: any, _value?: any): DrawCommand | null {
+  private handleMakeColorCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectColor?: string, preModifier?: any, postModifier?: any, _value?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Make command needs a shape or pronoun');
       return null;
@@ -244,8 +245,8 @@ export class GrammarCommandService {
       };
     }
 
-    // Get color from modifiers
-    const color = this.extractColor(preModifier, postModifier);
+    // Get color from object first, then from modifiers as fallback
+    const color = objectColor || this.extractColor(preModifier, postModifier);
     if (color) {
       return {
         type: 'draw', // We'll use 'draw' type but the app will interpret it as color change
@@ -301,7 +302,7 @@ export class GrammarCommandService {
     };
   }
 
-  private handleDeleteCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', preModifier?: any, postModifier?: any, value?: any): DrawCommand | null {
+  private handleDeleteCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', _preModifier?: any, _postModifier?: any, _value?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Delete command needs a shape or pronoun');
       return null;

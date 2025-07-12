@@ -2,9 +2,9 @@
 
 This document presents a simplified BNF (Backus-Naur Form) grammar for the voice command system, built incrementally.
 
-## Current Grammar (Phase 3, Step 3.1)
+## Current Grammar (Phase 5, Step 5.1)
 
-We're expanding to support all three basic shapes, common fillers, colored drawing commands, and movement commands.
+We're expanding to support all three basic shapes, common fillers, colored drawing commands, movement commands, delete commands, and color change commands.
 
 ### Main Structure
 ```bnf
@@ -14,10 +14,12 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
             | <draw> <draw-object-phrase>
             | <move> <move-object-phrase>
             | <delete> <delete-object-phrase>
+            | <color-verb> <color-object-phrase>
 
 <draw> ::= "draw"
 <move> ::= "move"
 <delete> ::= "delete" | "remove"
+<color-verb> ::= "color" | "make" | "fill"
 ```
 
 ### Object Phrases
@@ -34,10 +36,12 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 
 <delete-object-phrase> ::= <fillers> <shape>
 
+<color-object-phrase> ::= <fillers> <shape> <fillers>? <color>
+
 <fillers> ::= <filler>
             | <fillers> <filler>
 
-<filler> ::= "a" | "an" | "the" | "to"
+<filler> ::= "a" | "an" | "the" | "to" | "with"
 
 <shape> ::= "square" | "circle" | "triangle"
 ```
@@ -73,6 +77,9 @@ This grammar should handle:
 - `computer move the circle left 50 please`
 - `computer delete the square please`
 - `computer remove the circle please`
+- `computer color the square red please`
+- `computer make the circle blue please`
+- `computer fill the triangle with green please`
 - `computer clear please`
 
 **Note**: `<fillers>` can match one or more filler words, so "a", "the", "to", "to the", etc. all work naturally.
@@ -85,7 +92,7 @@ Once this works, we'll incrementally add:
 3. ✅ Color list (red, blue, etc.) - **COMPLETED**
 4. ✅ Colors in draw commands - **COMPLETED**
 5. ✅ Move verb and directions - **COMPLETED**
-6. More verbs (color, delete, etc.)
+6. ✅ More verbs (color, delete, etc.) - **COMPLETED**
 7. Modifiers and complex relationships
 
 ## Implementation Notes
