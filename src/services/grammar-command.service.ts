@@ -75,8 +75,12 @@ export class GrammarCommandService {
     const direction = object?.direction; // Get direction from object
     const distance = object?.distance; // Get distance from object
     const unit = object?.unit; // Get unit from object
+    const sizeModifier = object?.sizeModifier; // Get size modifier from object
+    const sizeRelation = object?.sizeRelation; // Get size relation from object
+    const targetShape = object?.targetShape; // Get target shape for size relation
     
-    console.log('Extracted values:', { shape, pronoun, color, direction, distance, unit });
+    console.log('Extracted values:', { shape, pronoun, color, direction, distance, unit, sizeModifier, sizeRelation, targetShape });
+    console.log('Size relation details:', { sizeRelation, targetShape });
 
     switch (verb) {
       case 'draw':
@@ -91,10 +95,10 @@ export class GrammarCommandService {
         return this.handleColorCommand(shape, pronoun, color, preModifier, postModifier);
       
       case 'make':
-        return this.handleMakeColorCommand(shape, pronoun, color, preModifier, postModifier, value);
+        return this.handleMakeCommand(shape, pronoun, color, sizeModifier, sizeRelation, targetShape, preModifier, postModifier, value);
       
       case 'resize':
-        return this.handleResizeCommand(shape, pronoun, preModifier, postModifier, value);
+        return this.handleResizeCommand(shape, pronoun, sizeModifier, sizeRelation, targetShape, preModifier, postModifier, value);
       
       case 'rotate':
         return this.handleRotateCommand(shape, pronoun, preModifier, postModifier, value);
@@ -213,13 +217,36 @@ export class GrammarCommandService {
     };
   }
 
-  private handleMakeColorCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectColor?: string, preModifier?: any, postModifier?: any, _value?: any): DrawCommand | null {
+  private handleMakeCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectColor?: string, objectSizeModifier?: string, objectSizeRelation?: string, objectTargetShape?: string, preModifier?: any, postModifier?: any, _value?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Make command needs a shape or pronoun');
       return null;
     }
 
-    // Handle size relationships
+    // Handle size relationships from object first
+    if (objectSizeRelation && objectTargetShape) {
+      return {
+        type: 'resize',
+        shape,
+        pronoun,
+        resizeMode: 'match',
+        targetShape: objectTargetShape as 'square' | 'circle' | 'triangle'
+      };
+    }
+
+    // Handle size modifiers from object first
+    if (objectSizeModifier) {
+      const resizeFactor = this.getSizeModifierFactor(objectSizeModifier);
+      return {
+        type: 'resize',
+        shape,
+        pronoun,
+        resizeMode: 'relative',
+        resizeFactor
+      };
+    }
+
+    // Handle size relationships from modifiers as fallback
     const sizeRelation = this.extractSizeRelation(preModifier, postModifier);
     if (sizeRelation) {
       return {
@@ -227,12 +254,11 @@ export class GrammarCommandService {
         shape,
         pronoun,
         resizeMode: 'match',
-        sizeRelation,
         targetShape: sizeRelation.reference as 'square' | 'circle' | 'triangle'
       };
     }
 
-    // Get size modifier
+    // Get size modifier from modifiers as fallback
     const sizeModifier = this.extractSizeModifier(preModifier, postModifier);
     if (sizeModifier) {
       const resizeFactor = this.getSizeModifierFactor(sizeModifier);
@@ -260,13 +286,36 @@ export class GrammarCommandService {
     return null;
   }
 
-  private handleResizeCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', preModifier?: any, postModifier?: any, _value?: any): DrawCommand | null {
+  private handleResizeCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectSizeModifier?: string, objectSizeRelation?: string, objectTargetShape?: string, preModifier?: any, postModifier?: any, _value?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Resize command needs a shape or pronoun');
       return null;
     }
 
-    // Get size modifier
+    // Handle size relationships from object first
+    if (objectSizeRelation && objectTargetShape) {
+      return {
+        type: 'resize',
+        shape,
+        pronoun,
+        resizeMode: 'match',
+        targetShape: objectTargetShape as 'square' | 'circle' | 'triangle'
+      };
+    }
+
+    // Handle size modifiers from object first
+    if (objectSizeModifier) {
+      const resizeFactor = this.getSizeModifierFactor(objectSizeModifier);
+      return {
+        type: 'resize',
+        shape,
+        pronoun,
+        resizeMode: 'relative',
+        resizeFactor
+      };
+    }
+
+    // Get size modifier from modifiers as fallback
     const sizeModifier = this.extractSizeModifier(preModifier, postModifier);
     if (!sizeModifier) {
       console.warn('Resize command needs a size modifier');

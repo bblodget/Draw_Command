@@ -2,9 +2,9 @@
 
 This document presents a simplified BNF (Backus-Naur Form) grammar for the voice command system, built incrementally.
 
-## Current Grammar (Phase 5, Step 5.1)
+## Current Grammar (Phase 6, Step 6.1)
 
-We're expanding to support all three basic shapes, common fillers, colored drawing commands, movement commands, delete commands, and color change commands.
+We're expanding to support all three basic shapes, common fillers, colored drawing commands, movement commands, delete commands, color change commands, and resize commands.
 
 ### Main Structure
 ```bnf
@@ -15,11 +15,13 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
             | <move> <move-object-phrase>
             | <delete> <delete-object-phrase>
             | <color-verb> <color-object-phrase>
+            | <resize-verb> <resize-object-phrase>
 
 <draw> ::= "draw"
 <move> ::= "move"
 <delete> ::= "delete" | "remove"
-<color-verb> ::= "color" | "make" | "fill"
+<color-verb> ::= "color" | "fill" | "make"
+<resize-verb> ::= "resize" | "make"
 ```
 
 ### Object Phrases
@@ -33,10 +35,15 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 <move-object-phrase> ::= <fillers> <shape> <fillers>? <direction>
                        | <fillers> <shape> <fillers>? <direction> <number>
                        | <fillers> <shape> <fillers>? <direction> <number> <unit>
+                       | <fillers> <shape> <fillers>? <number> <fillers>? <direction>
+                       | <fillers> <shape> <fillers>? <number> <unit> <fillers>? <direction>
 
 <delete-object-phrase> ::= <fillers> <shape>
 
 <color-object-phrase> ::= <fillers> <shape> <fillers>? <color>
+
+<resize-object-phrase> ::= <fillers> <shape> <fillers>? <size-modifier>
+                         | <fillers> <shape> <fillers>? "same" "size" "as" <fillers>? <shape>
 
 <fillers> ::= <filler>
             | <fillers> <filler>
@@ -60,6 +67,10 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 ```bnf
 <number> ::= [1-9][0-9]*
 <unit> ::= "pixels"
+
+<size-modifier> ::= "bigger" | "smaller" | "larger"
+                  | "much bigger" | "much smaller"
+                  | "a little bigger" | "a little smaller"
 ```
 
 ## Test Commands
@@ -75,11 +86,16 @@ This grammar should handle:
 - `computer move the square up 100 please`
 - `computer move the square up 100 pixels please`
 - `computer move the circle left 50 please`
+- `computer move the triangle 600 pixels to the right please`
 - `computer delete the square please`
 - `computer remove the circle please`
 - `computer color the square red please`
 - `computer make the circle blue please`
 - `computer fill the triangle with green please`
+- `computer make the square bigger please`
+- `computer resize the circle smaller please`
+- `computer make the triangle much bigger please`
+- `computer make the square the same size as the circle please`
 - `computer clear please`
 
 **Note**: `<fillers>` can match one or more filler words, so "a", "the", "to", "to the", etc. all work naturally.
@@ -93,6 +109,7 @@ Once this works, we'll incrementally add:
 4. ✅ Colors in draw commands - **COMPLETED**
 5. ✅ Move verb and directions - **COMPLETED**
 6. ✅ More verbs (color, delete, etc.) - **COMPLETED**
+7. ✅ Resize commands (make bigger/smaller) - **COMPLETED**
 7. Modifiers and complex relationships
 
 ## Implementation Notes

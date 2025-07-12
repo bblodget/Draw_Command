@@ -15,6 +15,9 @@ export interface ObjectPhrase {
   direction?: string;
   distance?: number;
   unit?: string;
+  sizeModifier?: string;
+  sizeRelation?: string;
+  targetShape?: string;
   preFillers?: string[];
   postFillers?: string[];
 }
