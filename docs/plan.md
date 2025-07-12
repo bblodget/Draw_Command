@@ -5,14 +5,16 @@
 **Last Updated**: 2025-07-12
 
 ### Phase 1: Core Functionality Foundation
-- ✅ **15/19 tasks completed** (79% complete)
+- ✅ **15/20 tasks completed** (75% complete)
 - ⏱️ **42-45 hours** actual time vs 40-50 hours estimated  
+- 🚨 **URGENT**: Task 1.9.5: Fix GitHub Pages Grammar Deployment Issue
 - 🎯 **Next**: Task 1.10: Rotate Commands
 
 ### Phase 1.5: GitHub Pages Deployment
 - ✅ **COMPLETED**: Live demo deployed!
 - 🌐 **Live Demo**: https://bblodget.github.io/Draw_Command/
-- ⭐ **Success**: Fully functional voice-controlled drawing available online
+- 🚨 **ISSUE**: Grammar module loading error in production (Task 1.9.5)
+- ⭐ **Success**: Fully functional voice-controlled drawing available locally
 
 ### Completed Tasks
 1. ✅ **Task 1.1**: Project Setup and Basic React App
@@ -53,10 +55,11 @@
 📦 **Deployment Status**: Successfully deployed to GitHub Pages with automatic CI/CD!
 
 **Next Steps**: 
-1. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
-2. ✅ **Task 1.11**: Relative Positioning - "draw a circle to the left of the square" (COMPLETED in Task 1.15)
-3. ✅ **Task 1.12**: Pronoun References - "move it to the right" (COMPLETED in Task 1.15)
-4. **Task 1.13**: Help System - "what can I draw"
+1. 🚨 **Task 1.9.5**: Fix GitHub Pages Grammar Deployment Issue - URGENT
+2. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
+3. ✅ **Task 1.11**: Relative Positioning - "draw a circle to the left of the square" (COMPLETED in Task 1.15)
+4. ✅ **Task 1.12**: Pronoun References - "move it to the right" (COMPLETED in Task 1.15)
+5. **Task 1.13**: Help System - "what can I draw"
 
 **Revolutionary BNF Grammar Achievement**: Task 1.15 successfully replaced regex-based parsing with sophisticated BNF grammar architecture, delivering spatial relationships, pronoun support, and advanced natural language processing capabilities that exceed the original Phase 1 goals.
 
@@ -450,6 +453,31 @@ When users pause between parts of a voice command (e.g., "Computer" → pause �
 
 ---
 
+### Task 1.9.5: Fix GitHub Pages Grammar Deployment Issue
+**Goal**: Resolve "grammar is not defined" error in production deployment.
+
+**Background**: 
+The live demo at https://bblodget.github.io/Draw_Command/ shows a console error: "Uncaught ReferenceError: grammar is not defined" which prevents the voice command parsing from working correctly in the deployed version.
+
+**Tasks**:
+- [ ] Investigate grammar module loading in production build
+- [ ] Check Vite build configuration for grammar file inclusion
+- [ ] Verify Nearley.js grammar compilation for production
+- [ ] Test grammar import/export statements in bundled code
+- [ ] Fix module resolution issues in GitHub Pages deployment
+- [ ] Verify live demo functionality after fix
+- [ ] Update deployment documentation if needed
+
+**Acceptance Criteria**:
+- Live demo at https://bblodget.github.io/Draw_Command/ loads without console errors
+- Voice command parsing works correctly in production
+- Grammar module is properly bundled and accessible
+- All voice commands function as expected in deployed version
+
+**Estimated Time**: 1-2 hours
+
+---
+
 ### Task 1.10: Rotate Commands
 **Goal**: Implement shape rotation with default and custom angles.
 
@@ -792,8 +820,8 @@ All planned phases successfully implemented with comprehensive testing:
 
 ## Timeline Estimate
 
-- **Phase 1**: ~~40-50 hours~~ **42-45 hours actual** (79% complete, 2 tasks remaining)
-  - Remaining: Tasks 1.10, 1.13 (~5-7 hours)
+- **Phase 1**: ~~40-50 hours~~ **42-45 hours actual** (75% complete, 3 tasks remaining)
+  - Remaining: Tasks 1.9.5, 1.10, 1.13 (~6-9 hours)
 - **Phase 1.5**: ~~2-3 hours~~ **54 minutes actual** ✅ COMPLETED
 - **Phase 2**: 15-20 hours (Polish & Advanced Features)
 - **Total**: ~~82-103 hours~~ **60-75 hours projected** (significantly under original estimate!)
