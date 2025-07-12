@@ -191,14 +191,22 @@ function App() {
           }
           
           if (command.color) {
+            // Get the existing shape's properties to preserve size and position
+            const existingShape = canvas.getShapeByType(colorShape);
+            if (!existingShape) {
+              setCommandResult({ success: false, message: `No ${colorShape} found to color` });
+              responseService.current.speak(`There's no ${colorShape} on the canvas to color`, 'normal');
+              break;
+            }
+            
             // For color commands, we create a new shape with the specified color
-            // This follows the three-object model where each shape type has one instance
+            // but preserve the existing shape's size and position
             const colorCommand: DrawCommand = {
               type: 'draw',
               shape: colorShape as 'square' | 'circle' | 'triangle',
               color: command.color,
-              size: 100, // Will be determined by existing shape
-              position: { x: 200, y: 200 } // Will be determined by existing shape
+              size: existingShape.size, // Preserve existing size
+              position: existingShape.position // Preserve existing position
             };
             
             // Execute the draw command which will replace the existing shape
