@@ -17,7 +17,7 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
             | <color-verb> <color-object-phrase>
             | <resize-verb> <resize-object-phrase>
 
-<draw> ::= "draw"
+<draw> ::= "draw" | "create"
 <move> ::= "move"
 <delete> ::= "delete" | "remove"
 <color-verb> ::= "color" | "fill" | "make"

@@ -22,6 +22,7 @@ command -> clear_command {% id %}
 clear_command -> "clear"  {% () => ({ verb: 'clear', object: null }) %}
 
 draw_command -> "draw" _ draw_object_phrase  {% ([,, object]) => ({ verb: 'draw', object: object }) %}
+    | "create" _ draw_object_phrase  {% ([,, object]) => ({ verb: 'draw', object: object }) %}
 
 move_command -> "move" _ move_object_phrase  {% ([,, object]) => ({ verb: 'move', object: object }) %}
 

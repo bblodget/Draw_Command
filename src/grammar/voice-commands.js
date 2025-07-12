@@ -18,6 +18,8 @@ var grammar = {
     {"name": "clear_command", "symbols": ["clear_command$string$1"], "postprocess": () => ({ verb: 'clear', object: null })},
     {"name": "draw_command$string$1", "symbols": [{"literal":"d"}, {"literal":"r"}, {"literal":"a"}, {"literal":"w"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "draw_command", "symbols": ["draw_command$string$1", "_", "draw_object_phrase"], "postprocess": ([,, object]) => ({ verb: 'draw', object: object })},
+    {"name": "draw_command$string$2", "symbols": [{"literal":"c"}, {"literal":"r"}, {"literal":"e"}, {"literal":"a"}, {"literal":"t"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "draw_command", "symbols": ["draw_command$string$2", "_", "draw_object_phrase"], "postprocess": ([,, object]) => ({ verb: 'draw', object: object })},
     {"name": "move_command$string$1", "symbols": [{"literal":"m"}, {"literal":"o"}, {"literal":"v"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "move_command", "symbols": ["move_command$string$1", "_", "move_object_phrase"], "postprocess": ([,, object]) => ({ verb: 'move', object: object })},
     {"name": "delete_command", "symbols": ["delete_verb", "_", "delete_object_phrase"], "postprocess": ([verb,, object]) => ({ verb: verb, object: object })},
