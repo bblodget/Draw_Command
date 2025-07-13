@@ -141,7 +141,7 @@ export class GrammarCommandService {
       pronoun,
       color: color ? this.normalizeColor(color) : undefined,
       size: defaultSize,
-      position: { x: 200, y: 200 } // Default position (center of canvas)
+      position: undefined // Let collision detection system choose random positions
     };
 
     // Handle spatial relationships from the new grammar structure

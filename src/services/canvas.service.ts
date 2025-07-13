@@ -58,12 +58,15 @@ export class CanvasService {
         if (position) {
             // New position explicitly provided (e.g., spatial relationship)
             validPosition = position;
+            console.log(`Square: Using explicit position`, position);
         } else if (wasReplaced && oldShape) {
             // When replacing without new position, use the old position (user's chosen location)
             validPosition = oldShape.position;
+            console.log(`Square: Using old position (replacement)`, oldShape.position);
         } else {
             // For new shapes, find a position that doesn't overlap
             validPosition = this.findValidPosition(size, 'square', position);
+            console.log(`Square: Found new random position`, validPosition);
         }
 
         const id = generateId();
