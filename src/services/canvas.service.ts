@@ -817,10 +817,23 @@ export class CanvasService {
         if (shapeType === 'circle') {
             // Still update the rotation in our data for consistency, but return humorous message
             shape.rotation = (shape.rotation + angle) % 360;
-            return { 
-                success: true, 
-                message: "I rotated the circle... just kidding!", 
-                isCircle: true 
+
+            // Array of humorous responses for circle rotation
+            const circleResponses = [
+                "I rotated the circle... just kidding!",
+                "Ha ha, very funny!",
+                "I rotated the circle, I promise",
+                "I rotated the circle or am I hallucinating again",
+                "Circles look the same when rotated, but I tracked the rotation for you"
+            ];
+
+            // Randomly select a response
+            const randomResponse = circleResponses[Math.floor(Math.random() * circleResponses.length)];
+
+            return {
+                success: true,
+                message: randomResponse,
+                isCircle: true
             };
         }
 
@@ -831,10 +844,10 @@ export class CanvasService {
 
         // Apply rotation to fabric object
         fabricObject.rotate(fabricObject.angle + angle);
-        
+
         // Update our shape data
         shape.rotation = (shape.rotation + angle) % 360;
-        
+
         // Update last interacted shape for pronoun resolution
         this.updateLastInteractedShape(shapeType);
 
@@ -843,10 +856,10 @@ export class CanvasService {
             this.fabricCanvas.renderAll();
         }
 
-        return { 
-            success: true, 
-            message: `Rotated the ${shapeType} ${angle} degrees`, 
-            isCircle: false 
+        return {
+            success: true,
+            message: `Rotated the ${shapeType} ${angle} degrees`,
+            isCircle: false
         };
     }
 }

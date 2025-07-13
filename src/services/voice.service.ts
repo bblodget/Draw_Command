@@ -192,10 +192,33 @@ export class VoiceService {
             // Include the full command from "computer" to "please" for the grammar parser
             const commandStart = attentionIndex;
             const commandEnd = executeIndex + this.EXECUTE_WORD.length;
-            return transcript.substring(commandStart, commandEnd).trim();
+            let command = transcript.substring(commandStart, commandEnd).trim();
+            
+            // Preprocess command to normalize speech-to-text symbols
+            const normalizedCommand = this.normalizeTranscript(command);
+            if (command !== normalizedCommand) {
+                console.log('Transcript normalized:', { original: command, normalized: normalizedCommand });
+            }
+            
+            return normalizedCommand;
         }
 
         return '';
+    }
+
+    private normalizeTranscript(transcript: string): string {
+        return transcript
+            // Convert degree symbol to word
+            .replace(/°/g, ' degrees')
+            // Convert negative number symbols to words (handles both "-45" and "- 45")
+            .replace(/-\s*(\d+)/g, 'negative $1')
+            // Convert positive number symbols to plain numbers (handles both "+45" and "+ 45")
+            .replace(/\+\s*(\d+)/g, '$1')
+            // Remove punctuation that interferes with grammar (commas, periods, etc.)
+            .replace(/[,\.!?;:]/g, '')
+            // Clean up extra spaces
+            .replace(/\s+/g, ' ')
+            .trim();
     }
 
     isSupported(): boolean {
