@@ -2,7 +2,7 @@
 // http://github.com/Hardmath123/nearley
 const grammar = (function () {
 function id(x) { return x[0]; }
-var compiledGrammar = {
+var grammar = {
     Lexer: undefined,
     ParserRules: [
     {"name": "main$string$1", "symbols": [{"literal":"c"}, {"literal":"o"}, {"literal":"m"}, {"literal":"p"}, {"literal":"u"}, {"literal":"t"}, {"literal":"e"}, {"literal":"r"}], "postprocess": function joiner(d) {return d.join('');}},
@@ -14,6 +14,7 @@ var compiledGrammar = {
     {"name": "command", "symbols": ["delete_command"], "postprocess": id},
     {"name": "command", "symbols": ["color_command"], "postprocess": id},
     {"name": "command", "symbols": ["resize_command"], "postprocess": id},
+    {"name": "command", "symbols": ["rotate_command"], "postprocess": id},
     {"name": "clear_command$string$1", "symbols": [{"literal":"c"}, {"literal":"l"}, {"literal":"e"}, {"literal":"a"}, {"literal":"r"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "clear_command", "symbols": ["clear_command$string$1"], "postprocess": () => ({ verb: 'clear', object: null })},
     {"name": "draw_command$string$1", "symbols": [{"literal":"d"}, {"literal":"r"}, {"literal":"a"}, {"literal":"w"}], "postprocess": function joiner(d) {return d.join('');}},
@@ -25,6 +26,8 @@ var compiledGrammar = {
     {"name": "delete_command", "symbols": ["delete_verb", "_", "delete_object_phrase"], "postprocess": ([verb,, object]) => ({ verb: verb, object: object })},
     {"name": "color_command", "symbols": ["color_verb", "_", "color_object_phrase"], "postprocess": ([verb,, object]) => ({ verb: verb, object: object })},
     {"name": "resize_command", "symbols": ["resize_verb", "_", "resize_object_phrase"], "postprocess": ([verb,, object]) => ({ verb: verb, object: object })},
+    {"name": "rotate_command$string$1", "symbols": [{"literal":"r"}, {"literal":"o"}, {"literal":"t"}, {"literal":"a"}, {"literal":"t"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "rotate_command", "symbols": ["rotate_command$string$1", "_", "rotate_object_phrase"], "postprocess": ([,, object]) => ({ verb: 'rotate', object: object })},
     {"name": "delete_verb$string$1", "symbols": [{"literal":"d"}, {"literal":"e"}, {"literal":"l"}, {"literal":"e"}, {"literal":"t"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "delete_verb", "symbols": ["delete_verb$string$1"], "postprocess": id},
     {"name": "delete_verb$string$2", "symbols": [{"literal":"r"}, {"literal":"e"}, {"literal":"m"}, {"literal":"o"}, {"literal":"v"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
@@ -56,6 +59,10 @@ var compiledGrammar = {
     {"name": "resize_object_phrase$string$2", "symbols": [{"literal":"s"}, {"literal":"i"}, {"literal":"z"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "resize_object_phrase$string$3", "symbols": [{"literal":"a"}, {"literal":"s"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "resize_object_phrase", "symbols": ["pronoun_or_shape", "optional_fillers", "_", "resize_object_phrase$string$1", "_", "resize_object_phrase$string$2", "_", "resize_object_phrase$string$3", "optional_fillers", "_", "shape"], "postprocess": ([obj, , , , , , , , , , shape]) => ({ ...obj, sizeRelation: 'same_size_as', targetShape: shape })},
+    {"name": "rotate_object_phrase", "symbols": ["pronoun_or_shape"], "postprocess": ([obj]) => ({ ...obj })},
+    {"name": "rotate_object_phrase", "symbols": ["pronoun_or_shape", "optional_fillers", "optional_sign", "_", "number"], "postprocess": ([obj, , sign, , number]) => ({ ...obj, angle: sign === 'negative' || sign === 'minus' ? -number : number })},
+    {"name": "rotate_object_phrase$string$1", "symbols": [{"literal":"d"}, {"literal":"e"}, {"literal":"g"}, {"literal":"r"}, {"literal":"e"}, {"literal":"e"}, {"literal":"s"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "rotate_object_phrase", "symbols": ["pronoun_or_shape", "optional_fillers", "optional_sign", "_", "number", "_", "rotate_object_phrase$string$1"], "postprocess": ([obj, , sign, , number, , ]) => ({ ...obj, angle: sign === 'negative' || sign === 'minus' ? -number : number, unit: 'degrees' })},
     {"name": "optional_fillers", "symbols": [], "postprocess": () => null},
     {"name": "optional_fillers", "symbols": ["_", "fillers"], "postprocess": () => null},
     {"name": "fillers", "symbols": ["filler"], "postprocess": () => null},
@@ -152,18 +159,20 @@ var compiledGrammar = {
     {"name": "size_modifier", "symbols": [{"literal":"a"}, "_", "size_modifier$string$10", "_", "size_modifier$string$11"], "postprocess": () => "a little smaller"},
     {"name": "unit$string$1", "symbols": [{"literal":"p"}, {"literal":"i"}, {"literal":"x"}, {"literal":"e"}, {"literal":"l"}, {"literal":"s"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "unit", "symbols": ["unit$string$1"], "postprocess": id},
+    {"name": "optional_sign", "symbols": [], "postprocess": () => null},
+    {"name": "optional_sign", "symbols": ["_", "sign"], "postprocess": ([, sign]) => sign},
+    {"name": "sign$string$1", "symbols": [{"literal":"n"}, {"literal":"e"}, {"literal":"g"}, {"literal":"a"}, {"literal":"t"}, {"literal":"i"}, {"literal":"v"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "sign", "symbols": ["sign$string$1"], "postprocess": id},
+    {"name": "sign$string$2", "symbols": [{"literal":"m"}, {"literal":"i"}, {"literal":"n"}, {"literal":"u"}, {"literal":"s"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "sign", "symbols": ["sign$string$2"], "postprocess": id},
     {"name": "_$ebnf$1", "symbols": []},
     {"name": "_$ebnf$1", "symbols": ["_$ebnf$1", /[\s]/], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "_", "symbols": ["_$ebnf$1"], "postprocess": () => null}
 ]
   , ParserStart: "main"
 }
-if (typeof module !== 'undefined'&& typeof module.exports !== 'undefined') {
-   module.exports = compiledGrammar;
-} else {
-   window.grammar = compiledGrammar;
-}
-return compiledGrammar;
+// Return the grammar object
+return grammar;
 })();
 
 export default grammar;

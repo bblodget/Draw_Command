@@ -5,7 +5,7 @@
 # Colors: red, blue, green, yellow, purple, orange, black, white, pink, brown, gray, grey
 # Directions: up, down, left, right
 # Size modifiers: bigger, smaller, larger, much bigger, much smaller, a little bigger, a little smaller
-# Verbs: draw, move, delete, remove, color, make, fill, resize
+# Verbs: draw, move, delete, remove, color, make, fill, resize, rotate
 
 # Main rule
 main -> "computer" _ command _ "please"     {% ([,, cmd]) => cmd %}
@@ -17,6 +17,7 @@ command -> clear_command {% id %}
     | delete_command {% id %}
     | color_command {% id %}
     | resize_command {% id %}
+    | rotate_command {% id %}
 
 # Command types
 clear_command -> "clear"  {% () => ({ verb: 'clear', object: null }) %}
@@ -31,6 +32,8 @@ delete_command -> delete_verb _ delete_object_phrase  {% ([verb,, object]) => ({
 color_command -> color_verb _ color_object_phrase  {% ([verb,, object]) => ({ verb: verb, object: object }) %}
 
 resize_command -> resize_verb _ resize_object_phrase  {% ([verb,, object]) => ({ verb: verb, object: object }) %}
+
+rotate_command -> "rotate" _ rotate_object_phrase  {% ([,, object]) => ({ verb: 'rotate', object: object }) %}
 
 # Delete verb (handles both delete and remove)
 delete_verb -> "delete" {% id %}
@@ -69,6 +72,11 @@ color_object_phrase -> pronoun_or_shape optional_fillers _ color  {% ([obj, , , 
 # Resize object phrases (shape and size modifier or size relation)
 resize_object_phrase -> pronoun_or_shape optional_fillers _ size_modifier  {% ([obj, , , modifier]) => ({ ...obj, sizeModifier: modifier }) %}
     | pronoun_or_shape optional_fillers _ "same" _ "size" _ "as" optional_fillers _ shape  {% ([obj, , , , , , , , , , shape]) => ({ ...obj, sizeRelation: 'same_size_as', targetShape: shape }) %}
+
+# Rotate object phrases (shape and optional angle)
+rotate_object_phrase -> pronoun_or_shape  {% ([obj]) => ({ ...obj }) %}
+    | pronoun_or_shape optional_fillers optional_sign _ number  {% ([obj, , sign, , number]) => ({ ...obj, angle: sign === 'negative' || sign === 'minus' ? -number : number }) %}
+    | pronoun_or_shape optional_fillers optional_sign _ number _ "degrees"  {% ([obj, , sign, , number, , ]) => ({ ...obj, angle: sign === 'negative' || sign === 'minus' ? -number : number, unit: 'degrees' }) %}
 
 # Optional fillers (can be empty or contain fillers)
 optional_fillers -> null {% () => null %}
@@ -139,6 +147,14 @@ size_modifier -> "bigger" {% id %}
 
 # Units
 unit -> "pixels" {% id %}
+
+# Optional sign (for rotation)
+optional_sign -> null {% () => null %}
+    | _ sign {% ([, sign]) => sign %}
+
+# Sign (negative or minus)
+sign -> "negative" {% id %}
+    | "minus" {% id %}
 
 # Whitespace
 _ -> [\s]:*  {% () => null %}

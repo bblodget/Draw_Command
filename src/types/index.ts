@@ -24,5 +24,6 @@ export interface Shape {
   color: string;
   position: { x: number; y: number };
   size: number;
+  rotation: number; // rotation angle in degrees
   createdAt: Date;
 }

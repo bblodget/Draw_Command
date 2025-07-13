@@ -87,6 +87,11 @@ export class CanvasService {
             lockMovementY: false,
         });
 
+        // Apply rotation if preserving from old shape
+        if (wasReplaced && oldShape && oldShape.rotation !== 0) {
+            rect.rotate(oldShape.rotation);
+        }
+
         this.fabricCanvas.add(rect);
         this.fabricObjects.set(id, rect);
 
@@ -104,6 +109,7 @@ export class CanvasService {
             color,
             position: validPosition,
             size,
+            rotation: wasReplaced && oldShape ? oldShape.rotation : 0, // Preserve rotation when replacing
             createdAt: new Date(),
         };
 
@@ -155,6 +161,11 @@ export class CanvasService {
             lockMovementY: false,
         });
 
+        // Apply rotation if preserving from old shape (circles don't show rotation but we track it)
+        if (wasReplaced && oldShape && oldShape.rotation !== 0) {
+            circle.rotate(oldShape.rotation);
+        }
+
         this.fabricCanvas.add(circle);
         this.fabricObjects.set(id, circle);
 
@@ -172,6 +183,7 @@ export class CanvasService {
             color,
             position: validPosition,
             size, // Store diameter as size (consistent with other shapes)
+            rotation: wasReplaced && oldShape ? oldShape.rotation : 0, // Preserve rotation when replacing
             createdAt: new Date(),
         };
 
@@ -224,6 +236,11 @@ export class CanvasService {
             lockMovementY: false,
         });
 
+        // Apply rotation if preserving from old shape
+        if (wasReplaced && oldShape && oldShape.rotation !== 0) {
+            triangle.rotate(oldShape.rotation);
+        }
+
         this.fabricCanvas.add(triangle);
         this.fabricObjects.set(id, triangle);
 
@@ -241,6 +258,7 @@ export class CanvasService {
             color,
             position: validPosition,
             size,
+            rotation: wasReplaced && oldShape ? oldShape.rotation : 0, // Preserve rotation when replacing
             createdAt: new Date(),
         };
 
@@ -340,6 +358,7 @@ export class CanvasService {
             color: '#000000',
             position,
             size,
+            rotation: 0,
             createdAt: new Date()
         };
 
@@ -362,6 +381,7 @@ export class CanvasService {
             color: '#000000',
             position,
             size,
+            rotation: 0,
             createdAt: new Date()
         });
 
@@ -784,5 +804,49 @@ export class CanvasService {
         position.y = Math.max(0, Math.min(canvasHeight - shapeSize, position.y));
 
         return position;
+    }
+
+    // Rotate shape by angle (30° default for demo visibility)
+    rotateShapeByType(shapeType: string, angle: number = 30): { success: boolean; message: string; isCircle: boolean } {
+        const shape = this.getShapeByType(shapeType);
+        if (!shape) {
+            return { success: false, message: `No ${shapeType} found to rotate`, isCircle: false };
+        }
+
+        // Special case for circles - they don't show rotation visually
+        if (shapeType === 'circle') {
+            // Still update the rotation in our data for consistency, but return humorous message
+            shape.rotation = (shape.rotation + angle) % 360;
+            return { 
+                success: true, 
+                message: "I rotated the circle... just kidding!", 
+                isCircle: true 
+            };
+        }
+
+        const fabricObject = this.fabricObjects.get(shape.id);
+        if (!fabricObject) {
+            return { success: false, message: `Fabric object not found for ${shapeType}`, isCircle: false };
+        }
+
+        // Apply rotation to fabric object
+        fabricObject.rotate(fabricObject.angle + angle);
+        
+        // Update our shape data
+        shape.rotation = (shape.rotation + angle) % 360;
+        
+        // Update last interacted shape for pronoun resolution
+        this.updateLastInteractedShape(shapeType);
+
+        // Re-render canvas
+        if (this.fabricCanvas) {
+            this.fabricCanvas.renderAll();
+        }
+
+        return { 
+            success: true, 
+            message: `Rotated the ${shapeType} ${angle} degrees`, 
+            isCircle: false 
+        };
     }
 }

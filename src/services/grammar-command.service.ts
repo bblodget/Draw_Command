@@ -80,8 +80,9 @@ export class GrammarCommandService {
     const targetShape = object?.targetShape; // Get target shape for size relation
     const spatialRelation = object?.spatialRelation; // Get spatial relation from object
     const referenceShape = object?.referenceShape; // Get reference shape for spatial relation
+    const angle = object?.angle; // Get rotation angle from object
     
-    console.log('Extracted values:', { shape, pronoun, color, direction, distance, unit, sizeModifier, sizeRelation, targetShape, spatialRelation, referenceShape });
+    console.log('Extracted values:', { shape, pronoun, color, direction, distance, unit, sizeModifier, sizeRelation, targetShape, spatialRelation, referenceShape, angle });
     console.log('Spatial relation details:', { spatialRelation, referenceShape });
 
     switch (verb) {
@@ -103,7 +104,7 @@ export class GrammarCommandService {
         return this.handleResizeCommand(shape, pronoun, sizeModifier, sizeRelation, targetShape, preModifier, postModifier, value);
       
       case 'rotate':
-        return this.handleRotateCommand(shape, pronoun, preModifier, postModifier, value);
+        return this.handleRotateCommand(shape, pronoun, angle, unit, preModifier, postModifier, value);
       
       case 'delete':
       case 'remove':
@@ -338,21 +339,21 @@ export class GrammarCommandService {
     };
   }
 
-  private handleRotateCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', _preModifier?: any, _postModifier?: any, value?: any): DrawCommand | null {
+  private handleRotateCommand(shape?: 'square' | 'circle' | 'triangle', pronoun?: 'it', objectAngle?: number, objectUnit?: string, _preModifier?: any, _postModifier?: any, value?: any): DrawCommand | null {
     if (!shape && !pronoun) {
       console.warn('Rotate command needs a shape or pronoun');
       return null;
     }
 
-    // Get angle from value, default to 90 degrees
-    const angle = value?.number || 90;
+    // Get angle from object first, then value, then default to 30 degrees for demo visibility
+    const angle = objectAngle || value?.number || 30;
     
     return {
       type: 'rotate',
       shape,
       pronoun,
       value: angle,
-      unit: value?.unit || 'degrees'
+      unit: objectUnit || value?.unit || 'degrees'
     };
   }
 

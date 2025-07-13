@@ -16,12 +16,14 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
             | <delete> <delete-object-phrase>
             | <color-verb> <color-object-phrase>
             | <resize-verb> <resize-object-phrase>
+            | <rotate> <rotate-object-phrase>
 
 <draw> ::= "draw" | "create"
 <move> ::= "move"
 <delete> ::= "delete" | "remove"
 <color-verb> ::= "color" | "fill" | "make"
 <resize-verb> ::= "resize" | "make"
+<rotate> ::= "rotate"
 ```
 
 ### Object Phrases
@@ -47,6 +49,10 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 
 <resize-object-phrase> ::= <pronoun-or-shape> <fillers>? <size-modifier>
                          | <pronoun-or-shape> <fillers>? "same" "size" "as" <fillers>? <shape>
+
+<rotate-object-phrase> ::= <pronoun-or-shape>
+                         | <pronoun-or-shape> <fillers>? <sign>? <number>
+                         | <pronoun-or-shape> <fillers>? <sign>? <number> "degrees"
 
 <the-shape> ::= <fillers> <shape>
 <pronoun> ::= "it"
@@ -87,6 +93,8 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 <size-modifier> ::= "bigger" | "smaller" | "larger"
                   | "much bigger" | "much smaller"
                   | "a little bigger" | "a little smaller"
+
+<sign> ::= "negative" | "minus"
 ```
 
 ## Test Commands
@@ -112,6 +120,10 @@ This grammar should handle:
 - `computer resize the circle smaller please`
 - `computer make the triangle much bigger please`
 - `computer make the square the same size as the circle please`
+- `computer rotate the triangle please`
+- `computer rotate the square 45 please`
+- `computer rotate it negative 30 degrees please`
+- `computer rotate the circle minus 90 please`
 - `computer clear please`
 
 **New pronoun support:**
@@ -120,6 +132,8 @@ This grammar should handle:
 - `computer delete it please`
 - `computer make it bigger please`
 - `computer move it up 50 pixels please`
+- `computer rotate it please`
+- `computer rotate it 45 degrees please`
 
 **New spatial relationship support:**
 - `computer draw a circle to the left of the square please`
@@ -145,7 +159,8 @@ Once this works, we'll incrementally add:
 7. ✅ Resize commands (make bigger/smaller) - **COMPLETED**
 8. ✅ Pronoun support ("it") - **COMPLETED**
 9. ✅ Spatial relationships ("to the left of", "above", etc.) - **COMPLETED**
-10. Advanced modifiers and complex relationships
+10. ⏳ Rotate commands (rotate with angles) - **IN PROGRESS**
+11. Advanced modifiers and complex relationships
 
 ## Implementation Notes
 
@@ -169,3 +184,25 @@ When implementing spatial relationships, the system should:
      If a position would place the shape outside canvas bounds, try the next option in the sequence.
 
 The spatial relationship commands work with both draw and move operations, allowing users to create shapes in specific positions relative to existing shapes or move existing shapes to new relative positions.
+
+### Rotation Implementation Details
+
+When implementing rotation commands, the system should:
+
+1. **Default angle**: Use 30° as the default rotation (visually noticeable for squares and triangles)
+2. **Direction convention**: 
+   - Positive angles = clockwise rotation
+   - Negative angles (using "negative" or "minus") = counterclockwise rotation
+3. **Special case for circles**: Since circles look identical when rotated, provide a humorous response:
+   - "I rotated the circle... just kidding!"
+   - "Ha! Nice try, but circles don't show rotation"
+4. **Angle units**: 
+   - "degrees" unit is optional
+   - Numbers without units are assumed to be degrees
+5. **Visual demo focus**: All angles are chosen to create visible changes for demonstration purposes
+
+**Supported rotation commands:**
+- `rotate the square` → 30° clockwise (default)
+- `rotate the triangle 45` → 45° clockwise
+- `rotate it negative 30 degrees` → 30° counterclockwise
+- `rotate the circle minus 90` → humorous response (no actual rotation)

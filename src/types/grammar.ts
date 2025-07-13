@@ -20,6 +20,7 @@ export interface ObjectPhrase {
   targetShape?: string;
   spatialRelation?: string;
   referenceShape?: string;
+  angle?: number; // rotation angle
   preFillers?: string[];
   postFillers?: string[];
 }

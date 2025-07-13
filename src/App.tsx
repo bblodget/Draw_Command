@@ -300,6 +300,33 @@ function App() {
           responseService.current.respondToClearCommand();
           break;
           
+        case 'rotate':
+          const rotateShape = command.shape || (command.pronoun === 'it' ? canvas.getLastInteractedShapeType() : null);
+          if (!rotateShape) {
+            setCommandResult({ success: false, message: 'No shape specified for rotation' });
+            responseService.current.speak('I need to know which shape to rotate', 'normal');
+            break;
+          }
+
+          // Get angle from command (grammar service handles the default)
+          const rotationAngle = command.value || 30; // Fallback just in case
+          console.log('Rotation command debug:', { command, rotationAngle });
+          
+          const rotateResult = canvas.rotateShapeByType(rotateShape, rotationAngle);
+          
+          if (rotateResult.success) {
+            setCommandResult({ success: true, message: rotateResult.message });
+            if (rotateResult.isCircle) {
+              responseService.current.speak(rotateResult.message, 'normal');
+            } else {
+              responseService.current.speak(`I rotated the ${rotateShape} ${Math.abs(rotationAngle)} degrees ${rotationAngle >= 0 ? 'clockwise' : 'counterclockwise'}`, 'normal');
+            }
+          } else {
+            setCommandResult({ success: false, message: rotateResult.message });
+            responseService.current.speak(rotateResult.message, 'normal');
+          }
+          break;
+          
         default:
           setCommandResult({ success: false, message: 'Unknown command type' });
           responseService.current.respondWithError('unrecognized');
