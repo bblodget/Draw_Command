@@ -17,7 +17,6 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
     const voiceServiceRef = useRef<VoiceService>(new VoiceService());
     const [isListening, setIsListening] = useState(false);
     const [transcript, setTranscript] = useState('');
-    const [error, setError] = useState<string | null>(null);
     const [isSupported, setIsSupported] = useState(false);
     const [micPermission, setMicPermission] = useState<boolean | null>(null);
     const [isSpeaking, setIsSpeaking] = useState(false);
@@ -43,12 +42,11 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
                 }
             },
             onError: (error: string) => {
-                setError(`Voice recognition error: ${error}`);
+                console.error('Voice recognition error:', error);
                 setIsListening(false);
             },
             onStart: () => {
                 setIsListening(true);
-                setError(null);
             },
             onEnd: () => {
                 setIsListening(false);
@@ -134,7 +132,7 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
             const hasPermission = await voiceService.requestMicrophonePermission();
             setMicPermission(hasPermission);
             if (!hasPermission) {
-                setError('Microphone permission is required for voice commands');
+                console.error('Microphone permission is required for voice commands');
                 return;
             }
         }
@@ -150,7 +148,7 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
         try {
             await voiceServiceRef.current.speak('Voice interface is working correctly');
         } catch {
-            setError('Speech synthesis failed');
+            console.error('Speech synthesis failed');
         }
     };
 

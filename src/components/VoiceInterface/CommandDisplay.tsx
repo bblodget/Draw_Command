@@ -2,14 +2,12 @@ import React from 'react';
 
 interface CommandDisplayProps {
     transcript: string;
-    lastCommand: string;
-    commandResult: { success: boolean; message: string } | null;
+    lastCommand?: string;
+    commandResult?: { success: boolean; message: string } | null;
 }
 
 export const CommandDisplay: React.FC<CommandDisplayProps> = ({
-    transcript,
-    lastCommand,
-    commandResult
+    transcript
 }) => {
     return (
         <div>

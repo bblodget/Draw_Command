@@ -41,17 +41,18 @@ function App() {
     };
 
     // Helper function to calculate position for spatial relationships
-    const calculateDrawPosition = (command: DrawCommand, canvas: CanvasService): { x: number; y: number } | null => {
+    const calculateDrawPosition = (command: DrawCommand, canvas: CanvasService): { x: number; y: number } | undefined => {
         if (command.spatialRelation) {
-            return canvas.calculateSpatialPosition(
+            const spatialPosition = canvas.calculateSpatialPosition(
                 command.size || 100,
                 command.shape!,
                 command.spatialRelation.relation,
                 command.spatialRelation.reference
             );
+            return spatialPosition || undefined;
         }
-        // For basic drawing commands, return null to let collision detection pick random positions
-        return command.position || null;
+        // For basic drawing commands, return undefined to let collision detection pick random positions
+        return command.position;
     };
 
     const executeCommand = (command: DrawCommand) => {
