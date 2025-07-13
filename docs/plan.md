@@ -2,12 +2,12 @@
 
 ## 📊 Current Progress
 
-**Last Updated**: 2025-07-12
+**Last Updated**: 2025-07-13
 
 ### Phase 1: Core Functionality Foundation
-- ✅ **17/21 tasks completed** (81% complete)
-- ⏱️ **44-47 hours** actual time vs 40-50 hours estimated  
-- 🎯 **Next**: Task 1.10: Rotate Commands
+- ✅ **18/21 tasks completed** (86% complete)
+- ⏱️ **49-52 hours** actual time vs 40-50 hours estimated  
+- 🎯 **Next**: Task 1.13: Help System
 
 ### Phase 1.5: GitHub Pages Deployment
 - ✅ **COMPLETED**: Live demo deployed!
@@ -33,6 +33,7 @@
 15. ✅ **Task 1.9.6**: Fix Shape Size Preservation During Color Changes
 16. ✅ **Task 1.14**: Deploy to GitHub Pages
 17. ✅ **Task 1.15**: BNF Grammar Architecture
+18. ✅ **Task 1.10**: Rotate Commands
 
 ### Current Status
 🎉 **Major Milestone**: Voice-to-drawing system is FULLY FUNCTIONAL AND DEPLOYED! The system can:
@@ -51,12 +52,15 @@
 - Professional UI with draggable voice control panel
 - Flicker-free boundary system for shapes and interface
 - 7 resize commands with visual size conversion between shape types
+- **NEW**: Shape rotation commands with 30° default and custom angles
+- **NEW**: Robust speech-to-text preprocessing (handles symbols, punctuation)
+- **NEW**: Circle rotation humor with 5 randomized responses
 - Live demo available at https://bblodget.github.io/Draw_Command/
 
 📦 **Deployment Status**: Successfully deployed to GitHub Pages with automatic CI/CD!
 
 **Next Steps**: 
-1. **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees"
+1. ✅ **Task 1.10**: Rotate Commands - "rotate the triangle 45 degrees" (COMPLETED)
 2. **Task 1.13**: Help System - "what can I draw"
 3. ✅ **Task 1.9.6**: Fix Shape Size Preservation During Color Changes (COMPLETED)
 4. ✅ **Task 1.9.5**: Fix GitHub Pages Grammar Deployment Issue (COMPLETED)
@@ -64,6 +68,8 @@
 6. ✅ **Task 1.12**: Pronoun References - "move it to the right" (COMPLETED in Task 1.15)
 
 **Revolutionary BNF Grammar Achievement**: Task 1.15 successfully replaced regex-based parsing with sophisticated BNF grammar architecture, delivering spatial relationships, pronoun support, and advanced natural language processing capabilities that exceed the original Phase 1 goals.
+
+**Latest Achievement**: Task 1.10 completed full rotation command system with robust speech-to-text preprocessing, solving critical voice recognition symbol conversion issues and adding entertaining demo personality features.
 
 ---
 
@@ -532,27 +538,44 @@ When a user resizes a shape (e.g., "make the square bigger") and then changes it
 
 ---
 
-### Task 1.10: Rotate Commands
+### ✅ Task 1.10: Rotate Commands (COMPLETED)
 **Goal**: Implement shape rotation with default and custom angles.
 
 **Tasks**:
-- [ ] Create regex pattern for "rotate the [shape]" commands
-- [ ] Add support for custom angles "rotate the [shape] 45 degrees"
-- [ ] Support negative angles "rotate the [shape] negative 45 degrees"
-- [ ] Implement rotateShape method in CanvasService
-- [ ] Update App.tsx to handle rotate commands
-- [ ] Add appropriate voice responses
-- [ ] Test various rotation angles
-- [ ] Update voice commands documentation
+- [x] Update BNF grammar to support rotation commands with optional angles
+- [x] Add rotation property to Shape interface with persistence
+- [x] Implement rotateShapeByType method in CanvasService with circle humor
+- [x] Update App.tsx to handle rotate commands with voice responses
+- [x] Fix transcript preprocessing for speech-to-text symbols and punctuation
+- [x] Add support for custom angles "rotate the [shape] 45 degrees"
+- [x] Support negative angles "rotate the [shape] negative 45 degrees" 
+- [x] Test various rotation scenarios and edge cases
 
 **Acceptance Criteria**:
-- "Rotate the triangle" rotates 90 degrees clockwise
-- "Rotate the triangle 45 degrees" rotates exactly 45 degrees
-- "Rotate the triangle negative 45 degrees" rotates counter-clockwise
-- Rotation maintains shape position
-- Voice confirms: "I rotated the triangle 45 degrees"
+- ✅ "Rotate the triangle" rotates 30 degrees clockwise (demo optimized)
+- ✅ "Rotate the triangle 45 degrees" rotates exactly 45 degrees
+- ✅ "Rotate the triangle negative 45 degrees" rotates counter-clockwise
+- ✅ Rotation maintains shape position and persists through other operations
+- ✅ Voice confirms: "I rotated the triangle 45 degrees clockwise"
+- ✅ Circle rotation provides humorous responses
+- ✅ Robust speech-to-text preprocessing handles symbols and punctuation
 
-**Estimated Time**: 2-3 hours
+**Completed**: 2025-07-13 | **Session**: `2025-07-12-1540-Task 1.10 (Rotate Commands).md`
+**Actual Time**: ~5 hours (exceeded estimate due to comprehensive bug fixing)
+
+**Major Achievements**:
+- **Complete Rotation System**: 30° default, custom angles, negative rotation, pronoun support
+- **Speech-to-Text Robustness**: Comprehensive preprocessing for degree symbols, punctuation, spaced signs
+- **Enhanced Demo Personality**: 5 randomized circle humor responses for entertainment
+- **Architecture Enhancement**: Extended BNF grammar and improved command processing pipeline
+- **Zero Regression**: All existing functionality preserved with rotation persistence
+
+**Key Innovations**:
+- Transcript normalization: `"computer rotate the square 45°, please"` → `"computer rotate the square 45 degrees please"`
+- Circle humor: "Ha ha, very funny!", "I rotated the circle, I promise", etc.
+- Flexible angle handling: Supports both `"-45"` and `"- 45"` speech-to-text variations
+
+**Estimated Time**: 2-3 hours | **Actual Time**: ~5 hours
 
 ---
 
