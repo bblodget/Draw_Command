@@ -11,15 +11,17 @@ interface VoiceInterfaceProps {
     lastCommand?: string;
     commandResult?: { success: boolean; message: string } | null;
     isDraggable?: boolean;
+    onVoiceServiceReady?: (voiceService: any) => void;
 }
 
-export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastCommand, commandResult, isDraggable = false }) => {
+export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastCommand, commandResult, isDraggable = false, onVoiceServiceReady }) => {
     const voiceServiceRef = useRef<VoiceService>(new VoiceService());
     const [isListening, setIsListening] = useState(false);
     const [transcript, setTranscript] = useState('');
     const [isSupported, setIsSupported] = useState(false);
     const [micPermission, setMicPermission] = useState<boolean | null>(null);
     const [isSpeaking, setIsSpeaking] = useState(false);
+    const [isSystemSpeaking, setIsSystemSpeaking] = useState(false);
 
     // Drag functionality
     const [isDragging, setIsDragging] = useState(false);
@@ -56,11 +58,22 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
             },
             onSpeechEnd: () => {
                 setIsSpeaking(false);
+            },
+            onSystemSpeakStart: () => {
+                setIsSystemSpeaking(true);
+            },
+            onSystemSpeakEnd: () => {
+                setIsSystemSpeaking(false);
             }
         };
 
         voiceService.setCallbacks(callbacks);
-    }, [onCommand]);
+
+        // Notify parent that VoiceService is ready
+        if (onVoiceServiceReady) {
+            onVoiceServiceReady(voiceService);
+        }
+    }, [onCommand, onVoiceServiceReady]);
 
     // Drag handlers
     const handleMouseDown = (e: React.MouseEvent) => {
@@ -212,6 +225,7 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
                             isSpeaking={isSpeaking}
                             hasTranscript={transcript.length > 0}
                             micPermission={micPermission}
+                            isSystemSpeaking={isSystemSpeaking}
                         />
                     </div>
 

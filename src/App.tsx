@@ -13,9 +13,16 @@ function App() {
     const commandService = useRef(new GrammarCommandService());
     const responseService = useRef(new ResponseService());
     const canvasServiceRef = useRef<CanvasService | null>(null);
+    const voiceServiceRef = useRef<any>(null);
 
     const handleCanvasReady = useCallback((canvasService: CanvasService) => {
         canvasServiceRef.current = canvasService;
+    }, []);
+
+    const handleVoiceServiceReady = useCallback((voiceService: any) => {
+        voiceServiceRef.current = voiceService;
+        // Update ResponseService to use VoiceService for coordination
+        responseService.current = new ResponseService(voiceService);
     }, []);
 
     // Helper function to resolve pronouns to shape types
@@ -377,6 +384,7 @@ function App() {
                 lastCommand={lastCommand}
                 commandResult={commandResult}
                 isDraggable={true}
+                onVoiceServiceReady={handleVoiceServiceReady}
             />
         </div>
     );

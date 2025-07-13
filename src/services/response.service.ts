@@ -9,6 +9,7 @@ export class ResponseService {
     private responseQueue: VoiceResponse[] = [];
     private isSpeaking: boolean = false;
     private currentUtterance: SpeechSynthesisUtterance | null = null;
+    private voiceService?: any; // Optional VoiceService for coordination
 
     // Color mapping for hex to name conversion
     private readonly hexToColorName: Record<string, string> = {
@@ -69,7 +70,8 @@ export class ResponseService {
         }
     };
 
-    constructor() {
+    constructor(voiceService?: any) {
+        this.voiceService = voiceService;
         if (!('speechSynthesis' in window)) {
             console.warn('Speech synthesis not supported in this browser');
             // Create a mock synthesis object that does nothing
@@ -100,6 +102,22 @@ export class ResponseService {
 
     // Main method to speak a response
     speak(text: string, priority: 'high' | 'normal' | 'low' = 'normal', interruptible: boolean = true): void {
+        // If VoiceService is available, use it for proper coordination
+        if (this.voiceService && typeof this.voiceService.speak === 'function') {
+            this.voiceService.speak(text).catch((error: Error) => {
+                console.error('VoiceService speak failed:', error);
+                // Fallback to local implementation
+                this.speakLocal(text, priority, interruptible);
+            });
+            return;
+        }
+
+        // Fallback to local implementation
+        this.speakLocal(text, priority, interruptible);
+    }
+
+    // Local speak implementation (fallback)
+    private speakLocal(text: string, priority: 'high' | 'normal' | 'low' = 'normal', interruptible: boolean = true): void {
         const response: VoiceResponse = { text, priority, interruptible };
 
         if (priority === 'high' && this.isSpeaking && this.currentUtterance && interruptible) {

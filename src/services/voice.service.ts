@@ -6,6 +6,8 @@ export interface VoiceRecognitionCallbacks {
     onEnd?: () => void;
     onSpeechStart?: () => void;
     onSpeechEnd?: () => void;
+    onSystemSpeakStart?: () => void;
+    onSystemSpeakEnd?: () => void;
 }
 
 export class VoiceService {
@@ -22,6 +24,8 @@ export class VoiceService {
     private lastExecutedAt: number = 0;
     private commandCooldownMs: number = 2000; // 2 second cooldown
     private isProcessingCommand: boolean = false; // Prevent overlapping command processing
+    private isSystemSpeaking: boolean = false; // Track when system is speaking
+    private isMuted: boolean = false; // Track microphone muting state
 
     constructor() {
         this.initializeSpeechRecognition();
@@ -68,6 +72,11 @@ export class VoiceService {
             };
 
             this.recognition.onresult = (event: SpeechRecognitionEvent) => {
+                // Ignore transcripts when system is speaking to prevent self-hearing
+                if (this.isSystemSpeaking || this.isMuted) {
+                    return;
+                }
+
                 let interimTranscript = '';
                 let finalTranscript = '';
 
@@ -278,6 +287,10 @@ export class VoiceService {
         return this.isListening;
     }
 
+    getIsSystemSpeaking(): boolean {
+        return this.isSystemSpeaking;
+    }
+
     getCurrentTranscript(): string {
         return this.currentTranscript;
     }
@@ -290,8 +303,23 @@ export class VoiceService {
             }
 
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.onend = () => resolve();
-            utterance.onerror = (event) => reject(new Error(`Speech synthesis error: ${event.error}`));
+            
+            utterance.onstart = () => {
+                this.isSystemSpeaking = true;
+                this.callbacks.onSystemSpeakStart?.();
+            };
+            
+            utterance.onend = () => {
+                this.isSystemSpeaking = false;
+                this.callbacks.onSystemSpeakEnd?.();
+                resolve();
+            };
+            
+            utterance.onerror = (event) => {
+                this.isSystemSpeaking = false;
+                this.callbacks.onSystemSpeakEnd?.();
+                reject(new Error(`Speech synthesis error: ${event.error}`));
+            };
 
             this.synthesis.speak(utterance);
         });
