@@ -95,7 +95,7 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
     const newY = e.clientY - dragOffset.y;
     
     // Apply bounds checking using same Math.max/min pattern as canvas shapes
-    const panelWidth = 320; // Fixed width from CSS: width: '320px'
+    const panelWidth = 400; // Fixed width from CSS: width: '400px'
     
     // Get actual panel height from DOM element
     const panelHeight = dragRef.current?.offsetHeight || 400; // Fallback to 400px if not available
@@ -174,7 +174,7 @@ export const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onCommand, lastC
         right: position.x === 0 && position.y === 0 ? '16px' : 'auto',
         top: position.x === 0 && position.y === 0 ? '100px' : position.y,
         left: position.x !== 0 || position.y !== 0 ? position.x : 'auto',
-        width: '320px',
+        width: '400px',
         maxHeight: 'calc(100vh - 200px)',
         overflowY: 'auto',
         transform: isDragging ? 'scale(1.02)' : 'scale(1)',

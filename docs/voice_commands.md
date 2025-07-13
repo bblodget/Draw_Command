@@ -379,8 +379,8 @@ Try these commands in order to see the system in action!
 
 ### 1. Basic Drawing
 ```
-Computer, draw a red square please
-Computer, draw a blue circle please  
+Computer, draw a square please
+Computer, create a blue circle please  
 Computer, draw a green triangle please
 Computer, create a yellow square please
 ```

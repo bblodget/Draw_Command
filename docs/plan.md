@@ -684,34 +684,45 @@ All planned phases successfully implemented with comprehensive testing:
 
 ---
 
-### Task 1.13: Interactive Help System
-**Goal**: Implement a conversational, multi-level help system.
+### Task 1.13: Example Voice Commands Guide
+**Goal**: Create a comprehensive, user-friendly guide of example voice commands for demo users.
 
 **Tasks**:
-- [ ] Create help context tracking system
-- [ ] Implement Level 1 help: "help please" → main categories
-- [ ] Implement Level 2 help: "help with [category]" → specific topics
-- [ ] Implement Level 3 help: "help with [command]" → detailed explanations
-- [ ] Add help state management and context reset
-- [ ] Create comprehensive help response templates
-- [ ] Add examples and usage patterns to help responses
-- [ ] Test interactive help conversation flow
-- [ ] Update voice commands documentation
+- [ ] Find and rename current "Voice Command Guide" to "Example Voice Commands"
+- [ ] Update guide with all current functionality including rotation commands
+- [ ] Organize commands by category (Drawing, Moving, Resizing, Rotating, Colors, etc.)
+- [ ] Create progression from basic to advanced commands
+- [ ] Include copy-paste friendly examples for easy testing
+- [ ] Add fun elements (circle rotation humor, spatial relationships)
+- [ ] Ensure all commands are current and working
+- [ ] Test all documented commands for accuracy
 
-**Interactive Help Flow**:
-1. **Level 1**: "Computer, help please" → "I can help you with shapes, colors, or commands. What would you like to know about?"
-2. **Level 2**: "Computer, help with commands please" → "I understand several command types: draw, move, delete, color, resize, rotate, and more. Which would you like to learn about?"
-3. **Level 3**: "Computer, help with move please" → "Move commands let you move shapes in any direction. For example, say 'move the square left' or 'move the circle up 100'. You can specify the distance in pixels."
+**Organized Command Categories**:
+1. **Basic Drawing**: "draw a red square", "create a blue circle"
+2. **Moving Shapes**: "move the square left", "move it up 100 pixels"
+3. **Resizing**: "make the triangle bigger", "make it the same size as the square"
+4. **Rotating**: "rotate the square", "rotate it 45 degrees", "rotate the triangle negative 30"
+5. **Changing Colors**: "color the circle green", "make it red"
+6. **Spatial Commands**: "draw a circle to the left of the square"
+7. **Pronoun Usage**: "move it right", "delete it", "rotate it"
+8. **Cleanup**: "delete the triangle", "clear"
+
+**Script Format**:
+- Clear, readable list users can follow along
+- Organized progression from simple to complex
+- Include demonstrations of all major features
+- Copy-paste friendly for quick testing
+- Highlight entertaining features (circle humor, spatial relationships)
 
 **Acceptance Criteria**:
-- Multi-level conversational help system works
-- Context is tracked between help requests
-- Help responses include examples and usage patterns
-- "Help more" provides additional details
-- Context resets after other commands
-- Voice responses are natural and helpful
+- Guide is renamed to "Example Voice Commands"
+- All current commands are documented and tested
+- Commands are organized logically by functionality
+- Users can easily follow along and try commands
+- Script demonstrates full system capabilities
+- All documented commands work as described
 
-**Estimated Time**: 3-4 hours
+**Estimated Time**: 1-2 hours (much simpler than conversational help system)
 
 ---
 

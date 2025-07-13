@@ -53,10 +53,13 @@ export class CanvasService {
             this.removeShapeByType('square');
         }
 
-        // Determine position: use old position if replacing (no overlap check), or find valid position for new shapes
+        // Determine position: use provided position if available, otherwise use old position if replacing
         let validPosition: { x: number; y: number };
-        if (wasReplaced && oldShape) {
-            // When replacing, always use the old position (user's chosen location)
+        if (position) {
+            // New position explicitly provided (e.g., spatial relationship)
+            validPosition = position;
+        } else if (wasReplaced && oldShape) {
+            // When replacing without new position, use the old position (user's chosen location)
             validPosition = oldShape.position;
         } else {
             // For new shapes, find a position that doesn't overlap
@@ -128,10 +131,13 @@ export class CanvasService {
             this.removeShapeByType('circle');
         }
 
-        // Determine position: use old position if replacing (no overlap check), or find valid position for new shapes
+        // Determine position: use provided position if available, otherwise use old position if replacing
         let validPosition: { x: number; y: number };
-        if (wasReplaced && oldShape) {
-            // When replacing, always use the old position (user's chosen location)
+        if (position) {
+            // New position explicitly provided (e.g., spatial relationship)
+            validPosition = position;
+        } else if (wasReplaced && oldShape) {
+            // When replacing without new position, use the old position (user's chosen location)
             validPosition = oldShape.position;
         } else {
             // For new shapes, find a position that doesn't overlap
@@ -202,10 +208,13 @@ export class CanvasService {
             this.removeShapeByType('triangle');
         }
 
-        // Determine position: use old position if replacing (no overlap check), or find valid position for new shapes
+        // Determine position: use provided position if available, otherwise use old position if replacing
         let validPosition: { x: number; y: number };
-        if (wasReplaced && oldShape) {
-            // When replacing, always use the old position (user's chosen location)
+        if (position) {
+            // New position explicitly provided (e.g., spatial relationship)
+            validPosition = position;
+        } else if (wasReplaced && oldShape) {
+            // When replacing without new position, use the old position (user's chosen location)
             validPosition = oldShape.position;
         } else {
             // For new shapes, find a position that doesn't overlap
