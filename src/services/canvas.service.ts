@@ -422,9 +422,19 @@ export class CanvasService {
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
             let x: number, y: number;
 
-            // All shapes now use top-left corner positioning
-            x = Math.random() * (canvasWidth - size);
-            y = Math.random() * (canvasHeight - size);
+            // Define a centered spawn area that avoids the Voice Control panel (400px wide)
+            // Leave 450px margin on each side to ensure Voice Control panel never overlaps
+            const safeMargin = 450; // Extra margin for Voice Control panel (400px) + movement space
+            
+            const spawnAreaWidth = Math.max(300, canvasWidth - (safeMargin * 2)); // Minimum 300px wide
+            const spawnAreaHeight = Math.max(300, canvasHeight * 0.6); // 60% height, minimum 300px
+            
+            const spawnAreaLeft = (canvasWidth - spawnAreaWidth) / 2;
+            const spawnAreaTop = (canvasHeight - spawnAreaHeight) / 2;
+
+            // Generate random position within the centered spawn area
+            x = spawnAreaLeft + Math.random() * (spawnAreaWidth - size);
+            y = spawnAreaTop + Math.random() * (spawnAreaHeight - size);
 
             const position = { x: Math.round(x), y: Math.round(y) };
 
@@ -434,8 +444,10 @@ export class CanvasService {
             }
         }
 
-        // Fallback: return a safe position even if it might overlap
-        return { x: 50, y: 50 };
+        // Fallback: return a safe centered position even if it might overlap
+        const fallbackX = canvasWidth * 0.4; // Center-left of canvas (40% from left)
+        const fallbackY = canvasHeight * 0.4; // Center-top of canvas (40% from top)
+        return { x: Math.round(fallbackX), y: Math.round(fallbackY) };
     }
 
     // Event listener management for tracking shape movements

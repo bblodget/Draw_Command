@@ -815,6 +815,30 @@ All planned phases successfully implemented with comprehensive testing:
 
 ---
 
+### Task 2.4.1: Update Initial Shape Placement
+**Goal**: Define a safe spawn area in the center of the canvas to prevent shapes from appearing behind the Voice Control box.
+
+**Background**: Currently shapes can spawn anywhere on the canvas using random collision detection, which sometimes places them behind the draggable Voice Control panel, making them hard to see during demos.
+
+**Tasks**:
+- [ ] Analyze current collision detection and random positioning system
+- [ ] Define a centered spawn area that avoids Voice Control panel overlap
+- [ ] Update `findValidPosition` method in CanvasService to use restricted area
+- [ ] Ensure spatial relationships still work correctly with new positioning
+- [ ] Test positioning with various canvas sizes and Voice Control positions
+- [ ] Verify no regression in existing collision detection
+
+**Acceptance Criteria**:
+- New shapes spawn in a centered area that's always visible
+- Voice Control panel never overlaps initial shape placement
+- Spatial relationships continue to work correctly
+- Collision detection still prevents overlapping shapes
+- Works across different screen sizes and Voice Control positions
+
+**Estimated Time**: 1-2 hours
+
+---
+
 ### Task 2.5: Final Testing and Refinement
 **Goal**: Comprehensive testing of all fixes and final polish.
 
