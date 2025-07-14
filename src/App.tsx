@@ -169,11 +169,6 @@ function App() {
                         // Convert center offset back to top-left offset for moveShapeByType
                         const offset = centerOffset; // moveShapeByType works with any offset, doesn't matter if it's center or top-left based
                         
-                        console.log(`[SPATIAL MOVE] Center calculation:`);
-                        console.log(`  Current center: (${referencePosition.x}, ${referencePosition.y})`);
-                        console.log(`  Target center: (${targetCenter.x}, ${targetCenter.y})`);
-                        console.log(`  Center offset: (${offset.x}, ${offset.y})`);
-
                         const moved = canvas.moveShapeByType(moveShape, offset);
                         if (moved) {
                             const relationText = command.spatialRelation.relation.replace('_', ' ');
@@ -342,7 +337,6 @@ function App() {
 
                     // Get angle from command (grammar service handles the default)
                     const rotationAngle = command.value || 30; // Fallback just in case
-                    console.log('Rotation command debug:', { command, rotationAngle });
 
                     const rotateResult = canvas.rotateShapeByType(rotateShape, rotationAngle);
 
@@ -373,14 +367,12 @@ function App() {
     };
 
     const handleVoiceCommand = (command: string) => {
-        console.log('Voice command received:', command);
         setLastCommand(command);
 
         // Parse the command
         const parsedCommand = commandService.current.parseCommand(command);
 
         if (parsedCommand) {
-            console.log('Parsed command:', parsedCommand);
             executeCommand(parsedCommand);
         } else {
             setCommandResult({

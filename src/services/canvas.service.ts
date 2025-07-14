@@ -58,15 +58,12 @@ export class CanvasService {
         if (position) {
             // New position explicitly provided (e.g., spatial relationship)
             validPosition = position;
-            console.log(`Square: Using explicit position`, position);
         } else if (wasReplaced && oldShape) {
             // When replacing without new position, use the old position (user's chosen location)
             validPosition = oldShape.position;
-            console.log(`Square: Using old position (replacement)`, oldShape.position);
         } else {
             // For new shapes, find a position that doesn't overlap
             validPosition = this.findValidPosition(size, 'square', position);
-            console.log(`Square: Found new random position`, validPosition);
         }
 
         const id = generateId();
@@ -389,14 +386,6 @@ export class CanvasService {
         }
 
         // Find the actual Fabric.js object for this shape
-        console.log(`[POSITIONING] Looking for Fabric object with shapeId: ${shape.id}`);
-        console.log(`[POSITIONING] Canvas objects:`, this.fabricCanvas.getObjects().map(obj => ({
-            type: obj.type,
-            data: (obj as any).data,
-            hasData: !!(obj as any).data,
-            shapeId: (obj as any).data?.shapeId
-        })));
-        
         const fabricObject = this.fabricCanvas.getObjects().find(obj => 
             (obj as any).data && (obj as any).data.shapeId === shape.id
         );
@@ -406,8 +395,6 @@ export class CanvasService {
             const centerPoint = fabricObject.getCenterPoint();
             const size = shape.size;
             const halfSize = size / 2;
-
-            console.log(`[POSITIONING] Shape ${shape.type} (ID: ${shape.id}) found in Fabric, center: (${centerPoint.x}, ${centerPoint.y}), size: ${size}`);
 
             return {
                 left: centerPoint.x - halfSize,
@@ -419,7 +406,6 @@ export class CanvasService {
             // Fallback to stored position if Fabric object not found
             const { x, y } = shape.position;
             const size = shape.size;
-            console.log(`[POSITIONING] Shape ${shape.type} (ID: ${shape.id}) NOT found in Fabric, using stored position: (${x}, ${y}), size: ${size}`);
             return {
                 left: x,
                 right: x + size,
@@ -568,8 +554,6 @@ export class CanvasService {
         const newX = currentFabricPos.x + offset.x;
         const newY = currentFabricPos.y + offset.y;
         
-        console.log(`[MOVE] Using actual Fabric position: (${currentFabricPos.x}, ${currentFabricPos.y}) + offset(${offset.x}, ${offset.y}) = new(${newX}, ${newY})`);
-
         // Get canvas dimensions
         const canvasWidth = this.fabricCanvas.getWidth();
         const canvasHeight = this.fabricCanvas.getHeight();
@@ -852,9 +836,6 @@ export class CanvasService {
 
         let centerPosition: { x: number; y: number };
 
-        console.log(`[POSITIONING] Reference ${referenceShapeType} bounds:`, refBounds);
-        console.log(`[POSITIONING] Spatial relation: ${relation}, ref center: (${refCenterX}, ${refCenterY}), new shape size: ${shapeSize}`);
-
         switch (relation) {
             case 'left_of':
             case 'to_the_left_of':
@@ -877,7 +858,6 @@ export class CanvasService {
                     x: refCenterX,
                     y: refBounds.top - halfSize - spacing
                 };
-                console.log(`[POSITIONING] Above calculation: centerPosition = (${centerPosition.x}, ${centerPosition.y})`);
                 break;
 
             case 'below':
@@ -924,8 +904,6 @@ export class CanvasService {
             x: centerPosition.x - halfShapeSize,
             y: centerPosition.y - halfShapeSize
         };
-
-        console.log(`[POSITIONING] Center position: (${centerPosition.x}, ${centerPosition.y}), top-left: (${topLeftPosition.x}, ${topLeftPosition.y})`);
 
         return topLeftPosition;
     }

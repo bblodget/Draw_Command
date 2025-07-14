@@ -54,8 +54,6 @@ export class CommandService {
         // Normalize the text: lowercase and trim
         const normalizedText = text.toLowerCase().trim();
 
-        console.log('Parsing command:', normalizedText);
-
         // Try to match draw command
         const drawMatch = normalizedText.match(this.patterns.draw);
         if (drawMatch) {

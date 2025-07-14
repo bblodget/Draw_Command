@@ -20,12 +20,6 @@ export const Canvas: React.FC<CanvasProps> = ({ onCanvasReady }) => {
     const containerWidth = window.innerWidth;
     const containerHeight = window.innerHeight - headerHeight;
 
-    // Debug logging
-    console.log('Canvas initialization:');
-    console.log('- Window dimensions:', window.innerWidth, 'x', window.innerHeight);
-    console.log('- Header height:', headerHeight);
-    console.log('- Calculated canvas dimensions:', containerWidth, 'x', containerHeight);
-
     // Initialize Fabric.js canvas
     const fabricCanvas = new fabric.Canvas(canvasRef.current, {
       width: containerWidth,
@@ -58,12 +52,6 @@ export const Canvas: React.FC<CanvasProps> = ({ onCanvasReady }) => {
         const headerHeight = 80; // Approximate header height
         const newWidth = window.innerWidth;
         const newHeight = window.innerHeight - headerHeight;
-        
-        // Debug logging
-        console.log('Canvas resize:');
-        console.log('- Window dimensions:', window.innerWidth, 'x', window.innerHeight);
-        console.log('- Header height:', headerHeight);
-        console.log('- New canvas dimensions:', newWidth, 'x', newHeight);
         
         // Update canvas dimensions
         fabricCanvas.setDimensions({ width: newWidth, height: newHeight });
