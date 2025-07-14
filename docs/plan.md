@@ -930,6 +930,54 @@ All planned phases successfully implemented with comprehensive testing:
 
 ---
 
+## Phase 3: Enhancement and Optimization
+
+**Goal**: Add enhancements to improve natural language understanding and user experience.
+
+**Current Progress**: 0/1 tasks completed (0%)
+
+### Task 3.1: Add Grammar Synonyms
+**Goal**: Expand the voice command grammar with additional synonyms to make commands more natural and intuitive.
+
+**Background**: The current grammar supports basic keywords, but users may naturally try synonyms that aren't currently supported. Adding synonyms for spatial relationships, actions, and other key terms will improve the user experience and make the system feel more natural.
+
+**Proposed Synonyms**:
+- **Spatial relationships**: 
+  - "above" | "over" 
+  - "below" | "under"
+  - "next to" | "beside" | "near"
+- **Action verbs**:
+  - "create" | "make" | "build" (for draw)
+  - "erase" | "destroy" (for delete)
+  - "move" | "position"
+- **Size modifiers**:
+  - "bigger" | "larger" | "increase"
+  - "smaller" | "decrease" | "shrink"
+- **Colors**: 
+  - "grey" | "gray" (already supported)
+  - Potentially add "cyan", "magenta", "lime", etc.
+
+**Tasks**:
+- [ ] Update docs/grammar.md with proposed synonym expansions
+- [ ] Review and agree on final synonym list
+- [ ] Update Nearley grammar file (src/grammar/voice-commands.ne)
+- [ ] Update grammar test cases
+- [ ] Update docs/voice_commands.md with new examples
+- [ ] Test new synonyms with voice recognition
+- [ ] Verify no conflicts with existing commands
+- [ ] Update quick_start.md with popular synonym examples
+
+**Acceptance Criteria**:
+- Grammar documentation clearly shows all supported synonyms
+- All proposed synonyms work correctly in voice commands
+- No regression in existing command functionality
+- Voice recognition accuracy maintained or improved
+- Updated documentation reflects all changes
+
+**Estimated Time**: 2-3 hours
+
+---
+
 ## Testing Strategy
 
 ### After Each Task
