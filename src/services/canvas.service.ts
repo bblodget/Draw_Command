@@ -91,6 +91,7 @@ export class CanvasService {
             hasBorders: true,
             lockMovementX: false,
             lockMovementY: false,
+            data: { shapeId: id }
         });
 
         // Apply rotation if preserving from old shape
@@ -168,6 +169,7 @@ export class CanvasService {
             hasBorders: true,
             lockMovementX: false,
             lockMovementY: false,
+            data: { shapeId: id }
         });
 
         // Apply rotation if preserving from old shape (circles don't show rotation but we track it)
@@ -246,6 +248,7 @@ export class CanvasService {
             hasBorders: true,
             lockMovementX: false,
             lockMovementY: false,
+            data: { shapeId: id }
         });
 
         // Apply rotation if preserving from old shape
@@ -319,6 +322,29 @@ export class CanvasService {
         return shapeId ? this.shapes.get(shapeId) : undefined;
     }
 
+    getCurrentFabricPosition(shapeId: string): { x: number; y: number } | null {
+        const fabricObject = this.fabricObjects.get(shapeId);
+        if (fabricObject && fabricObject.left !== undefined && fabricObject.top !== undefined) {
+            return {
+                x: fabricObject.left,
+                y: fabricObject.top
+            };
+        }
+        return null;
+    }
+
+    getCurrentFabricCenterPosition(shapeId: string): { x: number; y: number } | null {
+        const fabricObject = this.fabricObjects.get(shapeId);
+        if (fabricObject) {
+            const centerPoint = fabricObject.getCenterPoint();
+            return {
+                x: centerPoint.x,
+                y: centerPoint.y
+            };
+        }
+        return null;
+    }
+
     private removeShapeByType(shapeType: string): boolean {
         const existingShapeId = this.shapesByType.get(shapeType);
         if (existingShapeId) {
@@ -350,16 +376,57 @@ export class CanvasService {
     }
 
     private getShapeBounds(shape: Shape): { left: number; right: number; top: number; bottom: number } {
-        const { x, y } = shape.position;
-        const size = shape.size;
+        if (!this.fabricCanvas) {
+            // Fallback to stored position if canvas not available
+            const { x, y } = shape.position;
+            const size = shape.size;
+            return {
+                left: x,
+                right: x + size,
+                top: y,
+                bottom: y + size
+            };
+        }
 
-        // All shapes now use the same calculation - size represents width/height/diameter
-        return {
-            left: x,
-            right: x + size,
-            top: y,
-            bottom: y + size
-        };
+        // Find the actual Fabric.js object for this shape
+        console.log(`[POSITIONING] Looking for Fabric object with shapeId: ${shape.id}`);
+        console.log(`[POSITIONING] Canvas objects:`, this.fabricCanvas.getObjects().map(obj => ({
+            type: obj.type,
+            data: obj.data,
+            hasData: !!obj.data,
+            shapeId: obj.data?.shapeId
+        })));
+        
+        const fabricObject = this.fabricCanvas.getObjects().find(obj => 
+            obj.data && obj.data.shapeId === shape.id
+        );
+
+        if (fabricObject) {
+            // Use the actual center position from Fabric.js (works correctly with rotated shapes)
+            const centerPoint = fabricObject.getCenterPoint();
+            const size = shape.size;
+            const halfSize = size / 2;
+
+            console.log(`[POSITIONING] Shape ${shape.type} (ID: ${shape.id}) found in Fabric, center: (${centerPoint.x}, ${centerPoint.y}), size: ${size}`);
+
+            return {
+                left: centerPoint.x - halfSize,
+                right: centerPoint.x + halfSize,
+                top: centerPoint.y - halfSize,
+                bottom: centerPoint.y + halfSize
+            };
+        } else {
+            // Fallback to stored position if Fabric object not found
+            const { x, y } = shape.position;
+            const size = shape.size;
+            console.log(`[POSITIONING] Shape ${shape.type} (ID: ${shape.id}) NOT found in Fabric, using stored position: (${x}, ${y}), size: ${size}`);
+            return {
+                left: x,
+                right: x + size,
+                top: y,
+                bottom: y + size
+            };
+        }
     }
 
     private checkPositionOverlap(position: { x: number; y: number }, size: number, shapeType: string): boolean {
@@ -401,6 +468,20 @@ export class CanvasService {
             bounds.right <= canvasWidth &&
             bounds.top >= 0 &&
             bounds.bottom <= canvasHeight;
+    }
+
+    private isCenterPositionOnCanvas(centerPosition: { x: number; y: number }, size: number, shapeType: string): boolean {
+        if (!this.fabricCanvas) return false;
+
+        const canvasWidth = this.fabricCanvas.getWidth();
+        const canvasHeight = this.fabricCanvas.getHeight();
+        const halfSize = size / 2;
+
+        // Check if shape would be fully within canvas bounds when centered at this position
+        return (centerPosition.x - halfSize >= 0 && 
+                centerPosition.x + halfSize <= canvasWidth &&
+                centerPosition.y - halfSize >= 0 && 
+                centerPosition.y + halfSize <= canvasHeight);
     }
 
     private findValidPosition(size: number, shapeType: string, preferredPosition?: { x: number; y: number }): { x: number; y: number } {
@@ -482,10 +563,12 @@ export class CanvasService {
         const fabricObject = this.fabricObjects.get(shape.id);
         if (!fabricObject) return false;
 
-        // Calculate new position
-        const currentPos = shape.position;
-        const newX = currentPos.x + offset.x;
-        const newY = currentPos.y + offset.y;
+        // Calculate new position using actual Fabric position, not stored position
+        const currentFabricPos = this.getCurrentFabricPosition(shape.id) || shape.position;
+        const newX = currentFabricPos.x + offset.x;
+        const newY = currentFabricPos.y + offset.y;
+        
+        console.log(`[MOVE] Using actual Fabric position: (${currentFabricPos.x}, ${currentFabricPos.y}) + offset(${offset.x}, ${offset.y}) = new(${newX}, ${newY})`);
 
         // Get canvas dimensions
         const canvasWidth = this.fabricCanvas.getWidth();
@@ -762,58 +845,67 @@ export class CanvasService {
         const canvasWidth = this.fabricCanvas.getWidth();
         const canvasHeight = this.fabricCanvas.getHeight();
 
-        let position: { x: number; y: number };
+        // Calculate reference shape center from bounds
+        const refCenterX = (refBounds.left + refBounds.right) / 2;
+        const refCenterY = (refBounds.top + refBounds.bottom) / 2;
+        const halfSize = shapeSize / 2;
+
+        let centerPosition: { x: number; y: number };
+
+        console.log(`[POSITIONING] Reference ${referenceShapeType} bounds:`, refBounds);
+        console.log(`[POSITIONING] Spatial relation: ${relation}, ref center: (${refCenterX}, ${refCenterY}), new shape size: ${shapeSize}`);
 
         switch (relation) {
             case 'left_of':
             case 'to_the_left_of':
-                position = {
-                    x: refBounds.left - shapeSize - spacing,
-                    y: refBounds.top + (refBounds.bottom - refBounds.top - shapeSize) / 2
+                centerPosition = {
+                    x: refBounds.left - halfSize - spacing,
+                    y: refCenterY
                 };
                 break;
 
             case 'right_of':
             case 'to_the_right_of':
-                position = {
-                    x: refBounds.right + spacing,
-                    y: refBounds.top + (refBounds.bottom - refBounds.top - shapeSize) / 2
+                centerPosition = {
+                    x: refBounds.right + halfSize + spacing,
+                    y: refCenterY
                 };
                 break;
 
             case 'above':
-                position = {
-                    x: refBounds.left + (refBounds.right - refBounds.left - shapeSize) / 2,
-                    y: refBounds.top - shapeSize - spacing
+                centerPosition = {
+                    x: refCenterX,
+                    y: refBounds.top - halfSize - spacing
                 };
+                console.log(`[POSITIONING] Above calculation: centerPosition = (${centerPosition.x}, ${centerPosition.y})`);
                 break;
 
             case 'below':
-                position = {
-                    x: refBounds.left + (refBounds.right - refBounds.left - shapeSize) / 2,
-                    y: refBounds.bottom + spacing
+                centerPosition = {
+                    x: refCenterX,
+                    y: refBounds.bottom + halfSize + spacing
                 };
                 break;
 
             case 'next_to':
-                // Try positions in priority order: right, left, above, below
-                const positions = [
-                    { x: refBounds.right + spacing, y: refBounds.top + (refBounds.bottom - refBounds.top - shapeSize) / 2 },
-                    { x: refBounds.left - shapeSize - spacing, y: refBounds.top + (refBounds.bottom - refBounds.top - shapeSize) / 2 },
-                    { x: refBounds.left + (refBounds.right - refBounds.left - shapeSize) / 2, y: refBounds.top - shapeSize - spacing },
-                    { x: refBounds.left + (refBounds.right - refBounds.left - shapeSize) / 2, y: refBounds.bottom + spacing }
+                // Try positions in priority order: right, left, above, below (using center coordinates)
+                const centerPositions = [
+                    { x: refBounds.right + halfSize + spacing, y: refCenterY },
+                    { x: refBounds.left - halfSize - spacing, y: refCenterY },
+                    { x: refCenterX, y: refBounds.top - halfSize - spacing },
+                    { x: refCenterX, y: refBounds.bottom + halfSize + spacing }
                 ];
 
-                for (const pos of positions) {
-                    if (this.isPositionOnCanvas(pos, shapeSize, shapeType)) {
-                        position = pos;
+                for (const pos of centerPositions) {
+                    if (this.isCenterPositionOnCanvas(pos, shapeSize, shapeType)) {
+                        centerPosition = pos;
                         break;
                     }
                 }
 
-                if (!position!) {
+                if (!centerPosition!) {
                     // If no position works, use the first one anyway
-                    position = positions[0];
+                    centerPosition = centerPositions[0];
                 }
                 break;
 
@@ -822,12 +914,20 @@ export class CanvasService {
                 return null;
         }
 
-        // Ensure position is within canvas bounds
-        // All shapes now use top-left corner positioning
-        position.x = Math.max(0, Math.min(canvasWidth - shapeSize, position.x));
-        position.y = Math.max(0, Math.min(canvasHeight - shapeSize, position.y));
+        // Ensure center position is within canvas bounds
+        const halfShapeSize = shapeSize / 2;
+        centerPosition.x = Math.max(halfShapeSize, Math.min(canvasWidth - halfShapeSize, centerPosition.x));
+        centerPosition.y = Math.max(halfShapeSize, Math.min(canvasHeight - halfShapeSize, centerPosition.y));
 
-        return position;
+        // Convert center position to top-left corner for Fabric.js
+        const topLeftPosition = {
+            x: centerPosition.x - halfShapeSize,
+            y: centerPosition.y - halfShapeSize
+        };
+
+        console.log(`[POSITIONING] Center position: (${centerPosition.x}, ${centerPosition.y}), top-left: (${topLeftPosition.x}, ${topLeftPosition.y})`);
+
+        return topLeftPosition;
     }
 
     // Rotate shape by angle (30° default for demo visibility)

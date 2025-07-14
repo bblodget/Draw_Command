@@ -147,10 +147,32 @@ function App() {
                             break;
                         }
 
-                        const offset = {
-                            x: spatialPosition.x - existingShape.position.x,
-                            y: spatialPosition.y - existingShape.position.y
+                        // Get current actual center position from Fabric object
+                        const currentCenterPosition = canvas.getCurrentFabricCenterPosition(existingShape.id);
+                        const referencePosition = currentCenterPosition || {
+                            x: existingShape.position.x + existingShape.size / 2,
+                            y: existingShape.position.y + existingShape.size / 2
                         };
+                        
+                        // Convert spatialPosition (top-left) to center coordinates for consistent comparison
+                        const targetCenter = {
+                            x: spatialPosition.x + existingShape.size / 2,
+                            y: spatialPosition.y + existingShape.size / 2
+                        };
+                        
+                        // Calculate center-to-center offset
+                        const centerOffset = {
+                            x: targetCenter.x - referencePosition.x,
+                            y: targetCenter.y - referencePosition.y
+                        };
+                        
+                        // Convert center offset back to top-left offset for moveShapeByType
+                        const offset = centerOffset; // moveShapeByType works with any offset, doesn't matter if it's center or top-left based
+                        
+                        console.log(`[SPATIAL MOVE] Center calculation:`);
+                        console.log(`  Current center: (${referencePosition.x}, ${referencePosition.y})`);
+                        console.log(`  Target center: (${targetCenter.x}, ${targetCenter.y})`);
+                        console.log(`  Center offset: (${offset.x}, ${offset.y})`);
 
                         const moved = canvas.moveShapeByType(moveShape, offset);
                         if (moved) {
