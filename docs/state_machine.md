@@ -156,31 +156,34 @@ Action: Clear stateTranscript, restart speech recognition, keep currentTranscrip
 - Clear separation of concerns between states
 - Robust handling of edge cases
 
-## Debugging with Console Logs
+## Production Implementation
 
-The state machine includes comprehensive logging with the `[STATE MACHINE]` prefix:
+**Note**: The state machine implementation in production does not include debug console logging for performance and clean console output.
+
+### Development Debug Logging (Removed in Production)
+During development, the state machine included detailed logging such as:
 
 ```javascript
+// Example of debug logs that were used during development:
 [STATE MACHINE] Current state: IDLE
-[STATE MACHINE] hasComputer: true, hasPlease: false
-[STATE MACHINE] finalText: "computer"
 [STATE MACHINE] IDLE -> CLEAR (found "computer")
 [STATE MACHINE] CLEAR -> TRANSCRIPT, initialized: "computer draw a red square"
-[STATE MACHINE] TRANSCRIPT updating: "computer draw a red square please"
 [STATE MACHINE] TRANSCRIPT -> EXECUTION (found "please" in FINAL text)
-[STATE MACHINE] Executing command: "computer draw a red square please"
-[STATE MACHINE] Command execution: computer draw a red square please
 [STATE MACHINE] EXECUTION -> IDLE (command processed)
-[STATE MACHINE] Clearing stateTranscript to prevent duplicate execution
-[STATE MACHINE] Restarting speech recognition to clear accumulated results
 ```
 
-### Debug Logging Categories
-- **State transitions**: Shows state changes and triggers
-- **Command processing**: Logs command extraction and execution
-- **Duplicate prevention**: Shows when commands are ignored as duplicates
-- **Speech recognition**: Logs restart and session management
-- **Transcript management**: Shows stateTranscript clearing and updates
+### Error Logging (Preserved)
+- **Error handling**: `console.error()` for actual failures and exceptions
+- **Warnings**: `console.warn()` for invalid commands or missing references
+- **Permission issues**: Microphone and speech synthesis errors
+
+### For Development Debugging
+If debugging is needed during development, temporarily add console.log statements to:
+- **State transitions**: Track state changes and triggers
+- **Command processing**: Monitor command extraction and execution
+- **Duplicate prevention**: Verify when commands are ignored as duplicates
+- **Speech recognition**: Monitor restart and session management
+- **Transcript management**: Track stateTranscript clearing and updates
 
 ## Implementation File
 

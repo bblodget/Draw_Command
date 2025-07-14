@@ -94,8 +94,6 @@ export class VoiceService {
                 let interimText = '';
                 let finalText = '';
                 
-                // Enhanced logging for debugging
-                console.log(`[STATE MACHINE DEBUG] event.results.length: ${event.results.length}, resultIndex: ${event.resultIndex}`);
                 
                 for (let i = 0; i < event.results.length; i++) {
                     const transcript = event.results[i][0].transcript;
@@ -111,11 +109,6 @@ export class VoiceService {
                 allResultsText = allResultsText.trim();
                 finalText = finalText.trim();
                 interimText = interimText.trim();
-                
-                console.log(`[STATE MACHINE] Current state: ${this.transcriptState}`);
-                console.log(`[STATE MACHINE] All results: "${allResultsText}"`);
-                console.log(`[STATE MACHINE] Final: "${finalText}", Interim: "${interimText}"`);
-                console.log(`[STATE MACHINE DEBUG] stateTranscript: "${this.stateTranscript}"`);
                 
                 // State machine logic
                 this.processStateTransitions(allResultsText, finalText, interimText);
@@ -137,15 +130,10 @@ export class VoiceService {
     private processStateTransitions(allText: string, finalText: string, _interimText: string): void {
         const allLower = allText.toLowerCase();
         const hasComputer = allLower.includes(this.ATTENTION_WORD);
-        const hasPlease = allLower.includes(this.EXECUTE_WORD);
-        
-        console.log(`[STATE MACHINE] hasComputer: ${hasComputer}, hasPlease: ${hasPlease}`);
-        console.log(`[STATE MACHINE] finalText: "${finalText}"`);
         
         switch (this.transcriptState) {
             case TranscriptState.IDLE:
                 if (hasComputer) {
-                    console.log('[STATE MACHINE] IDLE -> CLEAR (found "computer")');
                     this.transcriptState = TranscriptState.CLEAR;
                     // Don't process further in same call - let next speech event handle CLEAR state
                 }
@@ -164,11 +152,9 @@ export class VoiceService {
                 
                 // Check if we already have a complete command (contains "please")
                 if (this.stateTranscript.toLowerCase().includes(this.EXECUTE_WORD)) {
-                    console.log(`[STATE MACHINE] CLEAR -> EXECUTION (complete command found): "${this.stateTranscript}"`);
                     this.transcriptState = TranscriptState.EXECUTION;
                     this.executeCommand(this.stateTranscript);
                 } else {
-                    console.log(`[STATE MACHINE] CLEAR -> TRANSCRIPT, initialized: "${this.stateTranscript}"`);
                     this.transcriptState = TranscriptState.TRANSCRIPT;
                 }
                 break;
@@ -176,7 +162,6 @@ export class VoiceService {
             case TranscriptState.TRANSCRIPT:
                 // Check if we hear a new "computer" that seems separate
                 if (hasComputer && this.isNewComputerCommand(allText)) {
-                    console.log('[STATE MACHINE] TRANSCRIPT -> CLEAR (new "computer" detected)');
                     this.transcriptState = TranscriptState.CLEAR;
                     return; // Don't process further, let next event handle CLEAR
                 }
@@ -190,11 +175,9 @@ export class VoiceService {
                     // If no "computer" found, keep existing transcript (shouldn't happen in normal flow)
                     // this.stateTranscript remains unchanged
                 }
-                console.log(`[STATE MACHINE] TRANSCRIPT updating: "${this.stateTranscript}"`);
                 
                 // Only execute if we have FINAL text with "please" in the current state transcript
                 if (finalText.length > 0 && this.stateTranscript.toLowerCase().includes(this.EXECUTE_WORD)) {
-                    console.log('[STATE MACHINE] TRANSCRIPT -> EXECUTION (found "please" in current transcript)');
                     this.transcriptState = TranscriptState.EXECUTION;
                     this.executeCommand(this.stateTranscript);
                 }
@@ -203,7 +186,6 @@ export class VoiceService {
             case TranscriptState.EXECUTION:
                 // Stay in execution until explicitly moved back to IDLE
                 // This happens after command execution completes
-                console.log('[STATE MACHINE] In EXECUTION state, ignoring input');
                 break;
         }
     }
@@ -222,7 +204,6 @@ export class VoiceService {
             const endsWithComputerPattern = /computer\s+\w+\s*(please)?$/i.test(text.trim());
             
             if (hasMultiplePlease || endsWithComputerPattern) {
-                console.log(`[STATE MACHINE] Multiple commands detected (${computerCount} computers, pattern suggests new command)`);
                 return true;
             }
         }
@@ -232,7 +213,6 @@ export class VoiceService {
     
     // Execute the command and transition back to IDLE
     private executeCommand(transcript: string): void {
-        console.log(`[STATE MACHINE] Executing command: "${transcript}"`);
         
         // Extract command from transcript
         const command = this.extractCommand(transcript);
@@ -240,27 +220,21 @@ export class VoiceService {
         
         // Prevent duplicate command execution (within cooldown period)
         if (command && (command !== this.lastExecutedCommand || now - this.lastExecutedAt > this.commandCooldownMs)) {
-            console.log('[STATE MACHINE] Command execution:', command);
             this.callbacks.onCommand?.(command);
             this.lastExecutedCommand = command;
             this.lastExecutedAt = now;
-        } else if (command === this.lastExecutedCommand) {
-            console.log('[STATE MACHINE] Duplicate command ignored:', command);
         }
         
         // Transition back to IDLE (keep transcript visible for user reference)
-        console.log('[STATE MACHINE] EXECUTION -> IDLE (command processed)');
         this.transcriptState = TranscriptState.IDLE;
         
         // Clear stateTranscript to prevent it from being used in next command
         // But keep currentTranscript for display
-        console.log('[STATE MACHINE] Clearing stateTranscript to prevent duplicate execution');
         this.stateTranscript = '';
         
         // Restart speech recognition to clear accumulated results
         // This prevents old commands from appearing in new recognition sessions
         if (this.isListening && this.recognition) {
-            console.log('[STATE MACHINE] Restarting speech recognition to clear accumulated results');
             this.shouldRestart = true;
             this.recognition.stop();
             // The onend handler will automatically restart it after 100ms
@@ -279,27 +253,19 @@ export class VoiceService {
         const attentionIndex = lowerTranscript.indexOf(this.ATTENTION_WORD);
         const executeIndex = lowerTranscript.indexOf(this.EXECUTE_WORD);
 
-        console.log(`[STATE MACHINE DEBUG] extractCommand from: "${transcript}"`);
-        console.log(`[STATE MACHINE DEBUG] attentionIndex: ${attentionIndex}, executeIndex: ${executeIndex}`);
-
         if (attentionIndex !== -1 && executeIndex !== -1 && executeIndex > attentionIndex) {
             // Include the full command from "computer" to "please" for the grammar parser
             const commandStart = attentionIndex;
             const commandEnd = executeIndex + this.EXECUTE_WORD.length;
             let command = transcript.substring(commandStart, commandEnd).trim();
             
-            console.log(`[STATE MACHINE DEBUG] Extracted command: "${command}"`);
             
             // Preprocess command to normalize speech-to-text symbols
             const normalizedCommand = this.normalizeTranscript(command);
-            if (command !== normalizedCommand) {
-                console.log('Transcript normalized:', { original: command, normalized: normalizedCommand });
-            }
             
             return normalizedCommand;
         }
 
-        console.log(`[STATE MACHINE DEBUG] No valid command found in transcript`);
         return '';
     }
 
@@ -414,7 +380,6 @@ export class VoiceService {
     }
 
     clearTranscript(): void {
-        console.log('[STATE MACHINE] Manual clear - resetting to IDLE');
         this.currentTranscript = '';
         this.stateTranscript = '';
         this.transcriptState = TranscriptState.IDLE;

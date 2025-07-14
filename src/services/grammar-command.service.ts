@@ -32,8 +32,6 @@ export class GrammarCommandService {
     // Normalize the text: lowercase and trim
     const normalizedText = text.toLowerCase().trim();
     
-    console.log('Parsing command with grammar:', normalizedText);
-
     try {
       // Create a new parser instance
       const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
@@ -51,7 +49,6 @@ export class GrammarCommandService {
       }
       
       const parsedCommand = parser.results[0] as ParsedCommand;
-      console.log('Parsed command:', parsedCommand);
       
       // Convert parsed command to DrawCommand
       return this.convertToDrawCommand(parsedCommand);
@@ -64,9 +61,6 @@ export class GrammarCommandService {
 
   private convertToDrawCommand(parsed: ParsedCommand): DrawCommand | null {
     const { verb, object, preModifier, postModifier, value } = parsed;
-    
-    // Debug logging
-    console.log('Converting parsed command:', { verb, object, preModifier, postModifier, value });
     
     // Get the shape or pronoun (handle null object for commands like "clear")
     const shape = object?.type === 'shape' ? object.value as 'square' | 'circle' | 'triangle' : undefined;
@@ -82,9 +76,6 @@ export class GrammarCommandService {
     const referenceShape = object?.referenceShape; // Get reference shape for spatial relation
     const angle = object?.angle; // Get rotation angle from object
     
-    console.log('Extracted values:', { shape, pronoun, color, direction, distance, unit, sizeModifier, sizeRelation, targetShape, spatialRelation, referenceShape, angle });
-    console.log('Spatial relation details:', { spatialRelation, referenceShape });
-
     switch (verb) {
       case 'draw':
         return this.handleDrawCommand(shape, pronoun, color, spatialRelation, referenceShape, preModifier, postModifier, value);
