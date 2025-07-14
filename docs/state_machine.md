@@ -39,9 +39,11 @@ The voice command system uses a 4-state finite state machine to manage transcrip
 - **Purpose**: Process command and provide response
 - **Behavior**:
   - Extracts command from accumulated transcript
-  - Executes command through callback system
+  - Executes command through callback system with duplicate prevention
   - Ignores any new speech input during processing
   - Provides voice response to user
+  - **Clears stateTranscript** to prevent duplicate execution
+  - **Restarts speech recognition** to clear accumulated results
 - **Transition**: After command completion → **IDLE**
 
 ## State Flow Diagram
@@ -91,7 +93,12 @@ The system detects separate commands using heuristics:
 - **IDLE**: `stateTranscript` unchanged (preserves last completed command for user reference)
 - **CLEAR**: `stateTranscript = allText` (clears and resets with new speech recognition)
 - **TRANSCRIPT**: `stateTranscript = allText` (continuously updated with latest speech)
-- **EXECUTION**: `stateTranscript` preserved for command processing, remains visible after return to IDLE
+- **EXECUTION**: `stateTranscript` used for command processing, then **cleared** to prevent duplicate execution
+
+### Speech Recognition Session Management
+- **Automatic Restart**: After each command execution, speech recognition restarts to clear accumulated results
+- **Duplicate Prevention**: Commands are prevented from executing multiple times within cooldown period
+- **Session Isolation**: Each new command starts with a fresh speech recognition session
 
 ## Example Flow
 
@@ -116,7 +123,7 @@ Action: Execute command "Computer draw a red square please"
 
 After Command Completion:
 State: EXECUTION → IDLE
-Action: Keep transcript visible
+Action: Clear stateTranscript, restart speech recognition, keep currentTranscript visible
 ```
 
 ## Benefits of State Machine Approach
@@ -130,11 +137,14 @@ Action: Keep transcript visible
 - Automatic clearing between commands
 - No old commands persisting in transcript
 - Clear separation between commands
+- Speech recognition restart prevents command accumulation
 
 ### **Reliable Execution**
 - Commands only execute when completely ready
 - No premature execution on partial input
 - Proper timing with speech recognition finalization
+- Duplicate command prevention with cooldown system
+- Fresh speech recognition session for each command
 
 ### **Maintainable Code**
 - Simple state machine logic vs complex accumulation
@@ -159,8 +169,18 @@ The state machine includes comprehensive logging with the `[STATE MACHINE]` pref
 [STATE MACHINE] TRANSCRIPT updating: "computer draw a red square please"
 [STATE MACHINE] TRANSCRIPT -> EXECUTION (found "please" in FINAL text)
 [STATE MACHINE] Executing command: "computer draw a red square please"
+[STATE MACHINE] Command execution: computer draw a red square please
 [STATE MACHINE] EXECUTION -> IDLE (command processed)
+[STATE MACHINE] Clearing stateTranscript to prevent duplicate execution
+[STATE MACHINE] Restarting speech recognition to clear accumulated results
 ```
+
+### Debug Logging Categories
+- **State transitions**: Shows state changes and triggers
+- **Command processing**: Logs command extraction and execution
+- **Duplicate prevention**: Shows when commands are ignored as duplicates
+- **Speech recognition**: Logs restart and session management
+- **Transcript management**: Shows stateTranscript clearing and updates
 
 ## Implementation File
 
@@ -169,8 +189,26 @@ The state machine is implemented in `/src/services/voice.service.ts` as part of 
 Key methods:
 - `processStateTransitions()`: Main state machine logic
 - `isNewComputerCommand()`: Detects when a new command starts
-- `executeCommand()`: Processes commands and returns to IDLE
+- `executeCommand()`: Processes commands, prevents duplicates, clears state, and restarts recognition
 - `clearTranscript()`: Manual reset to IDLE state
+- Auto-restart mechanism via `shouldRestart` flag and `onend` handler
+
+## Advanced Features
+
+### Duplicate Command Prevention
+- **Cooldown System**: Commands are prevented from executing multiple times within 2 seconds
+- **Command Comparison**: Exact command matching to identify duplicates
+- **Logging**: Duplicate attempts are logged for debugging
+
+### Speech Recognition Session Management
+- **Automatic Restart**: Recognition restarts after each command to prevent accumulation
+- **Session Isolation**: Each command starts fresh without previous session data
+- **Timing Control**: 100ms delay between stop and restart to prevent issues
+
+### Enhanced Error Prevention
+- **State Transcript Clearing**: Prevents old commands from contaminating new ones
+- **Recognition Reset**: Eliminates accumulated speech recognition artifacts
+- **Comprehensive Logging**: All state transitions and decisions are logged
 
 ## Future Enhancements
 
@@ -180,5 +218,6 @@ Potential improvements to consider:
 3. **Partial command execution**: Handle commands without "please"
 4. **Multi-language support**: Adapt attention/execution words per language
 5. **Custom wake words**: Allow configuration of attention word
+6. **Configurable cooldown**: Allow adjustment of duplicate prevention timing
 
-This state machine design provides a solid foundation for reliable voice command processing with clear, predictable behavior that users can understand and trust.
+This state machine design provides a solid foundation for reliable voice command processing with clear, predictable behavior that users can understand and trust. The enhanced session management and duplicate prevention features ensure robust performance in real-world usage scenarios.
