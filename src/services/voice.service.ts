@@ -38,6 +38,7 @@ export class VoiceService {
     private commandCooldownMs: number = 2000; // 2 second cooldown
     private isSystemSpeaking: boolean = false; // Track when system is speaking
     private isMuted: boolean = false; // Track microphone muting state
+    private shouldRestart: boolean = false; // Track if we should restart after stopping
 
     constructor() {
         this.initializeSpeechRecognition();
@@ -65,12 +66,11 @@ export class VoiceService {
             this.recognition.onend = () => {
                 this.isListening = false;
                 this.callbacks.onEnd?.();
-                // Auto-restart if we were listening (but add a small delay to prevent rapid restarts)
-                if (this.isListening) {
+                // Auto-restart if we should (but add a small delay to prevent rapid restarts)
+                if (this.shouldRestart) {
+                    this.shouldRestart = false;
                     setTimeout(() => {
-                        if (this.isListening) {
-                            this.startListening();
-                        }
+                        this.startListening();
                     }, 100);
                 }
             };
@@ -94,6 +94,9 @@ export class VoiceService {
                 let interimText = '';
                 let finalText = '';
                 
+                // Enhanced logging for debugging
+                console.log(`[STATE MACHINE DEBUG] event.results.length: ${event.results.length}, resultIndex: ${event.resultIndex}`);
+                
                 for (let i = 0; i < event.results.length; i++) {
                     const transcript = event.results[i][0].transcript;
                     allResultsText += transcript + ' ';
@@ -112,6 +115,7 @@ export class VoiceService {
                 console.log(`[STATE MACHINE] Current state: ${this.transcriptState}`);
                 console.log(`[STATE MACHINE] All results: "${allResultsText}"`);
                 console.log(`[STATE MACHINE] Final: "${finalText}", Interim: "${interimText}"`);
+                console.log(`[STATE MACHINE DEBUG] stateTranscript: "${this.stateTranscript}"`);
                 
                 // State machine logic
                 this.processStateTransitions(allResultsText, finalText, interimText);
@@ -247,7 +251,20 @@ export class VoiceService {
         // Transition back to IDLE (keep transcript visible for user reference)
         console.log('[STATE MACHINE] EXECUTION -> IDLE (command processed)');
         this.transcriptState = TranscriptState.IDLE;
-        // DON'T clear stateTranscript - let user see the completed command
+        
+        // Clear stateTranscript to prevent it from being used in next command
+        // But keep currentTranscript for display
+        console.log('[STATE MACHINE] Clearing stateTranscript to prevent duplicate execution');
+        this.stateTranscript = '';
+        
+        // Restart speech recognition to clear accumulated results
+        // This prevents old commands from appearing in new recognition sessions
+        if (this.isListening && this.recognition) {
+            console.log('[STATE MACHINE] Restarting speech recognition to clear accumulated results');
+            this.shouldRestart = true;
+            this.recognition.stop();
+            // The onend handler will automatically restart it after 100ms
+        }
     }
 
 
@@ -262,11 +279,16 @@ export class VoiceService {
         const attentionIndex = lowerTranscript.indexOf(this.ATTENTION_WORD);
         const executeIndex = lowerTranscript.indexOf(this.EXECUTE_WORD);
 
+        console.log(`[STATE MACHINE DEBUG] extractCommand from: "${transcript}"`);
+        console.log(`[STATE MACHINE DEBUG] attentionIndex: ${attentionIndex}, executeIndex: ${executeIndex}`);
+
         if (attentionIndex !== -1 && executeIndex !== -1 && executeIndex > attentionIndex) {
             // Include the full command from "computer" to "please" for the grammar parser
             const commandStart = attentionIndex;
             const commandEnd = executeIndex + this.EXECUTE_WORD.length;
             let command = transcript.substring(commandStart, commandEnd).trim();
+            
+            console.log(`[STATE MACHINE DEBUG] Extracted command: "${command}"`);
             
             // Preprocess command to normalize speech-to-text symbols
             const normalizedCommand = this.normalizeTranscript(command);
@@ -277,6 +299,7 @@ export class VoiceService {
             return normalizedCommand;
         }
 
+        console.log(`[STATE MACHINE DEBUG] No valid command found in transcript`);
         return '';
     }
 
