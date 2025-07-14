@@ -392,13 +392,13 @@ export class CanvasService {
         console.log(`[POSITIONING] Looking for Fabric object with shapeId: ${shape.id}`);
         console.log(`[POSITIONING] Canvas objects:`, this.fabricCanvas.getObjects().map(obj => ({
             type: obj.type,
-            data: obj.data,
-            hasData: !!obj.data,
-            shapeId: obj.data?.shapeId
+            data: (obj as any).data,
+            hasData: !!(obj as any).data,
+            shapeId: (obj as any).data?.shapeId
         })));
         
         const fabricObject = this.fabricCanvas.getObjects().find(obj => 
-            obj.data && obj.data.shapeId === shape.id
+            (obj as any).data && (obj as any).data.shapeId === shape.id
         );
 
         if (fabricObject) {
@@ -470,7 +470,7 @@ export class CanvasService {
             bounds.bottom <= canvasHeight;
     }
 
-    private isCenterPositionOnCanvas(centerPosition: { x: number; y: number }, size: number, shapeType: string): boolean {
+    private isCenterPositionOnCanvas(centerPosition: { x: number; y: number }, size: number, _shapeType: string): boolean {
         if (!this.fabricCanvas) return false;
 
         const canvasWidth = this.fabricCanvas.getWidth();
