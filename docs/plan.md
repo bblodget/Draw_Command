@@ -715,7 +715,7 @@ All planned phases successfully implemented with comprehensive testing:
 
 **Goal**: Address critical usability issues identified during testing to ensure a professional, demo-ready experience.
 
-**Current Progress**: 2/5 tasks completed (40%)
+**Current Progress**: 3/5 tasks completed (60%)
 
 ### Task 2.1: Fix Command Execution Reliability
 **Goal**: Investigate and fix issue where transcript shows complete command but no action happens.
@@ -741,26 +741,37 @@ All planned phases successfully implemented with comprehensive testing:
 
 ---
 
-### Task 2.2: Fix Transcript Continuity
+### ✅ Task 2.2: Fix Transcript Continuity (COMPLETED)
 **Goal**: Prevent transcript from being restarted mid-command.
 
-**Background**: The transcript sometimes gets cleared/restarted while the user is still speaking a command, causing partial commands to be lost and breaking the user experience.
+**Background**: The transcript sometimes gets cleared/restarted while the user is still speaking a command, causing partial commands to be lost and breaking the user experience. Additionally, "computer" words would disappear from transcripts and commands would get stuck after first execution.
 
 **Tasks**:
-- [ ] Investigate what triggers transcript restarts during active speech
-- [ ] Check for unintended "computer" word detection mid-command
-- [ ] Review speech recognition event handling for interruptions
-- [ ] Implement proper command boundary detection
-- [ ] Add debouncing or buffering to prevent premature resets
-- [ ] Test with continuous speech and natural pauses
+- [x] Investigate what triggers transcript restarts during active speech
+- [x] Check for unintended "computer" word detection mid-command
+- [x] Review speech recognition event handling for interruptions
+- [x] Implement proper command boundary detection
+- [x] Add debouncing or buffering to prevent premature resets
+- [x] Test with continuous speech and natural pauses
 
-**Acceptance Criteria**:
-- Transcript maintains continuity throughout entire command
-- Only "computer" at the start of a new command resets transcript
-- Natural pauses within commands don't cause restarts
-- Smooth experience for users speaking at different speeds
+**Implementation**: Completely replaced complex transcript accumulation with 4-state finite state machine (IDLE → CLEAR → TRANSCRIPT → EXECUTION) that provides predictable behavior, eliminates transcript continuity issues, and handles both complete and incomplete commands properly.
 
-**Estimated Time**: 2-3 hours
+**Key Innovations**:
+- **State Machine Architecture**: Clean event-driven transitions eliminate complex edge cases
+- **Dual Execution Paths**: Complete commands go directly CLEAR → EXECUTION, incomplete use full cycle
+- **Robust Command Detection**: Sophisticated heuristics prevent false command boundaries  
+- **Comprehensive Logging**: Detailed state machine debugging for future maintenance
+
+**Acceptance Criteria**: ✅ **ALL ACHIEVED**
+- ✅ Transcript maintains continuity throughout entire command
+- ✅ Only "computer" at the start of a new command resets transcript
+- ✅ Natural pauses within commands don't cause restarts  
+- ✅ Smooth experience for users speaking at different speeds
+- ✅ Fixed "computer" word disappearing from transcripts
+- ✅ Fixed second commands getting stuck waiting for input
+
+**Completed**: 2025-07-13 | **Session**: `2025-07-13-1446-Task 2.2: Fix Transcript Continuity.md`
+**Actual Time**: 4.5 hours | **User Testing**: ✅ Passed
 
 ---
 
