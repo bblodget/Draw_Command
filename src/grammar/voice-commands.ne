@@ -1,11 +1,12 @@
-# Voice Commands Grammar - Phase 6, Step 6.2
+# Voice Commands Grammar - Phase 8, Step 8.2 + Task 3.1 Synonyms
 # Goal: Parse "computer [verb] [filler] [color?] [shape] [direction?] please" and "computer clear please"
 # Supports: square, circle, triangle, it (pronoun)
 # Fillers: a, an, the, to, with
 # Colors: red, blue, green, yellow, purple, orange, black, white, pink, brown, gray, grey
 # Directions: up, down, left, right
 # Size modifiers: bigger, smaller, larger, much bigger, much smaller, a little bigger, a little smaller
-# Verbs: draw, move, delete, remove, color, make, fill, resize, rotate
+# Verbs: draw, create, move, place, position, delete, remove, color, make, fill, resize, rotate
+# Spatial synonyms: above/over, below/under, next to/beside/near
 
 # Main rule
 main -> "computer" _ command _ "please"     {% ([,, cmd]) => cmd %}
@@ -26,6 +27,8 @@ draw_command -> "draw" _ draw_object_phrase  {% ([,, object]) => ({ verb: 'draw'
     | "create" _ draw_object_phrase  {% ([,, object]) => ({ verb: 'draw', object: object }) %}
 
 move_command -> "move" _ move_object_phrase  {% ([,, object]) => ({ verb: 'move', object: object }) %}
+    | "place" _ move_object_phrase  {% ([,, object]) => ({ verb: 'move', object: object }) %}
+    | "position" _ move_object_phrase  {% ([,, object]) => ({ verb: 'move', object: object }) %}
 
 delete_command -> delete_verb _ delete_object_phrase  {% ([verb,, object]) => ({ verb: verb, object: object }) %}
 
@@ -109,9 +112,20 @@ shape -> "square" {% id %}
 # Spatial relationships
 spatial_relationship -> "to" _ "the" _ "left" _ "of" {% () => "to_the_left_of" %}
     | "to" _ "the" _ "right" _ "of" {% () => "to_the_right_of" %}
-    | "above" {% () => "above" %}
-    | "below" {% () => "below" %}
-    | "next" _ "to" {% () => "next_to" %}
+    | above {% id %}
+    | below {% id %}
+    | next_to {% id %}
+
+# Spatial relationship synonyms
+above -> "above" {% () => "above" %}
+    | "over" {% () => "above" %}
+
+below -> "below" {% () => "below" %}
+    | "under" {% () => "below" %}
+
+next_to -> "next" _ "to" {% () => "next_to" %}
+    | "beside" {% () => "next_to" %}
+    | "near" {% () => "next_to" %}
 
 # Colors
 color -> "red" {% id %}

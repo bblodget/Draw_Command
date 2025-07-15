@@ -19,7 +19,7 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
             | <rotate> <rotate-object-phrase>
 
 <draw> ::= "draw" | "create"
-<move> ::= "move"
+<move> ::= "move" | "place" | "position"
 <delete> ::= "delete" | "remove"
 <color-verb> ::= "color" | "fill" | "make"
 <resize-verb> ::= "resize" | "make"
@@ -70,9 +70,14 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
 ```bnf
 <spatial-relationship> ::= "to" "the" "left" "of"
                          | "to" "the" "right" "of"
-                         | "above"
-                         | "below"
-                         | "next" "to"
+                         | <above>
+                         | <below>
+                         | <next_to>
+
+<above> ::= "above" | "over"
+<below> ::= "below" | "under"
+<next_to> ::= "next" "to" | "beside" | "near"
+
 ```
 
 ### Colors
@@ -144,6 +149,22 @@ This grammar should handle:
 - `computer move the square to the left of the circle please`
 - `computer move it above the triangle please`
 - `computer move the circle next to the square please`
+
+**New spatial synonym support:**
+- `computer draw a square over the circle please`
+- `computer draw a blue circle under the square please`
+- `computer move it over the triangle please`
+- `computer move the circle under the square please`
+- `computer draw a triangle beside the circle please`
+- `computer draw a red square near the triangle please`
+- `computer move the square beside the circle please`
+- `computer move it near the triangle please`
+
+**New move synonym support:**
+- `computer place the square to the left of the circle please`
+- `computer position the triangle above the square please`
+- `computer place it near the circle please`
+- `computer position the square 100 pixels up please`
 
 **Note**: `<fillers>` can match one or more filler words, so "a", "the", "to", "to the", etc. all work naturally. The pronoun "it" refers to the last shape that was operated on and doesn't require filler words.
 

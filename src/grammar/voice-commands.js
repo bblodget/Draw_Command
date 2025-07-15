@@ -2,7 +2,7 @@
 // http://github.com/Hardmath123/nearley
 const grammar = (function () {
 function id(x) { return x[0]; }
-var grammar = {
+var compiledGrammar = {
     Lexer: undefined,
     ParserRules: [
     {"name": "main$string$1", "symbols": [{"literal":"c"}, {"literal":"o"}, {"literal":"m"}, {"literal":"p"}, {"literal":"u"}, {"literal":"t"}, {"literal":"e"}, {"literal":"r"}], "postprocess": function joiner(d) {return d.join('');}},
@@ -23,6 +23,10 @@ var grammar = {
     {"name": "draw_command", "symbols": ["draw_command$string$2", "_", "draw_object_phrase"], "postprocess": ([,, object]) => ({ verb: 'draw', object: object })},
     {"name": "move_command$string$1", "symbols": [{"literal":"m"}, {"literal":"o"}, {"literal":"v"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "move_command", "symbols": ["move_command$string$1", "_", "move_object_phrase"], "postprocess": ([,, object]) => ({ verb: 'move', object: object })},
+    {"name": "move_command$string$2", "symbols": [{"literal":"p"}, {"literal":"l"}, {"literal":"a"}, {"literal":"c"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "move_command", "symbols": ["move_command$string$2", "_", "move_object_phrase"], "postprocess": ([,, object]) => ({ verb: 'move', object: object })},
+    {"name": "move_command$string$3", "symbols": [{"literal":"p"}, {"literal":"o"}, {"literal":"s"}, {"literal":"i"}, {"literal":"t"}, {"literal":"i"}, {"literal":"o"}, {"literal":"n"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "move_command", "symbols": ["move_command$string$3", "_", "move_object_phrase"], "postprocess": ([,, object]) => ({ verb: 'move', object: object })},
     {"name": "delete_command", "symbols": ["delete_verb", "_", "delete_object_phrase"], "postprocess": ([verb,, object]) => ({ verb: verb, object: object })},
     {"name": "color_command", "symbols": ["color_verb", "_", "color_object_phrase"], "postprocess": ([verb,, object]) => ({ verb: verb, object: object })},
     {"name": "resize_command", "symbols": ["resize_verb", "_", "resize_object_phrase"], "postprocess": ([verb,, object]) => ({ verb: verb, object: object })},
@@ -97,13 +101,24 @@ var grammar = {
     {"name": "spatial_relationship$string$7", "symbols": [{"literal":"r"}, {"literal":"i"}, {"literal":"g"}, {"literal":"h"}, {"literal":"t"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "spatial_relationship$string$8", "symbols": [{"literal":"o"}, {"literal":"f"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "spatial_relationship", "symbols": ["spatial_relationship$string$5", "_", "spatial_relationship$string$6", "_", "spatial_relationship$string$7", "_", "spatial_relationship$string$8"], "postprocess": () => "to_the_right_of"},
-    {"name": "spatial_relationship$string$9", "symbols": [{"literal":"a"}, {"literal":"b"}, {"literal":"o"}, {"literal":"v"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
-    {"name": "spatial_relationship", "symbols": ["spatial_relationship$string$9"], "postprocess": () => "above"},
-    {"name": "spatial_relationship$string$10", "symbols": [{"literal":"b"}, {"literal":"e"}, {"literal":"l"}, {"literal":"o"}, {"literal":"w"}], "postprocess": function joiner(d) {return d.join('');}},
-    {"name": "spatial_relationship", "symbols": ["spatial_relationship$string$10"], "postprocess": () => "below"},
-    {"name": "spatial_relationship$string$11", "symbols": [{"literal":"n"}, {"literal":"e"}, {"literal":"x"}, {"literal":"t"}], "postprocess": function joiner(d) {return d.join('');}},
-    {"name": "spatial_relationship$string$12", "symbols": [{"literal":"t"}, {"literal":"o"}], "postprocess": function joiner(d) {return d.join('');}},
-    {"name": "spatial_relationship", "symbols": ["spatial_relationship$string$11", "_", "spatial_relationship$string$12"], "postprocess": () => "next_to"},
+    {"name": "spatial_relationship", "symbols": ["above"], "postprocess": id},
+    {"name": "spatial_relationship", "symbols": ["below"], "postprocess": id},
+    {"name": "spatial_relationship", "symbols": ["next_to"], "postprocess": id},
+    {"name": "above$string$1", "symbols": [{"literal":"a"}, {"literal":"b"}, {"literal":"o"}, {"literal":"v"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "above", "symbols": ["above$string$1"], "postprocess": () => "above"},
+    {"name": "above$string$2", "symbols": [{"literal":"o"}, {"literal":"v"}, {"literal":"e"}, {"literal":"r"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "above", "symbols": ["above$string$2"], "postprocess": () => "above"},
+    {"name": "below$string$1", "symbols": [{"literal":"b"}, {"literal":"e"}, {"literal":"l"}, {"literal":"o"}, {"literal":"w"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "below", "symbols": ["below$string$1"], "postprocess": () => "below"},
+    {"name": "below$string$2", "symbols": [{"literal":"u"}, {"literal":"n"}, {"literal":"d"}, {"literal":"e"}, {"literal":"r"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "below", "symbols": ["below$string$2"], "postprocess": () => "below"},
+    {"name": "next_to$string$1", "symbols": [{"literal":"n"}, {"literal":"e"}, {"literal":"x"}, {"literal":"t"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "next_to$string$2", "symbols": [{"literal":"t"}, {"literal":"o"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "next_to", "symbols": ["next_to$string$1", "_", "next_to$string$2"], "postprocess": () => "next_to"},
+    {"name": "next_to$string$3", "symbols": [{"literal":"b"}, {"literal":"e"}, {"literal":"s"}, {"literal":"i"}, {"literal":"d"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "next_to", "symbols": ["next_to$string$3"], "postprocess": () => "next_to"},
+    {"name": "next_to$string$4", "symbols": [{"literal":"n"}, {"literal":"e"}, {"literal":"a"}, {"literal":"r"}], "postprocess": function joiner(d) {return d.join('');}},
+    {"name": "next_to", "symbols": ["next_to$string$4"], "postprocess": () => "next_to"},
     {"name": "color$string$1", "symbols": [{"literal":"r"}, {"literal":"e"}, {"literal":"d"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "color", "symbols": ["color$string$1"], "postprocess": id},
     {"name": "color$string$2", "symbols": [{"literal":"b"}, {"literal":"l"}, {"literal":"u"}, {"literal":"e"}], "postprocess": function joiner(d) {return d.join('');}},
@@ -172,7 +187,7 @@ var grammar = {
   , ParserStart: "main"
 }
 // Return the grammar object
-return grammar;
+return compiledGrammar;
 })();
 
 export default grammar;
