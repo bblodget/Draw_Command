@@ -2,15 +2,29 @@
 
 A modern recreation of the iconic 1980s TI professional computer demo, allowing you to draw and manipulate shapes on screen using natural voice commands. Features advanced BNF grammar parsing, spatial relationships, and comprehensive natural language understanding.
 
+![Draw Command Screenshot](screenshots/shot024.png)
+
 ## 🌐 Live Demo
 
 🚀 **[Try the Live Demo](https://bblodget.github.io/Draw_Command/)**
 
-**Ready to use right now!** - Full voice-controlled drawing experience with no setup required.
+Full voice-controlled drawing experience with no setup required.
 
-## 🎯 Quick Start Commands
+## 🎯 Quick Start
 
-Try saying these commands:
+### Getting Started
+1. **Grant microphone permissions** when prompted by your browser
+2. **Press "Start Voice Recognition"** button in the Voice Control panel
+3. **Speak clearly** using the "Computer, [command] please" format
+
+### Three Object Model
+The application uses a simplified interaction model with one instance per shape type:
+- **One square, one circle, one triangle maximum**
+- **Unambiguous shape references** ("the square", "it")
+- **Automatic replacement** when creating duplicate types
+- **Enhanced spatial relationships** between the three shapes
+
+### Try These Commands:
 - **"Computer, draw a red square please"** - Creates a red square
 - **"Computer, draw a blue circle to the left of the square please"** - Spatial positioning
 - **"Computer, make the square bigger please"** - Resize shapes
@@ -35,7 +49,7 @@ Try saying these commands:
 - **Collision Detection**: Smart positioning prevents overlapping
 - **Canvas Boundaries**: Shapes stay within visible area
 
-### 🖥️ Professional Interface
+### 🖥️ User Interface
 - **Draggable Voice Control**: Move the control panel anywhere
 - **Real-time Transcript**: See your commands as you speak
 - **Visual Feedback**: Color-coded status indicators
@@ -51,76 +65,62 @@ Try saying these commands:
 
 ## 📊 Project Status
 
-**🎉 FEATURE COMPLETE AND DEPLOYED!**
+**✅ Feature Complete and Deployed**
 
-- **Phase 1**: ✅ **COMPLETED** - Core Functionality (18/18 tasks, 49-52 hours)
-- **Phase 1.5**: ✅ **COMPLETED** - GitHub Pages Deployment
-- **Phase 2**: 🔄 **IN PROGRESS** - Final Polish (1/5 tasks completed)
+Live demo available at https://bblodget.github.io/Draw_Command/
 
-### Revolutionary Achievements
+### Project Features
 
-**🏆 BNF Grammar Architecture**: Replaced regex-based parsing with sophisticated grammar system supporting:
+**BNF Grammar Architecture**: Grammar-based parsing system supporting:
 - Complex spatial relationships
-- Advanced pronoun resolution  
+- Pronoun resolution  
 - Natural language variations
 - Sub-50ms parsing performance
 
-**🎯 Advanced Commands**: Far beyond original goals:
+**Advanced Commands**:
 - 5 spatial relationships (left of, right of, above, below, next to)
 - 7 resize commands with intensity modifiers
 - Custom rotation angles with negative support
 - Visual size conversion between shape types
 
-**📦 Production Deployment**: Live demo with zero server costs, automatic CI/CD, and HTTPS microphone access.
+**Production Deployment**: Live demo with zero server costs, automatic CI/CD, and HTTPS microphone access.
+
+## 🔄 How it Works
+
+The application uses a simple but powerful voice recognition flow:
+
+1. **Wake Word**: Say "Computer" to start a command
+2. **Speech Recognition**: The Web Speech API converts your speech to text
+3. **Grammar Parsing**: A BNF grammar parser understands the command structure
+4. **Canvas Operation**: The command is executed on the HTML5 canvas
+5. **Voice Response**: The system confirms the action with speech synthesis
+6. **Ready for Next**: Say "Computer" again to start a new command
+
+All processing happens in your browser - no server required!
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS
-- **Voice**: Web Speech API (recognition + synthesis)
-- **Parsing**: BNF Grammar with Nearley.js (replaced regex)
-- **Graphics**: HTML5 Canvas + Fabric.js
-- **Deployment**: GitHub Pages with GitHub Actions CI/CD
+- **Frontend**: [React 18](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) + [Vite](https://vitejs.dev/) + [Tailwind CSS](https://tailwindcss.com/)
+- **Voice**: [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) (recognition + synthesis)
+- **Parsing**: BNF Grammar with [Nearley.js](https://nearley.js.org/) (replaced regex)
+- **Graphics**: HTML5 Canvas + [Fabric.js](http://fabricjs.com/)
+- **Deployment**: [GitHub Pages](https://pages.github.com/) with [GitHub Actions](https://github.com/features/actions) CI/CD
 - **Architecture**: 100% client-side, no backend required
 
-## 🎮 Complete Command Reference
+## 🌐 Browser Compatibility
 
-### Basic Drawing
-- "Computer, draw a square please"
-- "Computer, create a blue circle please"  
-- "Computer, draw a green triangle please"
+Uses [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) which may not be supported in all browsers. Most testing done in Chrome.
 
-### Spatial Relationships
-- "Computer, draw a circle to the left of the square please"
-- "Computer, draw a triangle above the circle please"
-- "Computer, draw a square to the right of the triangle please"
-- "Computer, draw a circle below the square please"
-- "Computer, draw a triangle next to the circle please"
+| Browser | Voice Recognition | Voice Synthesis | BNF Grammar | Canvas |
+|---------|------------------|-----------------|-------------|---------|
+| Chrome  | ✅ Full Support  | ✅ Full Support | ✅ Full Support | ✅ Full Support |
+| Firefox | ✅ Full Support  | ✅ Full Support | ✅ Full Support | ✅ Full Support |
+| Safari  | ⚠️ Limited       | ✅ Full Support | ✅ Full Support | ✅ Full Support |
+| Edge    | ✅ Full Support  | ✅ Full Support | ✅ Full Support | ✅ Full Support |
 
-### Movement Commands
-- "Computer, move the square left please"
-- "Computer, move the circle 100 pixels right please"
-- "Computer, move the triangle up please"
-- "Computer, move it down please" (pronoun reference)
+## 📖 Complete Command Reference
 
-### Resize Commands
-- "Computer, make the square bigger please" (1.5x)
-- "Computer, make the circle much bigger please" (2x)
-- "Computer, make the triangle a little smaller please" (0.8x)
-- "Computer, make the square the same size as the circle please"
-
-### Rotation Commands
-- "Computer, rotate the triangle please" (30° default)
-- "Computer, rotate the square 45 degrees please"
-- "Computer, rotate the circle negative 90 degrees please"
-
-### Color Commands
-- "Computer, color the square blue please"
-- "Computer, make the circle red please"
-- "Computer, change the triangle to purple please"
-
-### Utility Commands
-- "Computer, delete the square please"
-- "Computer, remove the circle please"
+For detailed command documentation with all variations and examples, see: **[Voice Commands Documentation](docs/voice_commands.md)**
 
 ## 🚀 Local Development
 
@@ -212,13 +212,6 @@ The project uses a sophisticated grammar-based parser instead of simple regex ma
 - **Natural Language Support**: Handles filler words, variations, and complex syntax
 - **Extensible Architecture**: Easy to add new commands and features
 
-### Three Object Model
-Simplified interaction model with one instance per shape type:
-- One square, one circle, one triangle maximum
-- Unambiguous shape references ("the square", "it")
-- Automatic replacement when creating duplicate types
-- Enhanced spatial relationship calculations
-
 ### Collision Detection & Smart Positioning
 - **Random Position Generation**: New shapes placed at non-overlapping locations
 - **Boundary Protection**: All shapes stay within canvas bounds
@@ -227,88 +220,20 @@ Simplified interaction model with one instance per shape type:
 
 ## 🐛 Troubleshooting
 
-### Voice Recognition Issues
-
-**Microphone not working:**
-- Ensure HTTPS connection (required for microphone access)
-- Check browser permissions for microphone
-- Try refreshing the page and re-granting permissions
-
-**Commands not recognized:**
-- Start every command with "Computer"
-- End every command with "please"
-- Speak clearly and at moderate pace
-- Check transcript area to see what was heard
-
-**Incomplete commands:**
-- Wait for complete transcript before speaking again
-- Allow system to finish speaking before next command
-- Avoid speaking over the system's voice responses
-
-### Canvas Issues
-
-**Shapes overlapping:**
-- This was a known bug, fixed in Task 2.4
-- If still occurring, refresh the page
-
-**Shapes moving off screen:**
-- Boundary protection should prevent this
-- Use drag controls to manually reposition shapes if needed
-
-**Performance issues:**
-- Try refreshing the page
-- Close other browser tabs using microphone
-- Check browser console for error messages
-
-### Browser Compatibility
-
-| Browser | Voice Recognition | Voice Synthesis | BNF Grammar | Canvas |
-|---------|------------------|-----------------|-------------|---------|
-| Chrome  | ✅ Full Support  | ✅ Full Support | ✅ Full Support | ✅ Full Support |
-| Firefox | ✅ Full Support  | ✅ Full Support | ✅ Full Support | ✅ Full Support |
-| Safari  | ⚠️ Limited       | ✅ Full Support | ✅ Full Support | ✅ Full Support |
-| Edge    | ✅ Full Support  | ✅ Full Support | ✅ Full Support | ✅ Full Support |
+- Make sure you press the **"Start Voice Recognition"** button
+- Start every command with **"Computer"**
+- End every command with **"please"** 
+- You can start a command over again by saying **"Computer"**
+- Check that you see the transcript adding words as you talk
+- Uses [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) which may not be supported in all browsers (see browser compatibility above). Most testing done in Chrome browser.
 
 ## 🤝 Contributing
 
-We welcome contributions! The project follows a session-based development workflow:
-
-1. **Fork the repository**
-2. **Read the development workflow**: [docs/development-workflow.md](docs/development-workflow.md)
-3. **Create feature branch**: `git checkout -b feature/amazing-feature`
-4. **Follow session-based development**: Use todo lists and task-by-task approval
-5. **Test thoroughly**: Ensure voice commands work across browsers
-6. **Submit pull request**: Include session documentation
-
-### Development Process
-- **Session-based development** with comprehensive tracking
-- **Task-by-task approval** before commits
-- **Feature branch isolation** for stability
-- **Comprehensive testing** including voice recognition
-- **Documentation updates** for all changes
+Contributions are welcome! Fork the repository and submit a pull request.
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🏆 Project Achievements
-
-### Technical Breakthroughs
-- **Revolutionary BNF Grammar**: Replaced regex with sophisticated natural language parser
-- **Advanced Spatial Understanding**: Complex positioning relationships
-- **Zero Server Dependencies**: 100% client-side with GitHub Pages deployment
-- **Professional Demo Quality**: Production-ready voice interface
-
-### Development Excellence
-- **Comprehensive Documentation**: 6 detailed documentation files
-- **Session-based Workflow**: Complete audit trail of all development work
-- **Extensive Testing**: Cross-browser voice recognition testing
-- **User-Centered Design**: Iterative feedback and refinement
-
-### Timeline Achievement
-- **Feature Complete**: All original goals achieved plus advanced features
-- **Production Deployed**: Live demo available with zero hosting costs
-- **Sustainable Architecture**: Maintainable and extensible codebase
 
 ## 🙏 Acknowledgments
 
@@ -326,4 +251,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**🎉 Experience the magic of voice-controlled computing - recreated for the modern web!**
+**Experience voice-controlled computing - recreated for the modern web!**
