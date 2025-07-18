@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines our collaborative development process using session-based development with structured todo lists and task-by-task approval to maintain a stable main branch while implementing new features safely for the Speech-to-Drawing Demo project.
+This document outlines our collaborative development process using session-based development with structured todo lists and task-by-task approval to maintain a stable main branch while implementing new features safely for the Draw Command project.
 
 ## Core Principles
 
@@ -34,7 +34,7 @@ This document outlines our collaborative development process using session-based
 
 **Example Session Start:**
 ```
-User: "Let's implement basic voice recognition for the speech-to-drawing demo"
+User: "Let's implement basic voice recognition for the Draw Command project"
 
 Claude: 
 1. Starts session: /project:session-start "Implement basic voice recognition"
@@ -184,7 +184,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ## Example Complete Workflow
 
 ```
-User: "Let's implement basic voice recognition for the speech-to-drawing demo"
+User: "Let's implement basic voice recognition for the Draw Command project"
 
 Claude: 
 1. /project:session-start "Implement basic voice recognition"

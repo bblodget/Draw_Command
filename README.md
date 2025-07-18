@@ -46,7 +46,7 @@ The application uses a simplified interaction model with one instance per shape 
 
 ### 🎨 Drawing Capabilities
 - **3 Shape Types**: Squares, circles, triangles
-- **12+ Colors**: Red, blue, green, yellow, purple, orange, pink, brown, black, white, gray, cyan
+- **11 Colors**: Red, blue, green, yellow, purple, orange, pink, brown, black, white, gray
 - **Shape Operations**: Draw, move, delete, resize, rotate, color change
 - **Collision Detection**: Smart positioning prevents overlapping
 - **Canvas Boundaries**: Shapes stay within visible area
