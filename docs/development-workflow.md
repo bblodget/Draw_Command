@@ -20,10 +20,10 @@ This document outlines our collaborative development process using session-based
 
 ```bash
 # Start a new session with a specific goal
-/project:session-start "Add physics engine to robot simulation"
+/session-start "Task 1.4: Attention Word Detection"
 
 # Or start a PR review session
-/project:session-start-pr 123 "Review physics engine implementation"
+/session-start-pr 123 "Review attention word detection implementation"
 ```
 
 **Session Setup Process:**
@@ -34,20 +34,19 @@ This document outlines our collaborative development process using session-based
 
 **Example Session Start:**
 ```
-User: "Let's implement basic voice recognition for the Draw Command project"
+User: "Let's implement Task 1.4: Attention Word Detection for the Draw Command project"
 
 Claude: 
-1. Starts session: /project:session-start "Implement basic voice recognition"
-2. Creates feature branch: feature-basic-voice-recognition
-3. Agrees on goal: "Implement Web Speech API integration for real-time speech-to-text functionality"
+1. Starts session: /session-start "Task 1.4: Attention Word Detection"
+2. Creates feature branch: feature-attention-word-detection
+3. Agrees on goal: "Implement 'computer' and 'please' detection system to buffer speech and extract complete command phrases"
 4. Creates todo list:
-   - [ ] Create VoiceInterface component
-   - [ ] Implement Web Speech API integration
-   - [ ] Add microphone permission handling
-   - [ ] Display real-time speech transcription
-   - [ ] Add start/stop voice recognition controls
-   - [ ] Handle speech recognition errors
-   - [ ] Test with different browsers
+   - [ ] Create attention word detection logic
+   - [ ] Buffer speech between "computer" and "please"
+   - [ ] Extract complete command phrases
+   - [ ] Add visual feedback for attention word detection
+   - [ ] Handle partial commands and timeouts
+   - [ ] Test with various speech patterns
 ```
 
 ### 2. Task Execution Cycle
@@ -78,10 +77,10 @@ Claude:
 git add <modified-files>
 
 # Create descriptive commit message
-git commit -m "Add physics engine integration
+git commit -m "Add attention word detection integration
 
 🤖 Generated with Claude Code
-Task: Set up physics engine library integration
+Task: Set up attention word detection system
 
 Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
@@ -97,16 +96,16 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 **Session Commands:**
 ```bash
 # Check current session status
-/project:session-current
+/session-current
 
 # Update session with progress
-/project:session-update "Completed physics engine integration, moving to collision detection"
+/session-update "Completed attention word detection integration, moving to command phrase extraction"
 
 # List all sessions
-/project:session-list
+/session-list
 
 # End session when all tasks complete
-/project:session-end
+/session-end
 ```
 
 **Session Update Format:**
@@ -117,24 +116,24 @@ date
 ### Update - 2025-07-18 8:21 AM
 
 **Workflow Phase:** Testing
-**Feature Branch:** feature-basic-voice-recognition
+**Feature Branch:** feature-attention-word-detection
 **Status:** Task 2 completed, ready for user testing
 
-**Summary**: Implemented Web Speech API integration
+**Summary**: Implemented speech buffering between "computer" and "please"
 
 **Git Changes**:
-- Modified: src/components/VoiceInterface/SpeechRecognition.tsx
-- Added: src/services/voiceService.ts
-- Current branch: feature-basic-voice-recognition (commit: abc123)
+- Modified: src/components/VoiceInterface/AttentionWordDetector.tsx
+- Added: src/services/attentionWordService.ts
+- Current branch: feature-attention-word-detection (commit: abc123)
 - **Workflow Status:** ✅ Task completed, awaiting user testing
 
 **Todo Progress**: 2 completed, 1 in progress, 4 pending
-- ✓ Completed: Create VoiceInterface component
-- ✓ Completed: Implement Web Speech API integration
+- ✓ Completed: Create attention word detection logic
+- ✓ Completed: Buffer speech between "computer" and "please"
 - 🔄 In Progress: User testing phase
 
-**Testing Status**: Awaiting user feedback on speech recognition functionality
-**Details**: Speech recognition now works with microphone permissions and real-time transcription
+**Testing Status**: Awaiting user feedback on attention word detection functionality
+**Details**: System now recognizes "computer" as trigger and buffers speech until "please" is detected
 ```
 
 ### 4. Session Completion
@@ -144,7 +143,7 @@ date
 **User:** "All tasks look good, let's finish the session"
 
 **Claude:**
-1. Calls `/project:session-end`
+1. Calls `/session-end`
 2. Creates final commit with session summary
 3. Merges feature branch to main
 4. Cleans up feature branch
@@ -152,18 +151,17 @@ date
 
 **Final Commit Example:**
 ```bash
-git commit -m "Complete basic voice recognition implementation
+git commit -m "Complete attention word detection implementation
 
 🤖 Generated with Claude Code
-Session: Implement basic voice recognition
+Session: Task 1.4: Attention Word Detection
 
-- Created VoiceInterface component
-- Implemented Web Speech API integration
-- Added microphone permission handling
-- Display real-time speech transcription
-- Added start/stop voice recognition controls
-- Handled speech recognition errors
-- Tested with different browsers
+- Created attention word detection logic
+- Buffer speech between "computer" and "please"
+- Extract complete command phrases
+- Add visual feedback for attention word detection
+- Handle partial commands and timeouts
+- Test with various speech patterns
 
 All tasks completed and tested successfully.
 
@@ -184,37 +182,37 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ## Example Complete Workflow
 
 ```
-User: "Let's implement basic voice recognition for the Draw Command project"
+User: "Let's implement Task 1.4: Attention Word Detection for the Draw Command project"
 
 Claude: 
-1. /project:session-start "Implement basic voice recognition"
-2. Creates feature branch: feature-basic-voice-recognition
+1. /session-start "Task 1.4: Attention Word Detection"
+2. Creates feature branch: feature-attention-word-detection
 3. Agrees on goal and creates todo list
-4. Proposes first task: "Create VoiceInterface component"
+4. Proposes first task: "Create attention word detection logic"
 
 User: "Go ahead with the first task"
 
 Claude:
-1. Implements VoiceInterface component
+1. Implements attention word detection logic
 2. Self-tests the implementation
-3. Asks: "Please test the VoiceInterface component"
+3. Asks: "Please test the attention word detection logic"
 
-User: "Component works, ready to commit"
+User: "Logic works, ready to commit"
 
 Claude:
 1. Commits the changes
-2. /project:session-update "Completed VoiceInterface component"
-3. Proposes next task: "Implement Web Speech API integration"
+2. /session-update "Completed attention word detection logic"
+3. Proposes next task: "Buffer speech between 'computer' and 'please'"
 
 [Continue through all tasks...]
 
 User: "All tasks look good, let's finish the session"
 
 Claude:
-1. /project:session-end
+1. /session-end
 2. Creates final commit
-3. Merges to main: git checkout main && git merge feature-basic-voice-recognition
-4. Cleans up: git branch -d feature-basic-voice-recognition
+3. Merges to main: git checkout main && git merge feature-attention-word-detection
+4. Cleans up: git branch -d feature-attention-word-detection
 ```
 
 ## Benefits
@@ -254,7 +252,7 @@ Claude:
 ### If Session Needs to be Abandoned
 ```bash
 # End the session early
-/project:session-end
+/session-end
 
 # Switch back to main
 git checkout main
