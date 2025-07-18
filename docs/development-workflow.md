@@ -301,4 +301,4 @@ When implementing features:
 
 ---
 
-*This workflow ensures high code quality, maintains a stable development environment, and provides complete tracking of all development work for the Speech-to-Drawing Demo project.*
+*This workflow ensures high code quality, maintains a stable development environment, and provides complete tracking of all development work for the Draw Command project.*
