@@ -12,6 +12,8 @@ Full voice-controlled drawing experience with no setup required.
 
 ## 🎯 Quick Start
 
+For a comprehensive quick start guide with examples and demo scripts, see: **[Quick Start Guide](docs/quick_start.md)**
+
 ### Getting Started
 1. **Grant microphone permissions** when prompted by your browser
 2. **Press "Start Voice Recognition"** button in the Voice Control panel
@@ -196,6 +198,7 @@ Draw_Command/
 ## 📚 Documentation
 
 - **[CLAUDE.md](CLAUDE.md)** - Project overview and development guide
+- **[Quick Start Guide](docs/quick_start.md)** - Essential commands and demo scripts
 - **[Voice Commands Guide](docs/voice_commands.md)** - Complete command reference
 - **[Development Plan](docs/plan.md)** - Roadmap and progress tracking
 - **[Development Workflow](docs/development-workflow.md)** - Session-based development process
