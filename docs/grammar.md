@@ -1,10 +1,10 @@
 # Voice Command Grammar (Simplified BNF)
 
-This document presents a simplified BNF (Backus-Naur Form) grammar for the voice command system, built incrementally.
+This document presents the complete BNF (Backus-Naur Form) grammar for the Draw Command voice system. The grammar was built incrementally and now includes all implemented features.
 
-## Current Grammar (Phase 8, Step 8.2)
+## Current Grammar (Complete)
 
-We're expanding to support all three basic shapes, common fillers, colored drawing commands, movement commands, delete commands, color change commands, resize commands, pronoun support, and spatial relationships.
+The grammar supports all implemented features including shapes, colors, movement, deletion, resizing, rotation, pronouns, spatial relationships, and synonyms.
 
 ### Main Structure
 ```bnf
@@ -19,7 +19,7 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
             | <rotate> <rotate-object-phrase>
 
 <draw> ::= "draw" | "create"
-<move> ::= "move" | "place" | "position"
+<move> ::= "move" | "place" | "position"    # Phase 3 synonyms added
 <delete> ::= "delete" | "remove"
 <color-verb> ::= "color" | "fill" | "make"
 <resize-verb> ::= "resize" | "make"
@@ -75,7 +75,7 @@ We're expanding to support all three basic shapes, common fillers, colored drawi
                          | <next_to>
 
 <above> ::= "above" | "over"
-<below> ::= "below" | "under"
+<below> ::= "below" | "under"  
 <next_to> ::= "next" "to" | "beside" | "near"
 
 ```
@@ -168,20 +168,20 @@ This grammar should handle:
 
 **Note**: `<fillers>` can match one or more filler words, so "a", "the", "to", "to the", etc. all work naturally. The pronoun "it" refers to the last shape that was operated on and doesn't require filler words.
 
-## Next Steps
+## Development History
 
-Once this works, we'll incrementally add:
-1. ✅ More shapes (circle, triangle) - **COMPLETED**
-2. ✅ More fillers (the, an) - **COMPLETED**
-3. ✅ Color list (red, blue, etc.) - **COMPLETED**
-4. ✅ Colors in draw commands - **COMPLETED**
-5. ✅ Move verb and directions - **COMPLETED**
-6. ✅ More verbs (color, delete, etc.) - **COMPLETED**
-7. ✅ Resize commands (make bigger/smaller) - **COMPLETED**
-8. ✅ Pronoun support ("it") - **COMPLETED**
-9. ✅ Spatial relationships ("to the left of", "above", etc.) - **COMPLETED**
-10. ⏳ Rotate commands (rotate with angles) - **IN PROGRESS**
-11. Advanced modifiers and complex relationships
+The grammar was developed incrementally:
+1. ✅ Basic shapes (square, circle, triangle)
+2. ✅ Filler words (a, an, the, to, with)
+3. ✅ Color support (11 colors)
+4. ✅ Drawing commands with colors
+5. ✅ Movement commands with directions
+6. ✅ Delete and color change verbs
+7. ✅ Resize commands (7 size modifiers)
+8. ✅ Pronoun support ("it")
+9. ✅ Spatial relationships (5 types)
+10. ✅ Rotation commands (with angles)
+11. ✅ Synonym support (spatial and movement)
 
 ## Implementation Notes
 
