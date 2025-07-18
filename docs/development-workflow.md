@@ -4,15 +4,54 @@
 
 This document outlines our collaborative development process using session-based development with structured todo lists and task-by-task approval to maintain a stable main branch while implementing new features safely for the Draw Command project.
 
-## Core Principles
+## Starting a New Project
+
+When starting a new project, follow this structured approach to set up the development framework and documentation:
+
+### 1. Copy Project Framework
+
+Copy over the starting project framework which includes:
+- `.claude/commands/session-*.md` - Session management commands
+- `.claude/sessions/.current-session` - Current session tracking file
+- `docs/development-workflow.md` - This workflow documentation
+
+### 2. Create Core Documentation
+
+**docs/requirements.md**
+- Lists project requirements without specifying implementation details
+- Tech stack agnostic - focuses on what the system should do, not how
+- Defines functional and non-functional requirements
+- Serves as the foundation for all other planning documents
+
+**docs/specification.md**
+- Specifies the technical implementation approach
+- Defines the tech stack and architecture decisions
+- Explains how requirements will be implemented
+- Bridges requirements to implementation details
+
+**docs/plan.md**
+- Development plan broken into phases, tasks, and steps
+- **Phases**: Major development milestones (e.g., "Core Functionality", "Advanced Features")
+- **Tasks**: Specific work items within phases (e.g., "Task 1.4: Attention Word Detection")
+- **Steps**: Detailed implementation steps within tasks
+- Sessions typically work at the **Task level** of granularity
+- Provides clear roadmap for development progress
+
+### 3. Development Flow
+
+1. **Requirements** → Define what the system should do
+2. **Specification** → Define how to implement it
+3. **Plan** → Break work into manageable tasks
+4. **Sessions** → Implement tasks using this workflow
+5. **Documentation** → Keep all docs updated as work progresses
+
+### Core Principles
 
 1. **Main branch stability** - The main branch should always be in a working state
 2. **Session-based development** - All work is organized into tracked development sessions
 3. **Feature isolation** - New features are developed in dedicated branches
 4. **Task-by-task approval** - Each task is tested and approved before committing
 5. **Collaborative approval** - Features are merged only after user approval
-
-## Session-Based Workflow
 
 ### 1. Session Start
 
