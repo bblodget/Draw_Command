@@ -220,12 +220,27 @@ The project uses a sophisticated grammar-based parser instead of simple regex ma
 
 ## 🐛 Troubleshooting
 
+### Basic Usage
 - Make sure you press the **"Start Voice Recognition"** button
 - Start every command with **"Computer"**
 - End every command with **"please"** 
 - You can start a command over again by saying **"Computer"**
 - Check that you see the transcript adding words as you talk
-- Uses [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) which may not be supported in all browsers (see browser compatibility above). Most testing done in Chrome browser.
+
+### Microphone Permissions
+
+**Chrome Browser Settings:**
+1. Click the **lock icon** (left of the URL bar) → **Site settings**
+2. Set **Microphone = Allow** (Camera can stay Ask/Block; only mic needed)
+3. If previously blocked, use **Reset permissions** then reload and **Allow** when prompted
+
+**macOS System Settings:**
+1. Go **Apple menu** > **System Settings** > **Privacy & Security** > **Microphone**
+2. Ensure **Google Chrome** (and/or "Chrome") is toggled **on**
+3. If it was off, toggle on and **restart Chrome**
+
+### Browser Compatibility
+Uses [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) which may not be supported in all browsers (see browser compatibility above). Most testing done in Chrome browser.
 
 ## 🤝 Contributing
 
