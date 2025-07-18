@@ -34,13 +34,12 @@ This document outlines our collaborative development process using session-based
 
 **Example Session Start:**
 ```
-User: "Let's implement Task 1.4: Attention Word Detection for the Draw Command project"
+User: "/session-start Task 1.4: Attention Word Detection"
 
 Claude: 
-1. Starts session: /session-start "Task 1.4: Attention Word Detection"
-2. Creates feature branch: feature-attention-word-detection
-3. Agrees on goal: "Implement 'computer' and 'please' detection system to buffer speech and extract complete command phrases"
-4. Creates todo list:
+1. Creates feature branch: feature-attention-word-detection
+2. Agrees on goal with user: "Implement 'computer' and 'please' detection system to buffer speech and extract complete command phrases"
+3. Creates todo list:
    - [ ] Create attention word detection logic
    - [ ] Buffer speech between "computer" and "please"
    - [ ] Extract complete command phrases
@@ -182,13 +181,13 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ## Example Complete Workflow
 
 ```
-User: "Let's implement Task 1.4: Attention Word Detection for the Draw Command project"
+User: "/session-start Task 1.4: Attention Word Detection"
 
 Claude: 
-1. /session-start "Task 1.4: Attention Word Detection"
-2. Creates feature branch: feature-attention-word-detection
-3. Agrees on goal and creates todo list
-4. Proposes first task: "Create attention word detection logic"
+1. Creates feature branch: feature-attention-word-detection
+2. Agrees on goal and creates todo list
+3. Proposes first task: "Create attention word detection logic"
+```
 
 User: "Go ahead with the first task"
 
