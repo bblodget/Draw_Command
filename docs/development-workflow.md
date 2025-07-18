@@ -19,7 +19,7 @@ This document outlines our collaborative development process using session-based
 **Starting a new development session:**
 
 ```bash
-# Start a new session with a specific goal
+# Start a new session with a specific goal (normally a Task from plan.md)
 /session-start "Task 1.4: Attention Word Detection"
 
 # Or start a PR review session
@@ -27,7 +27,7 @@ This document outlines our collaborative development process using session-based
 ```
 
 **Session Setup Process:**
-1. **Goal Agreement** - Define clear, specific goals for the session
+1. **Goal Agreement** - Define clear, specific goals for the session (typically based on plan.md tasks)
 2. **Todo List Creation** - Break the goal into bite-sized, manageable tasks
 3. **Feature Branch Creation** - Automatically creates a feature branch for the session
 4. **Session Documentation** - Creates a session file to track progress
@@ -38,7 +38,7 @@ User: "/session-start Task 1.4: Attention Word Detection"
 
 Claude: 
 1. Creates feature branch: feature-attention-word-detection
-2. Agrees on goal with user: "Implement 'computer' and 'please' detection system to buffer speech and extract complete command phrases"
+2. Agrees on goal with user: "Implement 'computer' and 'please' detection system to buffer speech and extract complete command phrases" (from plan.md)
 3. Creates todo list:
    - [ ] Create attention word detection logic
    - [ ] Buffer speech between "computer" and "please"
@@ -222,7 +222,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ## Example Complete Workflow
 
 ```
-User: "/session-start Task 1.4: Attention Word Detection"
+User: "/session-start Task 1.4: Attention Word Detection" (from plan.md)
 
 Claude: 
 1. Creates feature branch: feature-attention-word-detection
@@ -280,6 +280,7 @@ Claude:
 - **Verify canvas functionality after each change**
 
 ### For User
+- **Start sessions** with `/session-start` using Tasks from plan.md
 - **Approve each task** before Claude begins work
 - **Test thoroughly** before approving commits
 - **Test voice commands in different browsers**
