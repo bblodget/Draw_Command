@@ -2,8 +2,9 @@ Update the current development session by:
 
 1. Check if `.claude/sessions/.current-session` exists to find the active session
 2. If no active session, inform user to start one with `/project:session-start` or `/project:session-start-pr`
-3. If session exists, append to the session file with:
-   - Current timestamp
+3. **Get current date and time** using `date` command for accurate timestamps
+4. If session exists, append to the session file with:
+   - Current timestamp (from `date` command output)
    - **Automatic summary of recent activities** (always generated)
    - **Workflow Status:**
      * **For Feature Development:**
@@ -54,7 +55,10 @@ Keep updates concise but comprehensive for future reference.
 
 Example format for Feature Development:
 ```
-### Update - 2025-06-16 12:15 PM
+# First run date command to get current time
+date
+
+### Update - 2025-07-18 8:21 AM
 
 **Workflow Phase:** Testing
 **Feature Branch:** feature-add-physics-engine
@@ -79,7 +83,10 @@ Example format for Feature Development:
 
 Example format for PR Review:
 ```
-### Update - 2025-06-16 12:15 PM
+# First run date command to get current time
+date
+
+### Update - 2025-07-18 8:21 AM
 
 **Workflow Phase:** Testing
 **PR Branch:** pr-refactor (from main)

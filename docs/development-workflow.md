@@ -90,6 +90,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 - Claude updates the session with progress
 - Marks task as completed in todo list
 - Documents any issues encountered and solutions
+- **Uses `date` command to get accurate timestamps**: Always run `date` to get current time rather than estimating
 
 ### 3. Session Management
 
@@ -110,7 +111,10 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 
 **Session Update Format:**
 ```
-### Update - 2025-01-27 2:30 PM
+# Get current date and time first
+date
+
+### Update - 2025-07-18 8:21 AM
 
 **Workflow Phase:** Testing
 **Feature Branch:** feature-basic-voice-recognition
