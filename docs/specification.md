@@ -159,16 +159,19 @@ interface Shape {
   color: string;
   position: { x: number; y: number };
   size: number;
+  rotation: number;
   createdAt: Date;
 }
 ```
 
 #### Fabric.js Integration
-- Use Fabric.js for object manipulation
 - Three-object model (one square, one circle, one triangle)
+- Automatic shape replacement when drawing duplicates
 - Event handling for selection and modification
-- Spatial relationship positioning with boundary protection
-- Unified coordinate system for perfect shape alignment
+- Spatial relationship positioning with collision detection
+- Boundary protection to keep shapes on canvas
+- Unified coordinate system for perfect alignment
+- Rotation support with visual feedback
 
 ### 4. Voice Response System
 
